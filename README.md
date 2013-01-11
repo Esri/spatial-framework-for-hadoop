@@ -9,15 +9,15 @@ These tools provide Geoprocessing methods for ArcGIS to use with an external Had
 
 ## Instructions
 
-1. Download and unzip the .zip file to a suitable location.
+1. Download and unzip the .zip file to a suitable location or clone the repository with a git tool.
 2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (.tbx) file into ArcGIS Desktop.
-3. Use the tools individually, or in models or scripts.
+3. Use the tools individually, in models or in scripts.
 
 ## Requirements
 
 * Hadoop data-processing system with WebHDFS and Oozie workflow engine enabled
-* [Esri Geometry API for Java](https://github.com/esri/geometry-api-java) installed on the Hadoop system
-* Workflows calling MapReduce jobs require the location to the custom job to be run
+* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) installed on the Hadoop system
+* Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
 
 ## Resources
