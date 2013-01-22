@@ -3,9 +3,9 @@
 These tools provide Geoprocessing methods for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
 
 ## Features
-* Tools to export features from ArcGIS to Hadoop, or import features from Hadoop to ArcGIS
+* Tools that export features from ArcGIS to Hadoop, and import features from Hadoop to ArcGIS
 * Tools to submit a workflow to process data in Hadoop, and to check the status of a workflow
-* Uses JSON Conversion tools in the ArcGIS Geoprocessing Data Management Toolbox
+* Tools to convert features to JSON (Will eventually use JSON Conversion tools in the ArcGIS Geoprocessing Data Management Toolbox)
 
 ## Instructions
 
@@ -19,6 +19,9 @@ These tools provide Geoprocessing methods for ArcGIS to use with an external Had
 * [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
+
+## Dependencies
+* For WebHDFS support, a Python library webhdfs-py is bundled in.  Source is located at: https://github.com/Esri/webhdfs-py
 
 ## Resources
 
