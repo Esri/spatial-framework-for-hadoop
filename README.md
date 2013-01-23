@@ -16,7 +16,7 @@ These tools provide Geoprocessing methods for ArcGIS to use with an external Had
 ## Requirements
 
 * Hadoop data-processing system with WebHDFS and Oozie workflow engine enabled
-* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) installed on the Hadoop system
+* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
 
