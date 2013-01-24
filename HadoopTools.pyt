@@ -13,7 +13,7 @@ class Toolbox(object):
         self.alias = ""
 
         # List of tool classes associated with this toolbox
-        self.tools = [CopyToHDFS, CopyFromHDFS]#, HDFSCommand]
+        self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON] #, HDFSCommand]
 
 
 ######################################################################
@@ -203,6 +203,67 @@ class CopyFromHDFS(object):
             if response.status >= 400 :
                 messages.addErrorMessage('HTTP ERROR {0}. Reason: {1}'.format(response.status, response.reason))
 
+        return
+
+######################################################################
+import JSONUtil
+
+class FeaturesToJSON(object):
+     
+    def __init__(self):
+        self.label = "Features To JSON"
+        self.description = "Converts features to Esri JSON"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        in_features = arcpy.Parameter(
+            displayName="Input features",
+            name="in_features",
+            datatype="GPFeatureLayer",
+            parameterType="Required",
+            direction="Input")
+        
+        in_features.filter.list = ["Point", "Multipoint", "Polyline", "Polygon"]
+
+        out_json_file = arcpy.Parameter(
+            name="out_json_file",
+            displayName="Output JSON",
+            datatype="DEFile",
+            parameterType="Required",
+            direction="Output")
+        
+        out_json_file.filter.list = ["json"]
+
+        pjson = arcpy.Parameter(
+            name="format_json",
+            displayName="Formatted JSON",
+            datatype="GPBoolean",
+            parameterType="Optional",
+            direction="Input")
+        
+        pjson.filter.type = "ValueList"
+        pjson.filter.list = ["FORMATTED", "NOT_FORMATTED"]
+        pjson.value = False
+
+        parameters = [in_features, out_json_file, pjson]
+        return parameters
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        return
+                
+    def updateMessages(self, parameters):
+        return
+
+    def execute(self, parameters, messages):
+        in_features = parameters[0].value
+        out_json_file = parameters[1].value
+        b_pjson = parameters[2].value
+        with open(unicode(out_json_file), 'wb') as json_file :
+            JSONUtil.DumpFC2JSON(in_features, json_file, pjson = bool(b_pjson))
         return
 
 ######################################################################
