@@ -13,7 +13,7 @@ class Toolbox(object):
         self.alias = ""
 
         # List of tool classes associated with this toolbox
-        self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON] #, HDFSCommand]
+        self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON, JSONToFeatures] #, HDFSCommand]
 
 
 ######################################################################
@@ -27,7 +27,7 @@ class CopyToHDFS(object):
         in_file = arcpy.Parameter(
             name="in_local_file",
             displayName="Input local file",
-            datatype="File",
+            datatype="DEFile",
             parameterType="Required",
             direction="Input")
         
@@ -161,7 +161,7 @@ class CopyFromHDFS(object):
         out_local_file = arcpy.Parameter(
             name="out_local_file",
             displayName="Output local file",
-            datatype="File",
+            datatype="DEFile",
             parameterType="Required",
             direction="Output")
 
@@ -212,7 +212,7 @@ class FeaturesToJSON(object):
      
     def __init__(self):
         self.label = "Features To JSON"
-        self.description = "Converts features to Esri JSON"
+        self.description = "Converts features to Esri JSON file"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -233,6 +233,7 @@ class FeaturesToJSON(object):
             direction="Output")
         
         out_json_file.filter.list = ["json"]
+        out_json_file.parameterDependencies = [in_features.name]
 
         pjson = arcpy.Parameter(
             name="format_json",
@@ -264,6 +265,60 @@ class FeaturesToJSON(object):
         b_pjson = parameters[2].value
         with open(unicode(out_json_file), 'wb') as json_file :
             JSONUtil.DumpFC2JSON(in_features, json_file, pjson = bool(b_pjson))
+        return
+
+######################################################################
+class JSONToFeatures(object):
+     
+    def __init__(self):
+        self.label = "JSON To Features"
+        self.description = "Converts Esri JSON file to features"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        in_json_file = arcpy.Parameter(
+            displayName="Input JSON",
+            name="in_json_file",
+            datatype="DEFile",
+            parameterType="Required",
+            direction="Input")
+        
+        in_json_file.filter.list = ["json"]
+
+        out_features = arcpy.Parameter(
+            name="out_features",
+            displayName="Output feature class",
+            datatype="DEFeatureClass",
+            parameterType="Required",
+            direction="Output")
+        
+        out_features.parameterDependencies = [in_json_file.name]
+
+        parameters = [in_json_file, out_features]
+        return parameters
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        return
+                
+    def updateMessages(self, parameters):
+        return
+
+    def execute(self, parameters, messages):
+        in_json_file = parameters[0].value
+        out_features = parameters[1].value
+        
+        if arcpy.Exists(out_features):
+            arcpy.Delete_management(out_features)
+        if arcpy.Exists(out_features):
+            messages.addErrorMessage("Cannot delete: " + unicode(out_features))
+            return
+        
+        with open(unicode(in_json_file), 'rb') as json_fc_file:
+            JSONUtil.ImportFromJSON(json_fc_file, unicode(out_features))
         return
 
 ######################################################################
