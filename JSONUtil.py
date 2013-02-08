@@ -132,23 +132,21 @@ def DumpFC2JSON(fc, ftmp, pjson = False) :
         pass
 
     NL = u''
-    TAB = u''
     if pjson == True:
         NL = u'\n'
-        TAB = u'    '
         
     ftmp.write(u'{' + NL)
     
     #add fields
     fields = desc_fc.fields
     fields_json_string = DumpFields2JSONStr(fields, pjson)
-    ftmp.write(TAB + u'"fields": ' + fields_json_string + u',' + NL)
+    ftmp.write(u'"fields": ' + fields_json_string + u',' + NL)
     
     #add Z, M info
     if feature_type :
-        ftmp.write(TAB + TAB + u'"hasZ": {0},'.format(u'true' if desc_fc.hasZ else u'false') + NL)
-        ftmp.write(TAB + TAB + u'"hasM": {0},'.format(u'true' if desc_fc.hasM else u'false') + NL)
-        ftmp.write(TAB + TAB + u'"spatialReference": {{"wkid":"{0}"}},'.format(desc_fc.spatialReference.factoryCode) + NL)
+        ftmp.write(u'"hasZ": {0},'.format(u'true' if desc_fc.hasZ else u'false') + NL)
+        ftmp.write(u'"hasM": {0},'.format(u'true' if desc_fc.hasM else u'false') + NL)
+        ftmp.write(u'"spatialReference": {{"wkid":"{0}"}},'.format(desc_fc.spatialReference.factoryCode) + NL)
                
     #prepare field list
     field_list = []
@@ -164,8 +162,7 @@ def DumpFC2JSON(fc, ftmp, pjson = False) :
         field_list.append(u'shape@json')
 
     #add fieatures
-    ftmp.write(TAB + u'"features": [' + NL)
-    datetime_type = datetime.datetime
+    ftmp.write(u'"features": [' + NL)
     with arcpy.da.SearchCursor(fc, field_list) as cursor:
         add_comma = False
         row_len_no_geom = len(field_list) - (1 if feature_type else 0) #process geometry separately
@@ -184,15 +181,17 @@ def DumpFC2JSON(fc, ftmp, pjson = False) :
             else:
                 add_comma = True
 
+            attributes_str = unicode(json.dumps(attributes_json, indent = (4 if pjson else None)))
             if feature_type :    
-                row_json_str = u'{{%s"attributes": {0},%s"geometry": {1}%s}}'.format(unicode(json.dumps(attributes_json)), row[len(row) - 1])
-                row_json_str = TAB + TAB + row_json_str % (NL, NL, NL)
+                geometry_str = unicode(row[len(row) - 1]) if pjson != True else unicode(json.dumps(json.loads(row[len(row) - 1]), indent=4))
+                row_json_str = u'{{%s"attributes": {0},%s"geometry": {1}%s}}'.format(attributes_str, geometry_str)
+                row_json_str = row_json_str % (NL, NL, NL)
             else:
-                row_json_str = u'{{%s"attributes": {0}%s}}'.format(unicode(json.dumps(attributes_json)))
-                row_json_str = TAB + TAB + row_json_str % (NL, NL)
+                row_json_str = u'{{%s"attributes": {0}%s}}'.format(attributes_str)
+                row_json_str = row_json_str % (NL, NL)
 
             ftmp.write(row_json_str)
             
-    ftmp.write(TAB + u']' + NL)
+    ftmp.write(u']' + NL)
 
     ftmp.write(u'}')
