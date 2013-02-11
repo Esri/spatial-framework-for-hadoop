@@ -75,29 +75,52 @@ class CopyToHDFS(object):
 
     def updateParameters(self, parameters):
         if parameters[4].altered == False :
-            in_file = parameters[0].value        
+            in_file      = parameters[0].value        
             webhdfs_host = parameters[1].value
             webhdfs_port = parameters[2].value
             webhdfs_user = parameters[3].value
-            if in_file != None and webhdfs_port != None and webhdfs_host!= None and webhdfs_user != None and\
-              len(unicode(in_file)) and len(webhdfs_host) and len(webhdfs_user) :
-                homeDir = ''
-                try :
-                    wh = HDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-                    homeDir = wh.getHomeDir()
-                except :
-                    parameters[0].setErrorMessage('Error while trying to connect to : ' + str(webhdfs_host) + ':' + str(webhdfs_port))
-                    parameters[4].value = ''
-                else :
-                    parameters[4].clearMessage()
-                    parameters[4].value = homeDir + '/' + arcpy.Describe(in_file).name
+                
+            if in_file != None and webhdfs_port != None and webhdfs_host != None and webhdfs_user != None :
+                if len(unicode(in_file)) and len(webhdfs_host) and len(webhdfs_user) :
+                    homeDir = ''
+                    try :
+                        wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+                        homeDir = wh.getHomeDir()
+                    except :
+                        parameters[0].setErrorMessage('Error while trying to connect to : ' + str(webhdfs_host) + ':' + str(webhdfs_port))
+                        parameters[4].value = ''
+                    else :
+                        parameters[4].clearMessage()
+                        parameters[4].value = homeDir + '/' + arcpy.Describe(in_file).name
         return
                 
     def updateMessages(self, parameters):
-        #TODO: webhdfs.py missing support for file-specific attribute/exists information
-        #remote_paths = webhdfs.listdir(webhdfs_path)
-        #if (len(remote_path) > 0):
-        #    messages.addMessage("Remote HDFS entity /" + webhdfs_path + " already exists!")
+        #TODO: wh.py missing support for file-specific attribute/exists information
+        webhdfs_host = parameters[1].value
+        webhdfs_port = int(parameters[2].value)
+        webhdfs_user = parameters[3].value
+        webhdfs_file = parameters[4].value
+
+        webhdfs_path = ''
+        webhdfs_name = ''
+        files = []
+        if webhdfs_file and len(unicode(webhdfs_file)) :
+            (webhdfs_path, webhdfs_name) = os.path.split(webhdfs_file)
+        
+        try :
+            wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+            files = wh.listDirEx(webhdfs_path)
+        except :
+            parameters[4].setErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
+        
+        for f in files :
+            if f['type'] == 'FILE' and f['pathSuffix'] == webhdfs_name :
+                if arcpy.gp.overwriteOutput :
+                    parameters[4].setWarningMessage("Remote file '" + webhdfs_file + "' already exists.")
+                else :
+                    parameters[4].setErrorMessage("Remote file '" + webhdfs_file + "' already exists.")
+                break
+
         return
 
     def execute(self, parameters, messages):
@@ -111,8 +134,8 @@ class CopyToHDFS(object):
         response = None
         
         try :
-            webhdfs = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-            response = webhdfs.copyFromLocal(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
+            wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+            response = wh.copyFromLocal(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
         except :
             messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
             
@@ -194,8 +217,8 @@ class CopyFromHDFS(object):
         response = None
 
         try :
-            webhdfs = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-            response = webhdfs.copyToLocal(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
+            wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+            response = wh.copyToLocal(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
         except :
             messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
             
@@ -389,8 +412,8 @@ class JSONToFeatures(object):
         #return
                 
     #def updateMessages(self, parameters):
-        ##TODO: webhdfs.py missing support for file-specific attribute/exists information
-        ##remote_paths = webhdfs.listdir(webhdfs_path)
+        ##TODO: wh.py missing support for file-specific attribute/exists information
+        ##remote_paths = wh.listdir(webhdfs_path)
         ##if (len(remote_path) == 0):
         ##    messages.addMessage("Remote HDFS entity /" + webhdfs_path + "does notexists!")
         #return
@@ -402,18 +425,18 @@ class JSONToFeatures(object):
         #command = parameters[3].value
         #in_remote_path = parameters[4].value
                 
-        #webhdfs = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+        #wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
         
         #if command == HDFSCommand._cmdCreateFolder :
-            #response = webhdfs.mkdir(in_remote_path)
+            #response = wh.mkDir(in_remote_path)
             #parameters[4].value = response
             
         #elif command == HDFSCommand._cmdDeleteFile :
-            #response = webhdfs.delete(in_remote_path)
+            #response = wh.delete(in_remote_path)
             #parameters[4].value = response
             
         #elif command == HDFSCommand._cmdDeleteFolderRecursively :
-            #response = webhdfs.rmdir(in_remote_path)
+            #response = wh.rmDir(in_remote_path)
             #parameters[4].value = response
         
         #if response != None :
