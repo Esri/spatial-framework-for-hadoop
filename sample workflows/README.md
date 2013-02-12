@@ -1,5 +1,13 @@
 # Sample Workflows#
 
+TODO for samples
+
+- [x] add simple aggregation MapReduce sample
+- [x] include instructions for running the sample via the command line
+- [ ] add one or two more samples, possibly using Hive
+- [ ] include Oozie work flows with samples
+- [ ] add instructions to use the sample with ArcGIS Geoprocessing tools
+
 ## Getting Started
 
 
