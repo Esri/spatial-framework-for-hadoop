@@ -6,7 +6,7 @@ TODO for samples
 - [x] include instructions for running the sample via the command line
 - [ ] add one or two more samples, possibly using Hive
 - [ ] include Oozie work flows with samples
-- [ ] add instructions to use the sample with ArcGIS Geoprocessing tools
+- [ ] add instructions to use a sample with ArcGIS Geoprocessing tools
 
 ## Getting Started
 
