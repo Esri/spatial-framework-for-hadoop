@@ -11,7 +11,7 @@ TODO for samples
 ## Getting Started
 
 
-### Pre-requisites
+### Prerequisites
 
 * Access to a Hadoop cluster, or a local installation of Hadoop
 * A Git client that can pull from a GitHub repository
