@@ -42,7 +42,7 @@ Now lets make sure Hadoop is set up correctly in the environment
 echo $HADOOP_PREFIX
 /path/to/hadoop-1.0.4
 ```
-If you don't have the environment variable set, you're hadoop environment hasn't been set up correctly.
+If you don't have the environment variable set, your hadoop environment hasn't been set up correctly.
 
 For more information on setting up Hadoop, see [Getting Started With Hadoop](http://wiki.apache.org/hadoop/GettingStartedWithHadoop)
 
