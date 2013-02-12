@@ -232,7 +232,9 @@ class CopyFromHDFS(object):
 import JSONUtil
 
 class FeaturesToJSON(object):
-     
+    _esrijsonCollection = 'JSON_FEATURE_COLLECTION'
+    _esrijsonSimple = 'JSON_FEATURE_SIMPLE'
+    
     def __init__(self):
         self.label = "Features To JSON"
         self.description = "Converts features to Esri JSON file"
@@ -258,6 +260,17 @@ class FeaturesToJSON(object):
         out_json_file.filter.list = ["json"]
         out_json_file.parameterDependencies = [in_features.name]
 
+        json_type = arcpy.Parameter(
+            name="json_type",
+            displayName="JSON type",
+            datatype="String",
+            parameterType="Optional",
+            direction="Input")
+        
+        json_type.filter.type = "ValueList"
+        json_type.filter.list = [FeaturesToJSON._esrijsonCollection, FeaturesToJSON._esrijsonSimple]
+        json_type.value = FeaturesToJSON._esrijsonCollection
+
         pjson = arcpy.Parameter(
             name="format_json",
             displayName="Formatted JSON",
@@ -269,7 +282,7 @@ class FeaturesToJSON(object):
         pjson.filter.list = ["FORMATTED", "NOT_FORMATTED"]
         pjson.value = False
 
-        parameters = [in_features, out_json_file, pjson]
+        parameters = [in_features, out_json_file, json_type, pjson]
         return parameters
 
     def isLicensed(self):
@@ -285,9 +298,13 @@ class FeaturesToJSON(object):
     def execute(self, parameters, messages):
         in_features = parameters[0].value
         out_json_file = parameters[1].value
-        b_pjson = parameters[2].value
+        json_type = parameters[2].value
+        b_pjson = parameters[3].value
         with open(unicode(out_json_file), 'wb') as json_file :
-            JSONUtil.DumpFC2JSON(in_features, json_file, pjson = bool(b_pjson))
+            if json_type == FeaturesToJSON._esrijsonCollection :
+                JSONUtil.DumpFC2JSON(in_features, json_file, pjson = bool(b_pjson))
+            elif json_type == FeaturesToJSON._esrijsonSimple :
+                JSONUtil.DumpFC2JSONSimple(in_features, json_file, pjson = bool(b_pjson))
         return
 
 ######################################################################
@@ -413,7 +430,7 @@ class JSONToFeatures(object):
                 
     #def updateMessages(self, parameters):
         ##TODO: wh.py missing support for file-specific attribute/exists information
-        ##remote_paths = wh.listdir(webhdfs_path)
+        ##remote_paths = wh.listDir(webhdfs_path)
         ##if (len(remote_path) == 0):
         ##    messages.addMessage("Remote HDFS entity /" + webhdfs_path + "does notexists!")
         #return

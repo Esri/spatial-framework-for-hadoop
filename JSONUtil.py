@@ -195,3 +195,53 @@ def DumpFC2JSON(fc, ftmp, pjson = False) :
     ftmp.write(u']' + NL)
 
     ftmp.write(u'}')
+    
+##################################################
+def DumpFC2JSONSimple(fc, ftmp, pjson = False) :
+    desc_fc = arcpy.Describe(fc)
+    feature_type = None
+    try :
+        feature_type = desc_fc.featureType
+    except :
+        pass
+
+    NL = u''
+    if pjson == True:
+        NL = u'\n'
+    
+    #prepare field list
+    field_list = []
+    shape_field = None
+    if feature_type :
+        shape_field = unicode(desc_fc.shapeFieldName)
+    
+    for field in desc_fc.fields :
+        if field.type not in ['Geometry', 'OID'] and field.name not in ['Shape_Length', 'Shape_Area']:
+            field_list.append(unicode(field.name))
+
+    if feature_type :
+        field_list.append(u'shape@json')
+
+    #add fieatures
+    with arcpy.da.SearchCursor(fc, field_list) as cursor:
+        row_len_no_geom = len(field_list) - (1 if feature_type else 0) #process geometry separately
+        attributes_json = {}
+
+        for row in cursor :
+            attributes_json.clear()
+            i = 0
+            for attr in row :
+                if i < row_len_no_geom :
+                    attributes_json[field_list[i]] = (attr if type(attr) != datetime.datetime else unicode(attr))
+                    i += 1
+
+            attributes_str = unicode(json.dumps(attributes_json, indent = (4 if pjson else None)))
+            if feature_type :    
+                geometry_str = unicode(row[len(row) - 1]) if pjson != True else unicode(json.dumps(json.loads(row[len(row) - 1]), indent=4))
+                row_json_str = u'{{%s"attributes": {0},%s"geometry": {1}%s}}%s'.format(attributes_str, geometry_str)
+                row_json_str = row_json_str % (NL, NL, NL, NL)
+            else:
+                row_json_str = u'{{%s"attributes": {0}%s}}%s'.format(attributes_str)
+                row_json_str = row_json_str % (NL, NL, NL)
+
+            ftmp.write(row_json_str)
