@@ -72,12 +72,18 @@ sample-workflows/data/california-counties.json
 
 # list of earthquakes since ~1980 with the latitude, longitude and magnitude data for each
 sample-workflows/data/earthquakes.csv
+
+# geometry api for spatial operations (i.e. contains)
+sample-workflows/Java/esri-geometry-api.java
+
+# Hadoop helper utilities for deserializing the Esri JSON format
+sample-workflows/Java/hadoop-utilities.java
 ```
 
 Run the sample:
 ```bash
 cd ~/esri-git/hadoop-tools/sample-workflows/
-${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver data/california-counties.json data/earthquakes.csv output.out
+${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/california-counties.json data/earthquakes.csv output.out${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/california-counties.json data/earthquakes.csv output.out
 ```
 
 Print out the results:
