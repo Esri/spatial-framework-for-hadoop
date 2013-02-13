@@ -74,10 +74,10 @@ sample-workflows/data/california-counties.json
 sample-workflows/data/earthquakes.csv
 
 # geometry api for spatial operations (i.e. contains)
-sample-workflows/Java/esri-geometry-api.java
+sample-workflows/Java/esri-geometry-api.jar
 
 # Hadoop helper utilities for deserializing the Esri JSON format
-sample-workflows/Java/hadoop-utilities.java
+sample-workflows/Java/hadoop-utilities.jar
 ```
 
 Run the sample:
