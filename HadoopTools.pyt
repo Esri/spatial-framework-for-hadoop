@@ -67,7 +67,18 @@ class CopyToHDFS(object):
             parameterType="Derived",
             direction="Output")
 
-        parameters = [in_file, host, port, user, in_remote_file, out_remote_file]
+        b_append = arcpy.Parameter(
+            name="append_file",
+            displayName="Append file",
+            datatype="GPBoolean",
+            parameterType="Optional",
+            direction="Input")
+        
+        b_append.filter.type = "ValueList"
+        b_append.filter.list = ["CREATE", "APPEND"]
+        b_append.value = False
+        
+        parameters = [in_file, host, port, user, in_remote_file, out_remote_file, b_append]
         return parameters
 
     def isLicensed(self):
@@ -115,7 +126,7 @@ class CopyToHDFS(object):
         
         for f in files :
             if f['type'] == 'FILE' and f['pathSuffix'] == webhdfs_name :
-                if arcpy.gp.overwriteOutput :
+                if arcpy.gp.overwriteOutput:
                     parameters[4].setWarningMessage("Remote file '" + webhdfs_file + "' already exists.")
                 else :
                     parameters[4].setErrorMessage("Remote file '" + webhdfs_file + "' already exists.")
@@ -130,12 +141,17 @@ class CopyToHDFS(object):
         webhdfs_port = int(parameters[2].value)
         webhdfs_user = parameters[3].value
         webhdfs_file = parameters[4].value
+        b_append     = parameters[5].value
         
         response = None
         
         try :
             wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-            response = wh.copyFromLocal(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
+            if b_append :
+                response = wh.appendToHDFS(unicode(input_file), unicode(webhdfs_file))
+            else:
+                response = wh.copyToHDFS(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
+            
         except :
             messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
             
@@ -218,7 +234,7 @@ class CopyFromHDFS(object):
 
         try :
             wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-            response = wh.copyToLocal(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
+            response = wh.copyFromHDFS(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
         except :
             messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
             
