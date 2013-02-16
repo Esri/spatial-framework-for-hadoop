@@ -1,7 +1,7 @@
 import os
 import sys
 import arcpy
-from webhdfs import WebHDFS
+from webhdfs import WebHDFS, WebHDFSError
 
 
 ######################################################################
@@ -15,6 +15,17 @@ class Toolbox(object):
         # List of tool classes associated with this toolbox
         self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON, JSONToFeatures] #, HDFSCommand]
 
+######################################################################
+def AddExceptionError(messages, message = '') :
+    for ei in sys.exc_info() :
+        if isinstance(ei, Exception) :
+            messages.addErrorMessage('%s : %s' % (message if (message!= None and len(message) > 0) else 'Unexpected error', str(ei)))
+    
+######################################################################
+def SetExceptionError(parameter, message = '') :
+    for ei in sys.exc_info() :
+        if isinstance(ei, Exception) :
+            parameter.setErrorMessage('%s : %s' % (message if (message!= None and len(message) > 0) else 'Unexpected error', str(ei)))
 
 ######################################################################
 class CopyToHDFS(object):
@@ -90,23 +101,19 @@ class CopyToHDFS(object):
             webhdfs_host = parameters[1].value
             webhdfs_port = parameters[2].value
             webhdfs_user = parameters[3].value
-                
-            if in_file != None and webhdfs_port != None and webhdfs_host != None and webhdfs_user != None :
-                if len(unicode(in_file)) and len(webhdfs_host) and len(webhdfs_user) :
-                    homeDir = ''
-                    try :
-                        wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-                        homeDir = wh.getHomeDir()
-                    except :
-                        parameters[0].setErrorMessage('Error while trying to connect to : ' + str(webhdfs_host) + ':' + str(webhdfs_port))
-                        parameters[4].value = ''
-                    else :
-                        parameters[4].clearMessage()
-                        parameters[4].value = homeDir + '/' + arcpy.Describe(in_file).name
+                    
+            if in_file != None and webhdfs_port != None and webhdfs_host != None and webhdfs_user != None and len(unicode(in_file)) and len(webhdfs_host) and len(webhdfs_user) :
+                homeDir = ''
+                try :
+                    wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+                    homeDir = wh.getHomeDir()
+                except :
+                    parameters[4].value = ''
+                else :
+                    parameters[4].value = homeDir + '/' + arcpy.Describe(in_file).name
         return
                 
     def updateMessages(self, parameters):
-        #TODO: wh.py missing support for file-specific attribute/exists information
         webhdfs_host = parameters[1].value
         webhdfs_port = int(parameters[2].value)
         webhdfs_user = parameters[3].value
@@ -121,8 +128,11 @@ class CopyToHDFS(object):
         try :
             wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
             files = wh.listDirEx(webhdfs_path)
+        except WebHDFSError as whe:
+            parameters[4].setErrorMessage(str(whe))
         except :
-            parameters[4].setErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
+            SetExceptionError(parameters[4])
+            return
         
         for f in files :
             if f['type'] == 'FILE' and f['pathSuffix'] == webhdfs_name :
@@ -143,21 +153,17 @@ class CopyToHDFS(object):
         webhdfs_file = parameters[4].value
         b_append     = parameters[5].value
         
-        response = None
-        
         try :
             wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
             if b_append :
-                response = wh.appendToHDFS(unicode(input_file), unicode(webhdfs_file))
+                wh.appendToHDFS(unicode(input_file), unicode(webhdfs_file))
             else:
-                response = wh.copyToHDFS(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
+                wh.copyToHDFS(unicode(input_file), unicode(webhdfs_file), overwrite = bool(arcpy.gp.overwriteOutput))
+        except WebHDFSError as whe:
+            messages.addErrorMessage(str(whe))
+        except:
+            AddExceptionError(messages)
             
-        except :
-            messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
-            
-        if response != None :
-            if response.status >= 400 :
-                messages.addErrorMessage('HTTP ERROR {0}. Reason: {1}'.format(response.status, response.reason))
         return
 
 ######################################################################
@@ -230,17 +236,13 @@ class CopyFromHDFS(object):
             arcpy.gp.addError("Cannot delete: " + out_local_file)
             sys.exit()
         
-        response = None
-
         try :
             wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
-            response = wh.copyFromHDFS(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
-        except :
-            messages.addErrorMessage('Unexpected error: "{0}"'.format(sys.exc_info()[0]))
-            
-        if response != None :
-            if response.status >= 400 :
-                messages.addErrorMessage('HTTP ERROR {0}. Reason: {1}'.format(response.status, response.reason))
+            wh.copyFromHDFS(unicode(webhdfs_file), unicode(out_local_file), overwrite = bool(arcpy.gp.overwriteOutput))
+        except WebHDFSError as whe:
+            messages.addErrorMessage(str(whe))
+        except:
+            AddExceptionError(messages)
 
         return
 
@@ -445,7 +447,7 @@ class JSONToFeatures(object):
         #return
                 
     #def updateMessages(self, parameters):
-        ##TODO: wh.py missing support for file-specific attribute/exists information
+        ##TODO:
         ##remote_paths = wh.listDir(webhdfs_path)
         ##if (len(remote_path) == 0):
         ##    messages.addMessage("Remote HDFS entity /" + webhdfs_path + "does notexists!")
@@ -457,21 +459,19 @@ class JSONToFeatures(object):
         #webhdfs_user = parameters[2].value
         #command = parameters[3].value
         #in_remote_path = parameters[4].value
-                
-        #wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
+        #try:
+            #wh = WebHDFS(webhdfs_host, webhdfs_port, webhdfs_user)
         
-        #if command == HDFSCommand._cmdCreateFolder :
-            #response = wh.mkDir(in_remote_path)
-            #parameters[4].value = response
+            #if command == HDFSCommand._cmdCreateFolder :
+                #wh.mkDir(in_remote_path)
             
-        #elif command == HDFSCommand._cmdDeleteFile :
-            #response = wh.delete(in_remote_path)
-            #parameters[4].value = response
+            #elif command == HDFSCommand._cmdDeleteFile :
+                #wh.delete(in_remote_path)
             
-        #elif command == HDFSCommand._cmdDeleteFolderRecursively :
-            #response = wh.rmDir(in_remote_path)
-            #parameters[4].value = response
-        
-        #if response != None :
-            #messages.addMessage('Response is "{0}"'.format(response))
+            #elif command == HDFSCommand._cmdDeleteFolderRecursively :
+                #wh.rmDir(in_remote_path)
+        #except WebHDFSError as whe:
+            #messages.addMessage(str(whe))
+        #except :
+            #AddExceptionError(messages)
         #return
