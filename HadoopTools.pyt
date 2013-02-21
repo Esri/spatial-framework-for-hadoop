@@ -250,8 +250,8 @@ class CopyFromHDFS(object):
 import JSONUtil
 
 class FeaturesToJSON(object):
-    _esrijsonCollection = 'JSON_FEATURE_COLLECTION'
-    _esrijsonSimple = 'JSON_FEATURE_SIMPLE'
+    _esrijsonCollection = 'ENCLOSED_JSON'
+    _esrijsonSimple = 'UNENCLOSED_JSON'
     
     def __init__(self):
         self.label = "Features To JSON"
