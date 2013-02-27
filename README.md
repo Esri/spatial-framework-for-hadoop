@@ -1,6 +1,6 @@
 # hadoop-tools
 
-These tools provide Geoprocessing methods for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
+The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
 
 ## Features
 * Tools that export features from ArcGIS to Hadoop, and import features from Hadoop to ArcGIS
@@ -38,7 +38,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Anyone and everyone is welcome to contribute. 
 
 ## Licensing
-Copyright 2012 Esri
+Copyright 2013 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
