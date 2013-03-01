@@ -1,7 +1,7 @@
 import os, sys
 import arcpy
 from webhdfs import WebHDFS, WebHDFSError
-from OozieUtil import Oozie, Configuration
+from OozieUtil import Oozie, OozieError, Configuration
 import JSONUtil
 
 ######################################################################
@@ -438,41 +438,40 @@ class ExecuteWorkflow(object):
         b_track_status = parameters[2].value
         b_job_succeeded = False    
         
-        # Create Oozie client        
-        oozie_client = Oozie(oozie_url)
-        
-        # Create configuration xml    
-        conf = Configuration(jobprops_file)
-        
-        # Submit Job
-        job_id = oozie_client.submit(conf.xmldata)
-        messages.addMessage("Oozie job id {0}".format(job_id))
-        
-        # run job
-        oozie_client.run(job_id)
-        
-        # track progress if requested
-        if b_track_status:    
-            curr_status = oozie_client.status(job_id)                
-            messages.addMessage("Status : {0}".format(curr_status))
-            while curr_status in ['PENDING','RUNNING']:
-                #sleep for 5 seconds and check status
-                time.sleep(3)
-                status = oozie_client.status(job_id)        
-                if status != curr_status:
-                    messages.addMessage("Status : {0}".format(status))
-                curr_status = status   
-
-            if curr_status == 'SUCCEEDED' :
-                b_job_succeeded = True
-                messages.addMessage("Job {0} succeeded".format(job_id))
-                # TODO: Retrieve log information
+        try :
+            #prepare and run a job
+            conf = Configuration(jobprops_file)
+            oozie_client = Oozie(oozie_url)
+            job_id = oozie_client.submit(conf.xmldata)
+            messages.addMessage("Oozie job id {0}".format(job_id))
+            oozie_client.run(job_id)
+            
+            # track progress if requested
+            if b_track_status:    
+                curr_status = oozie_client.status(job_id)                
+                messages.addMessage("Status : {0}".format(curr_status))
+                while curr_status in ['PENDING','RUNNING']:
+                    time.sleep(3)
+                    status = oozie_client.status(job_id)        
+                    if status != curr_status:
+                        messages.addMessage("Status : {0}".format(status))
+                    curr_status = status   
+    
+                if curr_status == 'SUCCEEDED' :
+                    b_job_succeeded = True
+                    messages.addMessage("Job {0} succeeded".format(job_id))
+                    # TODO: Retrieve log information
+                else:
+                    messages.addErrorMessage("Job {0} failed".format(job_id))       
+                    
             else:
-                messages.addErrorMessage("Job {0} failed".format(job_id))       
-                
-        else:
-            b_job_succeeded = True
-            messages.addMessage("Job {0} successfully submitted".format(job_id))
+                b_job_succeeded = True
+                messages.addMessage("Job {0} successfully submitted".format(job_id))
+
+        except OozieError as err:
+            messages.addErrorMessage(str(err))
+        except:
+            AddExceptionError(messages)
             
         parameters[3].value = b_job_succeeded
         return

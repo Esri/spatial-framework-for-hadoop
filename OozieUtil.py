@@ -7,22 +7,19 @@ class Configuration():
 
     def __init__(self, jobPropFile):
         '''create an xml file from jobProperties'''
-        if (os.path.exists(jobPropFile)):
-            config = etree.Element("configuration")
-            with open(jobPropFile, 'r') as f:
-                for line in iter(f):
-                    (k,v) = line.strip().split("=")
-                    prop = etree.Element('property')
-                    name = etree.Element('name')
-                    name.text = k
-                    prop.append(name)
-                    value = etree.Element('value')
-                    value.text = v
-                    prop.append(value)
-                    config.append(prop)
-            self.xmldata = etree.tostring(config)
-        else:
-            arcpy.AddError("File not found {0}".format(jobPropFile))                
+        config = etree.Element("configuration")
+        with open(jobPropFile, 'r') as f:
+            for line in iter(f):
+                (k,v) = line.strip().split("=")
+                prop = etree.Element('property')
+                name = etree.Element('name')
+                name.text = k
+                prop.append(name)
+                value = etree.Element('value')
+                value.text = v
+                prop.append(value)
+                config.append(prop)
+        self.xmldata = etree.tostring(config)
 
 ######################################################################
 class Oozie():
@@ -36,7 +33,7 @@ class Oozie():
         if resp_out[0] == "NORMAL":
             self.url = oozieurl.rstrip("/")
         else:
-            arcpy.AddError("The status of oozie interface is not NORMAL")
+            raise OozieError('The status of oozie interface is not NORMAL')
     
     def submit(self, xmldata):
         '''Submit a job '''
@@ -76,4 +73,33 @@ class Oozie():
             else:
                 return True
         else :
-            arcpy.AddError(errorMessage)
+            raise OozieError(errorMessage)
+
+######################################################################
+class OozieError(Exception):
+    reason = ''
+    def __init__(self, reason):
+        self.reason = reason
+    def __str__(self):
+        return self.reason
+
+######################################################################
+######################################################################
+######################################################################
+if __name__ == '__main__':      
+    try:
+        conf = Configuration(r'c:\temp\job.properties')
+    
+        # Create Oozie client        
+        oozieClient = Oozie('http://python1.esri.com:11000/oozie')
+        # Submit Job
+        
+        jobID = oozieClient.submit(conf.xmldata)
+        
+        oozieClient.run(jobID)
+    except OozieError as err:
+        print str(err)
+    except:
+        for ei in sys.exc_info() :
+            if isinstance(ei, Exception) :
+                print str(ei)
