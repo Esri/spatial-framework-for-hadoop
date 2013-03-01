@@ -1,11 +1,9 @@
-import os
-import sys
+import os, sys
 import arcpy
 from webhdfs import WebHDFS, WebHDFSError
+from OozieUtil import Oozie, Configuration
+import JSONUtil
 
-
-######################################################################
-######################################################################
 ######################################################################
 class Toolbox(object):
     def __init__(self):
@@ -13,7 +11,7 @@ class Toolbox(object):
         self.alias = ""
 
         # List of tool classes associated with this toolbox
-        self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON, JSONToFeatures] #, HDFSCommand]
+        self.tools = [CopyToHDFS, CopyFromHDFS, FeaturesToJSON, JSONToFeatures, ExecuteWorkflow] #, HDFSCommand]
 
 ######################################################################
 def AddExceptionError(messages, message = '') :
@@ -71,13 +69,6 @@ class CopyToHDFS(object):
             parameterType="Required",
             direction="Input")
 
-        out_remote_file = arcpy.Parameter(
-            name="out_remote_file",
-            displayName="Output HDFS file",
-            datatype="String",
-            parameterType="Derived",
-            direction="Output")
-
         b_append = arcpy.Parameter(
             name="append_file",
             displayName="Append file",
@@ -85,11 +76,18 @@ class CopyToHDFS(object):
             parameterType="Optional",
             direction="Input")
         
+        out_remote_file = arcpy.Parameter(
+            name="out_remote_file",
+            displayName="Output HDFS file",
+            datatype="String",
+            parameterType="Derived",
+            direction="Output")
+
         b_append.filter.type = "ValueList"
         b_append.filter.list = ["CREATE", "APPEND"]
         b_append.value = False
         
-        parameters = [in_file, host, port, user, in_remote_file, out_remote_file, b_append]
+        parameters = [in_file, host, port, user, in_remote_file, b_append, out_remote_file]
         return parameters
 
     def isLicensed(self):
@@ -247,8 +245,6 @@ class CopyFromHDFS(object):
         return
 
 ######################################################################
-import JSONUtil
-
 class FeaturesToJSON(object):
     _esrijsonCollection = 'ENCLOSED_JSON'
     _esrijsonSimple = 'UNENCLOSED_JSON'
@@ -377,6 +373,108 @@ class JSONToFeatures(object):
         
         with open(unicode(in_json_file), 'rb') as json_fc_file:
             JSONUtil.ImportFromJSON(json_fc_file, unicode(out_features))
+        return
+
+######################################################################
+class ExecuteWorkflow(object):
+
+    def __init__(self):
+        self.label = "Execute Workflow"
+        self.description = "Executes Oozie workwlow"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        in_oozie_url = arcpy.Parameter(
+            displayName="Oozie URL",
+            name="in_oozie_url",
+            datatype="String",
+            parameterType="Required",
+            direction="Input")
+        
+        in_jobprops_file = arcpy.Parameter(
+            name="in_jobprops_file",
+            displayName="Job properties",
+            datatype="DEFile",
+            parameterType="Required",
+            direction="Input")
+        
+        track_status = arcpy.Parameter(
+            name="track_status",
+            displayName="Track status",
+            datatype="Boolean",
+            parameterType="Optional",
+            direction="Input")
+        
+        track_status.filter.type = "ValueList"
+        track_status.filter.list = ["TRACK_STATUS", "NO_TRACK_STATUS"]
+        track_status.value = True
+        
+        job_succseeded = arcpy.Parameter(
+            name="job_succseeded",
+            displayName="Job succseeded",
+            datatype="Boolean",
+            parameterType="Derived",
+            direction="Output")
+
+        job_succseeded.value = False
+
+        parameters = [in_oozie_url, in_jobprops_file, track_status, job_succseeded]
+        return parameters
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        return
+                
+    def updateMessages(self, parameters):
+        return
+
+    def execute(self, parameters, messages):
+        # Get parameters
+        oozie_url = parameters[0].value
+        jobprops_file = unicode(parameters[1].value)
+        b_track_status = parameters[2].value
+        b_job_succeeded = False    
+        
+        # Create Oozie client        
+        oozie_client = Oozie(oozie_url)
+        
+        # Create configuration xml    
+        conf = Configuration(jobprops_file)
+        
+        # Submit Job
+        job_id = oozie_client.submit(conf.xmldata)
+        messages.addMessage("Oozie job id {0}".format(job_id))
+        
+        # run job
+        oozie_client.run(job_id)
+        
+        # track progress if requested
+        if b_track_status:    
+            curr_status = oozie_client.status(job_id)                
+            messages.addMessage("Status : {0}".format(curr_status))
+            while curr_status in ['PENDING','RUNNING']:
+                #sleep for 5 seconds and check status
+                time.sleep(3)
+                status = oozie_client.status(job_id)        
+                if status != curr_status:
+                    messages.addMessage("Status : {0}".format(status))
+                curr_status = status   
+
+            if curr_status == 'SUCCEEDED' :
+                b_job_succeeded = True
+                messages.addMessage("Job {0} succeeded".format(job_id))
+                # TODO: Retrieve log information
+            else:
+                messages.addErrorMessage("Job {0} failed".format(job_id))       
+                
+        else:
+            b_job_succeeded = True
+            messages.addMessage("Job {0} successfully submitted".format(job_id))
+            
+        parameters[3].value = b_job_succeeded
         return
 
 ######################################################################

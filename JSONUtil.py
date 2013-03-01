@@ -1,7 +1,3 @@
-####################################################
-## 2013/01/06 : JSON To Feature and back functionality extracted to separate tools : Alex Z
-####################################################
-
 import os, sys, json, datetime, uuid
 import arcpy
 

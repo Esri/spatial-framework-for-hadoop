@@ -10,7 +10,7 @@ The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an externa
 ## Instructions
 
 1. Download and unzip the .zip file to a suitable location or clone the repository with a git tool.
-2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (.tbx) file into ArcGIS Desktop.
+2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (HadoopTools.pyt) file into ArcGIS Desktop.
 3. Use the tools individually, in models or in scripts.
 
 ## Requirements
@@ -22,6 +22,7 @@ The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an externa
 
 ## Dependencies
 * For WebHDFS support, a Python library webhdfs-py is bundled in.  Source is located at: https://github.com/Esri/webhdfs-py
+* Requests python library is required for OozieUtils.py (installation doc is located at http://docs.python-requests.org/en/latest/user/install/#install)
 
 ## Resources
 
