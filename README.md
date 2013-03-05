@@ -1,6 +1,6 @@
 # hadoop-tools
 
-These tools provide Geoprocessing methods for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
+The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
 
 ## Features
 * Tools that export features from ArcGIS to Hadoop, and import features from Hadoop to ArcGIS
@@ -10,7 +10,7 @@ These tools provide Geoprocessing methods for ArcGIS to use with an external Had
 ## Instructions
 
 1. Download and unzip the .zip file to a suitable location or clone the repository with a git tool.
-2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (.tbx) file into ArcGIS Desktop.
+2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (HadoopTools.pyt) file into ArcGIS Desktop.
 3. Use the tools individually, in models or in scripts.
 
 ## Requirements
@@ -22,6 +22,7 @@ These tools provide Geoprocessing methods for ArcGIS to use with an external Had
 
 ## Dependencies
 * For WebHDFS support, a Python library webhdfs-py is bundled in.  Source is located at: https://github.com/Esri/webhdfs-py
+* Requests python library is required for OozieUtils.py (installation doc is located at http://docs.python-requests.org/en/latest/user/install/#install)
 
 ## Resources
 
@@ -38,7 +39,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Anyone and everyone is welcome to contribute. 
 
 ## Licensing
-Copyright 2012 Esri
+Copyright 2013 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
