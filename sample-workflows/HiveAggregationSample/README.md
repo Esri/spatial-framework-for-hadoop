@@ -7,13 +7,18 @@ First start the Hive Command line (Hive CLI).  If you do not have Hive installed
 hive -S
 ```
 
-Add the required external libraries.
+Add the required external libraries and create temporary functions for the geometry api calls.
 ```bash
 add jar
   ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/esri-geometry-api.jar
   ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/hadoop-utilities.jar;
+  
+create temporary function ST_Point as 'com.esri.hadoop.hive.ST_Point';
+create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
 ```
 
+> Notes
+* This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions are available in the linked repository.
 
 Define a schema for the earthquake data.
 
@@ -62,4 +67,23 @@ San Luis Obispo	3
 Ventura	3
 Orange	2
 San Mateo	1
+```
+
+===
+
+## run-sample.sql
+
+Alternatively, you can run the entire sample using `run-sample.sql`.
+
+First move to the Hive sample directory and run Hive.
+
+```bash
+cd ~/esri-git/hadoop-tools/sample-workflows/HiveAggregationSample
+hive -S
+```
+
+Now run the sample sql file from within Hive
+
+```bash
+source run-sample.sql
 ```
