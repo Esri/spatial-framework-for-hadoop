@@ -18,7 +18,7 @@ add jar
 Define a schema for the earthquake data.
 
 ```sql
-CREATE EXTERNAL TABLE earthquakes (earthquake_date STRING, latitude DOUBLE, longitude DOUBLE, magnitude DOUBLE)
+CREATE EXTERNAL TABLE IF NOT EXISTS earthquakes (earthquake_date STRING, latitude DOUBLE, longitude DOUBLE, magnitude DOUBLE)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 LOCATION '${env:HOME}/esri-git/hadoop-tools/sample-workflows/data/earthquake-data';
 ```
@@ -26,7 +26,7 @@ LOCATION '${env:HOME}/esri-git/hadoop-tools/sample-workflows/data/earthquake-dat
 Define a schema for the California counties data.
 
 ```sql
-CREATE EXTERNAL TABLE counties (Area string, Perimeter string, State string, County string, Name string, BoundaryShape binary)                                         
+CREATE EXTERNAL TABLE IF NOT EXISTS counties (Area string, Perimeter string, State string, County string, Name string, BoundaryShape binary)                                         
 ROW FORMAT SERDE 'com.esri.hadoop.hive.serde.JsonSerde'              
 STORED AS INPUTFORMAT 'com.esri.hadoop.hive.serde.EnclosedJsonInputFormat'
 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
