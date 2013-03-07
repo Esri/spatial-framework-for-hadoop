@@ -2,6 +2,9 @@ add jar
   ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/esri-geometry-api.jar
   ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/hadoop-utilities.jar;
 
+create temporary function ST_Point as 'com.esri.hadoop.hive.ST_Point';
+create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
+
 CREATE EXTERNAL TABLE IF NOT EXISTS earthquakes (earthquake_date STRING, latitude DOUBLE, longitude DOUBLE, magnitude DOUBLE)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 LOCATION '${env:HOME}/esri-git/hadoop-tools/sample-workflows/data/earthquake-data';
