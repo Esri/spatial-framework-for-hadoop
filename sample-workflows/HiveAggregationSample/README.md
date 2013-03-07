@@ -20,7 +20,7 @@ create temporary function ST_Point as 'com.esri.hadoop.hive.ST_Point';
 create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
 ```
 
-> This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions are available in the linked repository.
+> This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions is available in the linked repository.
 
 Define a schema for the earthquake data.
 
