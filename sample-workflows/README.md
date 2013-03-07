@@ -1,13 +1,5 @@
 # Sample Workflows#
 
-TODO for samples
-
-- [x] add simple aggregation MapReduce sample
-- [x] include instructions for running the sample via the command line
-- [ ] add one or two more samples, possibly using Hive
-- [ ] include Oozie work flows with samples
-- [ ] add instructions to use a sample with ArcGIS Geoprocessing tools
-
 ## Getting Started
 
 
@@ -68,10 +60,10 @@ Files used by this sample:
 sample-workflows/PointInPolygonAggregationSample/bin/aggregation-sample.jar
 
 # california counties that will be use to aggregate the earthquake data
-sample-workflows/data/california-counties.json
+sample-workflows/data/counties-data/california-counties.json
 
 # list of earthquakes since ~1980 with the latitude, longitude and magnitude data for each
-sample-workflows/data/earthquakes.csv
+sample-workflows/data/earthquake-data/earthquakes.csv
 
 # geometry api for spatial operations (i.e. contains)
 sample-workflows/Java/esri-geometry-api.jar
@@ -83,11 +75,11 @@ sample-workflows/Java/hadoop-utilities.jar
 Run the sample:
 ```bash
 cd ~/esri-git/hadoop-tools/sample-workflows/
-${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/california-counties.json data/earthquakes.csv output.out${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/california-counties.json data/earthquakes.csv output.out
+${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/counties-data/california-counties.json data/earthquake-data/earthquakes.csv output
 ```
 
 Print out the results:
 ```bash
 # the output is not actually a single file, but a directory with files with names like 'part-r-00000'
-cat output.out/*
+cat output/*
 ```
