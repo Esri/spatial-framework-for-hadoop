@@ -7,6 +7,8 @@ First start the Hive Command line (Hive CLI).  If you do not have Hive installed
 hive -S
 ```
 
+> This sample assumes that Hive is installed on a local cluster.  If you are using a remote cluster, you will need to move your files to HDFS and change table definitions as needed.
+
 Add the required external libraries and create temporary functions for the geometry api calls.
 ```bash
 add jar
@@ -18,8 +20,7 @@ create temporary function ST_Point as 'com.esri.hadoop.hive.ST_Point';
 create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
 ```
 
-> Notes
-* This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions are available in the linked repository.
+> This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions are available in the linked repository.
 
 Define a schema for the earthquake data.
 
