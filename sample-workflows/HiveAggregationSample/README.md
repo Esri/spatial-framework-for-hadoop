@@ -22,7 +22,7 @@ create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
 
 > This is a minimum implementation the ST_Geometry user definied functions found in the [Hive Spatial Library](https://github.com/ArcGIS/hive-spatial).  The full list of functions is available in the linked repository.
 
-Define a schema for the earthquake data.
+Define a schema for the [earthquake data](https://github.com/Esri/hadoop-tools/tree/master/sample-workflows/data/earthquake-data).  The earthquake data is in CSV (comma-separated values) format, which is natively supported by Hive.
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS earthquakes (earthquake_date STRING, latitude DOUBLE, longitude DOUBLE, magnitude DOUBLE)
@@ -30,7 +30,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 LOCATION '${env:HOME}/esri-git/hadoop-tools/sample-workflows/data/earthquake-data';
 ```
 
-Define a schema for the California counties data.
+Define a schema for the [California counties data](https://github.com/Esri/hadoop-tools/tree/master/sample-workflows/data/counties-data).  The counties data is stored as [Enclosed JSON](https://github.com/Esri/hadoop-tools/wiki/JSON-Formats).  
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS counties (Area string, Perimeter string, State string, County string, Name string, BoundaryShape binary)                                         
