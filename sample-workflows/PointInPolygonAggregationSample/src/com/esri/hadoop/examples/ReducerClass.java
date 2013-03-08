@@ -14,6 +14,10 @@ public class ReducerClass extends Reducer<Text, EarthquakeDataWritable, Text, Ea
 		float agg_minMag = 999;
 		float agg_maxMag = 0;
 		
+		/* What we've got here is a key (county name such as 'Riverside') and a
+		 * list of every earthquake that occurred inside that county's boundary.
+		 * All we need to do is loop and aggregate the data in the list.
+		 */
 		for (EarthquakeDataWritable data : values)
 		{
 			int cnt = data.getCnt();
