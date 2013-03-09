@@ -12,9 +12,9 @@ hive -S
 Add the required external libraries and create temporary functions for the geometry api calls.
 ```bash
 add jar
-  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/esri-geometry-api.jar
-  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/hadoop-utilities.jar
-  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/Java/esri-hive-spatial.jar;
+  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/lib/esri-geometry-api.jar
+  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/lib/hadoop-utilities.jar
+  ${env:HOME}/esri-git/hadoop-tools/sample-workflows/lib/esri-hive-spatial.jar;
   
 create temporary function ST_Point as 'com.esri.hadoop.hive.ST_Point';
 create temporary function ST_Contains as 'com.esri.hadoop.hive.ST_Contains';
