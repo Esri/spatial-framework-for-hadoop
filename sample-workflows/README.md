@@ -5,12 +5,13 @@
 
 ### Prerequisites
 
-* Access to a Hadoop cluster, or a local installation of Hadoop
+* Access to a Hadoop cluster, or a local distribution of Hadoop
 * A Git client that can pull from a GitHub repository
 * A Unix environment is **highly** recommended. 
+* For the Hive sample, you will need a distribution of Hive 0.10 or greater
+
 
 ### Setting up the samples
-
 
 First, Pull the latest version of the samples from GitHub.  An easy way to do this is to clone the base *hadoop-tools* repository if you haven't already done so.
 
