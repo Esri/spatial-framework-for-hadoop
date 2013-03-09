@@ -24,10 +24,10 @@ sample-workflows/data/counties-data/california-counties.json
 sample-workflows/data/earthquake-data/earthquakes.csv
 
 # geometry api for spatial operations (i.e. contains)
-sample-workflows/Java/esri-geometry-api.jar
+sample-workflows/lib/esri-geometry-api.jar
 
 # Hadoop helper utilities for deserializing the Esri JSON format
-sample-workflows/Java/hadoop-utilities.jar
+sample-workflows/lib/hadoop-utilities.jar
 ```
 
 First, lets make sure Hadoop is set up correctly in the environment
@@ -45,7 +45,7 @@ For more information on setting up Hadoop, see [Getting Started With Hadoop](htt
 Run the sample:
 ```bash
 cd ~/esri-git/hadoop-tools/sample-workflows/
-${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars Java/esri-geometry-api.jar,Java/hadoop-utilities.jar data/counties-data/california-counties.json data/earthquake-data/earthquakes.csv output
+${HADOOP_PREFIX}/bin/hadoop jar PointInPolygonAggregationSample/bin/aggregation-sample.jar com.esri.hadoop.examples.AggregationSampleDriver -libjars lib/esri-geometry-api.jar,lib/hadoop-utilities.jar data/counties-data/california-counties.json data/earthquake-data/earthquakes.csv output
 ```
 
 Print out the results:
