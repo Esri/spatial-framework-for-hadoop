@@ -45,6 +45,7 @@ For more information on setting up Hadoop, see [Getting Started With Hadoop](htt
 ```bash
 export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:~/esri-git/hadoop-tools/sample-workflows/lib/esri-geometry-api.jar:~/esri-git/hadoop-tools/sample-workflows/lib/hadoop-utilities.jar
 ```
+If you have Hadoop in a remote cluster, you'll need to set the classpath in the clusters configuration.
 
 Run the sample:
 ```bash
