@@ -15,7 +15,7 @@ The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an externa
 
 ## Requirements
 
-* Hadoop data-processing system with WebHDFS and Oozie workflow engine enabled
+* Hadoop data-processing system with WebHDFS and Oozie workflow engine enabled (Oozie [requires](http://oozie.apache.org/docs/3.3.1/ENG_Building.html) Hadoop version 0.20.2 or newer.)
 * [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
