@@ -1,5 +1,7 @@
 ### Running the sample
 
+> This walk through assumes a local single node cluster.  More setup is likely required for a remote cluster. 
+
 This sample aggregates the count of earthquakes, average magnitude and min/max magnitudes, grouped by county. 
 
 The output should look like this (without the column headers):
