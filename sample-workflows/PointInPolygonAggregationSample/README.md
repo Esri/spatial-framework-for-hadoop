@@ -41,6 +41,10 @@ If you don't have the environment variable set, your hadoop environment hasn't b
 
 For more information on setting up Hadoop, see [Getting Started With Hadoop](http://wiki.apache.org/hadoop/GettingStartedWithHadoop)
 
+> Some versions of Hadoop have issues with the -libjars options.  If you get an error that says `java.lang.NoClassDefFoundError: com/esri/core/geometry/Geometry`, it might be necessary to add the jars to your hadoop classpath.
+```bash
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:~/esri-git/hadoop-tools/sample-workflows/lib/esri-geometry-api.jar:~/esri-git/hadoop-tools/sample-workflows/lib/hadoop-utilities.jar
+```
 
 Run the sample:
 ```bash
