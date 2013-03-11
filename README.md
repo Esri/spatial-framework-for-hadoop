@@ -1,28 +1,17 @@
 # hadoop-tools
 
-The 'hadoop-tools' provide Geoprocessing Tools for ArcGIS to use with an external Hadoop data-processing system.  The tools, written in Python, are available in the attached Hadoop Tools toolbox file, or can be imported into an existing custom toolbox.  The tools make use of the Hadoop [HDFS filesystem](http://hadoop.apache.org/docs/stable/#HDFS), and Hadoop [Oozie workflow management system](http://oozie.apache.org/).
+The Hadoop developer tools provide helper classes for interacting with ArcGIS data formats.
 
 ## Features
-* Tools that export features from ArcGIS to Hadoop, and import features from Hadoop to ArcGIS
-* Tools to submit a workflow to process data in Hadoop, and to check the status of a workflow
-* Tools to convert features to JSON (Will eventually use JSON Conversion tools in the ArcGIS Geoprocessing Data Management Toolbox)
 
-## Instructions
-
-1. Download and unzip the .zip file to a suitable location or clone the repository with a git tool.
-2. In the ‘ArcToolbox’ pane of ArcGIS desktop, use the ‘Add Toolbox…’ command to add the Hadoop Tools toolbox (HadoopTools.pyt) file into ArcGIS Desktop.
-3. Use the tools individually, in models or in scripts.
+* Hadoop InputFormats that can read ArcGIS exported JSON files in multiple formats
+* Classes that can map directly to a feature class in the enclosed JSON format
 
 ## Requirements
 
-* Hadoop data-processing system with WebHDFS and Oozie workflow engine enabled (Oozie [requires](http://oozie.apache.org/docs/3.3.1/ENG_Building.html) Hadoop version 0.20.2 or newer.)
 * [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
-
-## Dependencies
-* For WebHDFS support, a Python library webhdfs-py is bundled in.  Source is located at: https://github.com/Esri/webhdfs-py
-* Requests python library is required for OozieUtils.py (installation doc is located at http://docs.python-requests.org/en/latest/user/install/#install)
 
 ## Resources
 
