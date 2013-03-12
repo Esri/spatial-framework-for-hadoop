@@ -1,3 +1,6 @@
 [submodule "hadoop-gp-tools"]
 	path = hadoop-gp-tools
 	url = git@github.com:ArcGIS/hadoop-gp-tools.git
+[submodule "esri-geometry-api"]
+	path = esri-geometry-api
+	url = https://github.com/Esri/geometry-api-java
