@@ -1,11 +1,15 @@
 # hadoop-tools
 
-The Hadoop developer tools provide helper classes for interacting with ArcGIS data formats.
+The Hadoop tools for ArcGIS allow the user to make use of an externally (and customer-provided) Hadoop data processing system from within the ArcGIS GeoProcessing framework.
+
 
 ## Features
 
-* Hadoop InputFormats that can read ArcGIS exported JSON files in multiple formats
-* Classes that can map directly to a feature class in the enclosed JSON format
+* Java developer utilities for interacting with data exported from ArcGIS
+* Submodule links to the components that form the Hadoop toolkit
+ * **Java Geometry API** - Enables spatial operations in Java
+ * **Hive Spatial UDFs** - User defined functions for Hive that wrap methods in the Geometry API
+ * **Geoprocessing Tools** - Geoprocessing tools that enable ArcGIS users to interact with a Hadoop system
 
 ## Requirements
 
