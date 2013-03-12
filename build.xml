@@ -1,0 +1,40 @@
+<project name="hadoop-utilities" default="all">
+
+	<property file="build.properties" />
+
+	<path id="class.path">
+		<fileset dir="${hadoop.lib.path}">
+			<include name="**/hadoop-core-*.jar"/>
+			<include name="**/hadoop-common-*.jar"/>
+			<include name="**/hadoop-mapreduce-client-*.jar"/>
+		    <include name="**/jackson-*.jar"/>
+			<include name="**/commons-logging-*"/>
+		</fileset>
+		<fileset dir="${esri.lib.path}">
+			<include name="esri-geometry-api.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<mkdir dir="build" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="src" destdir="build">
+			<classpath refid="class.path"/>	
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar jarfile="./hadoop-utilities.jar" basedir="build"/>
+	</target>
+	
+	<target name="doc">
+		<javadoc sourcepath="src" destdir="javadoc">
+			<classpath refid="class.path"/>	
+		</javadoc>
+	</target>
+	
+	<target name="all" depends="jar,doc"/>
+	
+</project>
