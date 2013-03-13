@@ -3,7 +3,7 @@
 	url = git@github.com:ArcGIS/hadoop-gp-tools.git
 [submodule "esri-geometry-api"]
 	path = esri-geometry-api
-	url = git@github.com:Esri/geometry-api-java
+	url = git@github.com:Esri/geometry-api-java.git
 [submodule "hive-spatial"]
 	path = hive-spatial
 	url = git@github.com:ArcGIS/hive-spatial.git
