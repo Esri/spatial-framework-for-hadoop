@@ -6,6 +6,7 @@ The Hadoop tools for ArcGIS allow the user to make use of an externally (and cus
 ## Features
 
 * Java developer utilities for interacting with data exported from ArcGIS
+ * InputFormat extensions and other objects for JSON deserialization
 * Submodule links to the components that form the Hadoop toolkit
  * **Java Geometry API** - Enables spatial operations in Java
  * **Hive Spatial UDFs** - User defined functions for Hive that wrap methods in the Geometry API
