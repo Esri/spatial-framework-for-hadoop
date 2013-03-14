@@ -12,6 +12,11 @@ The Hadoop tools for ArcGIS allow the user to make use of an externally (and cus
  * **Hive Spatial UDFs** - User defined functions for Hive that wrap methods in the Geometry API
  * **Geoprocessing Tools** - Geoprocessing tools that enable ArcGIS users to interact with a Hadoop system
 
+## Documentation
+
+ * [Overview](https://github.com/Esri/hadoop-tools/wiki/Hadoop-Utilities)
+ * [Javadoc](http://esri.github.com/hadoop-tools/javadoc/)
+
 ## Requirements
 
 * [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
