@@ -14,8 +14,8 @@ The Hadoop tools for ArcGIS allow the user to make use of an externally (and cus
 
 ## Documentation
 
- * [Overview](https://github.com/Esri/hadoop-tools/wiki/Hadoop-Utilities)
- * [Javadoc](http://esri.github.com/hadoop-tools/javadoc/)
+ * [Overview](https://github.com/Esri/spatial-framework-hadoop/wiki/Hadoop-Utilities)
+ * [Javadoc](http://esri.github.com/spatial-framework-hadoop/javadoc/)
 
 ## Requirements
 
@@ -52,7 +52,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/hadoop-tools/master/license.txt) file.
+A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-hadoop/master/license.txt) file.
 
 [](Esri Tags: ArcGIS, Hadoop, Big-Data, GeoProcessing, JSON, Oozie, Workflow, Java)
 [](Esri Language: Python)
