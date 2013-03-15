@@ -2,20 +2,22 @@
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
+This framework is part of a larger set of [Spatial Tools for Hadoop](https://github.com/Esri/spatial-tools-hadoop).
 
 ## Features
 
+**In This Repository**
+
 * Java developer utilities for interacting with data exported from ArcGIS
  * InputFormat extensions and other objects for JSON deserialization
-* Submodule links to the components that form the Hadoop toolkit
- * **Geometry API for Java** - Enables spatial operations in Java
- * **Spatial Tools for Hive** - User defined functions for Hive that wrap methods in the Geometry API
- * **Geoprocessing Tools for Hadoop** - Geoprocessing tools that enable ArcGIS users to interact with a Hadoop system
-
-## Documentation
-
- * [Overview](https://github.com/Esri/spatial-framework-hadoop/wiki/Hadoop-Utilities)
+* Documentation
+ * [Wiki](https://github.com/Esri/spatial-framework-hadoop/wiki/Hadoop-Utilities)
  * [Javadoc](http://esri.github.com/spatial-framework-hadoop/javadoc/)
+
+**Additional Framework Resources**
+* [Geometry API Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
+* [Spatial Tools for Hive](https://github.com/Esri/spatial-tools-hive) - Hive User Defined Functions built on top of the geometry API for spatial data processing in Hive
+
 
 ## Requirements
 
