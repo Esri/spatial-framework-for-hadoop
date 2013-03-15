@@ -1,6 +1,6 @@
 # spatial-framework-hadoop
 
-The Spatial Framework for Hadoop allows the developers and data scientists to use the Hadoop data processing system for spatial data analysis.
+The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
 
 ## Features
