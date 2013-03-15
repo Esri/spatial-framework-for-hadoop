@@ -1,6 +1,6 @@
-# hadoop-tools
+# spatial-framework-hadoop
 
-The Hadoop tools for ArcGIS allow the user to make use of an externally (and customer-provided) Hadoop data processing system from within the ArcGIS GeoProcessing framework.
+The Spatial Framework for Hadoop allows the developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
 
 ## Features
@@ -8,9 +8,9 @@ The Hadoop tools for ArcGIS allow the user to make use of an externally (and cus
 * Java developer utilities for interacting with data exported from ArcGIS
  * InputFormat extensions and other objects for JSON deserialization
 * Submodule links to the components that form the Hadoop toolkit
- * **Java Geometry API** - Enables spatial operations in Java
- * **Hive Spatial UDFs** - User defined functions for Hive that wrap methods in the Geometry API
- * **Geoprocessing Tools** - Geoprocessing tools that enable ArcGIS users to interact with a Hadoop system
+ * **Geometry API for Java** - Enables spatial operations in Java
+ * **Spatial Tools for Hive** - User defined functions for Hive that wrap methods in the Geometry API
+ * **Geoprocessing Tools for Hadoop** - Geoprocessing tools that enable ArcGIS users to interact with a Hadoop system
 
 ## Documentation
 
