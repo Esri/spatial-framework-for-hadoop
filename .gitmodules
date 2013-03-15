@@ -1,9 +1,9 @@
 [submodule "gp-tools-hadoop"]
 	path = gp-tools-hadoop
-	url = git@github.com:Esri/gp-tools-hadoop.git
+	url = git@github.com:Esri/gp-tools-hadoop
 [submodule "geometry-api-java"]
 	path = geometry-api-java
-	url = git@github.com:Esri/geometry-api-java.git
+	url = git@github.com:Esri/geometry-api-java
 [submodule "spatial-tools-hive"]
 	path = spatial-tools-hive
-	url = git@github.com:Esri/spatial-tools-hive.git
+	url = git@github.com:Esri/spatial-tools-hive
