@@ -1,6 +1,6 @@
-<project name="esri-spatial-all" default="all">
+<project name="hadoop-utilities" default="all">
 
-	<property file="build.properties" />
+	<property file="../build.properties" />
 	<property name="dir.build" value="build" />
 
 	<path id="class.path">
@@ -10,11 +10,6 @@
 			<include name="**/hadoop-mapreduce-client-*.jar"/>
 		    <include name="**/jackson-*.jar"/>
 			<include name="**/commons-logging-*"/>
-		</fileset>
-		<fileset dir="${dir.hive.lib}">
-			<include name="hive-common-*" />
-			<include name="hive-exec-*" />
-			<include name="hive-pdk-*" />
 		</fileset>
 		<fileset dir="${dir.esri.lib}">
 			<include name="esri-geometry-api.jar" />
@@ -26,21 +21,26 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="hive/src" destdir="${dir.build}">
-			<classpath refid="class.path"/>	
-		</javac>
-		<javac srcdir="json/src" destdir="${dir.build}">
+		<javac srcdir="src" destdir="${dir.build}">
 			<classpath refid="class.path"/>	
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile">
-		<jar jarfile="./spatial-sdk-hadoop.jar" basedir="${dir.build}"/>
-	</target>
-
-	<target name="clean">
-		<delete dir="build" />
+		<jar jarfile="./spatial-sdk-json.jar" basedir="${dir.build}"/>
 	</target>
 	
-	<target name="all" depends="jar"/>
+	<target name="doc">
+		<javadoc sourcepath="src" destdir="javadoc">
+			<classpath refid="class.path"/>	
+		</javadoc>
+	</target>
+	
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="javadoc" />
+	</target>
+
+	<target name="all" depends="jar,doc"/>
+	
 </project>

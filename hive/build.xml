@@ -1,6 +1,6 @@
-<project name="esri-spatial-all" default="all">
+<project name="esri-hive-spatial" default="all">
 
-	<property file="build.properties" />
+	<property file="../build.properties" />
 	<property name="dir.build" value="build" />
 
 	<path id="class.path">
@@ -26,16 +26,13 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="hive/src" destdir="${dir.build}">
-			<classpath refid="class.path"/>	
-		</javac>
-		<javac srcdir="json/src" destdir="${dir.build}">
+		<javac srcdir="src" destdir="${dir.build}">
 			<classpath refid="class.path"/>	
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile">
-		<jar jarfile="./spatial-sdk-hadoop.jar" basedir="${dir.build}"/>
+		<jar jarfile="./spatial-sdk-hive.jar" basedir="${dir.build}"/>
 	</target>
 
 	<target name="clean">
@@ -43,4 +40,5 @@
 	</target>
 	
 	<target name="all" depends="jar"/>
+	
 </project>
