@@ -2,26 +2,40 @@
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
-This framework is part of a larger set of [Spatial Tools for Hadoop](https://github.com/Esri/spatial-tools-hadoop).
+## Getting Started
+
+At the root level of this repository, you can build a single jar with everything in the framework using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each framework component (i.e. `hive\build.xml`).
+
+You will need to update `build.properties` to point to your local distributions of Hadoop and Hive.  All build files will use this properties file.
+
+> For older versions of Hadoop, `dir.hadoop.lib` may point to $HADOOP_HOME/share.  This is fine as the build file searches the lib path recursively.
+
+```bash
+# hadoop library base path
+dir.hadoop.lib=/path/to/hadoop/lib
+
+# hive library base path
+dir.hive.lib=/path/to/hive/lib
+
+# esri libraries path (esri-geometry-api.jar, ...)
+dir.esri.lib=/path/to/esri/lib
+```
 
 ## Features
 
-**In This Repository**
+* **JSON Utilities** - Utilities for interacting with JSON exported from ArcGIS
+ * [Wiki](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)
+ * [Javadoc](http://esri.github.com/spatial-framework-hadoop/json/)
+* **Hive Spatial** - User-Defined Functions and SerDes for spatial analysis in Hive
+ * [UDF Documentation](https://github.com/Esri/spatial-framework-hadoop/wiki/UDF-Documentation)
+ * [JSON Serde](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-JSON-SerDe)
 
-* Java developer utilities for interacting with data exported from ArcGIS
- * InputFormat extensions and other objects for JSON deserialization
-* Documentation
- * [Wiki](https://github.com/Esri/spatial-framework-hadoop/wiki/Hadoop-Utilities)
- * [Javadoc](http://esri.github.com/spatial-framework-hadoop/javadoc/)
+## Dependencies
 
-**Additional Framework Resources**
-* [Geometry API Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
-* [Spatial Tools for Hive](https://github.com/Esri/spatial-tools-hive) - Hive User Defined Functions built on top of the geometry API for spatial data processing in Hive
-
+* [Esri Geometry API Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
 
 ## Requirements
 
-* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
 
