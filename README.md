@@ -23,10 +23,9 @@ dir.esri.lib=/path/to/esri/lib
 
 ## Features
 
-* **JSON Utilities** - Utilities for interacting with JSON exported from ArcGIS
- * [Wiki](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)
+* **[JSON Utilities](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
  * [Javadoc](http://esri.github.com/spatial-framework-hadoop/json/)
-* **Hive Spatial** - User-Defined Functions and SerDes for spatial analysis in Hive
+* **[Hive Spatial](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
  * [UDF Documentation](https://github.com/Esri/spatial-framework-hadoop/wiki/UDF-Documentation)
  * [JSON Serde](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-JSON-SerDe)
 
