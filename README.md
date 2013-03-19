@@ -2,6 +2,8 @@
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
+For applications and samples that use this framework, head over to [Spatial Applications for Hadoop](https://github.com/Esri/spatial-tools-hadoop).
+
 ## Features
 
 * **[JSON Utilities](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
