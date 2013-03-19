@@ -2,6 +2,14 @@
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
+## Features
+
+* **[JSON Utilities](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
+ * [Javadoc](http://esri.github.com/spatial-framework-hadoop/json/)
+* **[Hive Spatial](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
+ * [UDF Documentation](https://github.com/Esri/spatial-framework-hadoop/wiki/UDF-Documentation)
+ * [JSON Serde](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-JSON-SerDe)
+
 ## Getting Started
 
 At the root level of this repository, you can build a single jar with everything in the framework using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each framework component (i.e. `hive\build.xml`).
@@ -20,14 +28,6 @@ dir.hive.lib=/path/to/hive/lib
 # esri libraries path (esri-geometry-api.jar, ...)
 dir.esri.lib=/path/to/esri/lib
 ```
-
-## Features
-
-* **[JSON Utilities](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
- * [Javadoc](http://esri.github.com/spatial-framework-hadoop/json/)
-* **[Hive Spatial](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
- * [UDF Documentation](https://github.com/Esri/spatial-framework-hadoop/wiki/UDF-Documentation)
- * [JSON Serde](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-JSON-SerDe)
 
 ## Dependencies
 
