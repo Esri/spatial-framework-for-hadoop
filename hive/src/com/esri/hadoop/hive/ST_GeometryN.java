@@ -13,7 +13,7 @@ import com.esri.core.geometry.ogc.OGCMultiPolygon;
 
 @Description(
 	name = "ST_GeometryN",
-	value = "_FUNC_(ST_GeometryCollection) - return the Nth ST_Geometry in the collection",
+	value = "_FUNC_(ST_GeometryCollection, n) - return the nth ST_Geometry in the collection (1-based index)",
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))'), 3) FROM src LIMIT 1;  -- ST_Point(20 20)\n"
 	+ "  SELECT _FUNC_(ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))'), 2) FROM src LIMIT 1;  -- ST_Linestring(20 20, 7 8)\n"

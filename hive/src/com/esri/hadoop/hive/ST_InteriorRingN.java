@@ -14,7 +14,7 @@ import com.esri.core.geometry.ogc.OGCPolygon;
 
 @Description(
 	name = "ST_InteriorRingN",
-	value = "_FUNC_(ST_Polygon) - return linestring which is the Nth interior ring of the polygon",
+	value = "_FUNC_(ST_Polygon, n) - return ST_LineString which is the nth interior ring of the ST_Polygon (1-based index)",
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1) FROM src LIMIT 1;  -- LINESTRING (1 1, 5 1, 1 5, 1 1)\n"
 	)
