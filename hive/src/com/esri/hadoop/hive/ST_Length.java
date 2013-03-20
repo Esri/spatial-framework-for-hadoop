@@ -14,7 +14,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 @Description(name = "ST_Length",
    value = "_FUNC_(line) - returns the length of line",
    extended = "Example:\n"
-   + " SELECT _FUNC_(ST_Line(0.0,0.0, 3.0,4.0)) FROM src LIMIT 1;  --  5.0"
+   + "  SELECT _FUNC_(ST_Line(0.0,0.0, 3.0,4.0)) FROM src LIMIT 1;  --  5.0"
 )
 @HivePdkUnitTests(
 	cases = {
