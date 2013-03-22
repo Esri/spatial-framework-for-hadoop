@@ -16,20 +16,7 @@ For applications and samples that use this framework, head over to [GIS Tools fo
 
 At the root level of this repository, you can build a single jar with everything in the framework using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each framework component (i.e. `hive\build.xml`).
 
-You will need to update `build.properties` to point to your local distributions of Hadoop and Hive.  All build files will use this properties file.
-
-> For older versions of Hadoop, `dir.hadoop.lib` may point to $HADOOP_HOME/share.  This is fine as the build file searches the lib path recursively.
-
-```bash
-# hadoop library base path
-dir.hadoop.lib=/path/to/hadoop/lib
-
-# hive library base path
-dir.hive.lib=/path/to/hive/lib
-
-# esri libraries path (esri-geometry-api.jar, ...)
-dir.esri.lib=/path/to/esri/lib
-```
+The build files use [Maven Ant Tasks](http://maven.apache.org/ant-tasks/download.html) for dependency management.  You will need the jar in a place Ant can find it (i.e. `~/.ant/lib/maven-ant-tasks-2.1.3.jar`).
 
 ## Dependencies
 
