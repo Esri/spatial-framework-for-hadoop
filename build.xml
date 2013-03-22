@@ -1,36 +1,32 @@
-<project name="esri-spatial-all" default="all">
+<project name="esri-spatial-all" default="all" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
-	<property file="build.properties" />
 	<property name="dir.build" value="build" />
 
-	<path id="class.path">
-		<fileset dir="${dir.hadoop.lib}">
-			<include name="**/hadoop-core-*.jar"/>
-			<include name="**/hadoop-common-*.jar"/>
-			<include name="**/hadoop-mapreduce-client-*.jar"/>
-		    <include name="**/jackson-*.jar"/>
-			<include name="**/commons-logging-*"/>
-		</fileset>
-		<fileset dir="${dir.hive.lib}">
-			<include name="hive-common-*" />
-			<include name="hive-exec-*" />
-			<include name="hive-pdk-*" />
-		</fileset>
-		<fileset dir="${dir.esri.lib}">
-			<include name="esri-geometry-api.jar" />
+	<artifact:dependencies pathId="dependencies.class.path">
+		<dependency groupId="org.apache.hadoop" artifactId="hadoop-core" version="0.20.2"/>
+		<dependency groupId="org.apache.hive" artifactId="hive-exec" version="0.10.0"/>
+		<dependency groupId="org.apache.hive" artifactId="hive-serde" version="0.10.0"/>
+		<dependency groupId="org.apache.hive" artifactId="hive-pdk" version="0.10.0"/>
+	</artifact:dependencies>
+	
+	<path id="local.class.path">
+		<fileset dir="lib">
+			<include name="*.jar" />
 		</fileset>
 	</path>
-
+	
 	<target name="init">
 		<mkdir dir="${dir.build}" />
 	</target>
 
 	<target name="compile" depends="init">
 		<javac srcdir="hive/src" destdir="${dir.build}">
-			<classpath refid="class.path"/>	
+			<classpath refid="dependencies.class.path"/>	
+			<classpath refid="local.class.path"/>	
 		</javac>
 		<javac srcdir="json/src" destdir="${dir.build}">
-			<classpath refid="class.path"/>	
+			<classpath refid="dependencies.class.path"/>	
+			<classpath refid="local.class.path"/>	
 		</javac>
 	</target>
 
