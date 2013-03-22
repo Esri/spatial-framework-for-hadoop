@@ -1,27 +1,42 @@
-# spatial-framework-hadoop
+# spatial-framework-for-hadoop
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
-This framework is part of a larger set of [Spatial Tools for Hadoop](https://github.com/Esri/spatial-tools-hadoop).
+For applications and samples that use this framework, head over to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## Features
 
-**In This Repository**
+* **[JSON Utilities](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
+ * [Javadoc](http://esri.github.com/spatial-framework-for-hadoop/json/)
+* **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
+ * [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
+ * [JSON Serde](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
 
-* Java developer utilities for interacting with data exported from ArcGIS
- * InputFormat extensions and other objects for JSON deserialization
-* Documentation
- * [Wiki](https://github.com/Esri/spatial-framework-hadoop/wiki/Hadoop-Utilities)
- * [Javadoc](http://esri.github.com/spatial-framework-hadoop/javadoc/)
+## Getting Started
 
-**Additional Framework Resources**
-* [Geometry API Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
-* [Spatial Tools for Hive](https://github.com/Esri/spatial-tools-hive) - Hive User Defined Functions built on top of the geometry API for spatial data processing in Hive
+At the root level of this repository, you can build a single jar with everything in the framework using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each framework component (i.e. `hive\build.xml`).
 
+You will need to update `build.properties` to point to your local distributions of Hadoop and Hive.  All build files will use this properties file.
+
+> For older versions of Hadoop, `dir.hadoop.lib` may point to $HADOOP_HOME/share.  This is fine as the build file searches the lib path recursively.
+
+```bash
+# hadoop library base path
+dir.hadoop.lib=/path/to/hadoop/lib
+
+# hive library base path
+dir.hive.lib=/path/to/hive/lib
+
+# esri libraries path (esri-geometry-api.jar, ...)
+dir.esri.lib=/path/to/esri/lib
+```
+
+## Dependencies
+
+* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
 
 ## Requirements
 
-* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) jar file installed on the Hadoop system
 * Workflows calling MapReduce jobs require the location of the custom job to be run
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the ArcGIS user submitting the workflow file. 
 
@@ -54,8 +69,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-hadoop/master/license.txt) file.
+A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-for-hadoop/master/license.txt) file.
 
-[](Esri Tags: ArcGIS, Hadoop, Big-Data, GeoProcessing, JSON, Oozie, Workflow, Java)
+[](Esri Tags: ArcGIS, GIS, Big Data, Hadoop, Hive, Geoprocessing, Oozie, Workflow, JSON, Java)
 [](Esri Language: Python)
 
