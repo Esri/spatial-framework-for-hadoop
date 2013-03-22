@@ -17,9 +17,9 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
 	name = "ST_PointN",
-	value = "_FUNC_(geometry, n) - returns the point that is the nth vertex in an ST_Linestring or ST_MultiPoint",
+	value = "_FUNC_(ST_Geometry, n) - returns the point that is the nth vertex in an ST_Linestring or ST_MultiPoint (1-based index)",
 	extended = "Example:\n"
-	+ "  > SELECT _FUNC_(ST_LineString(1.5,2.5, 3.0,2.2), 2) FROM src LIMIT 1;  -- POINT(3.0 2.2)\n"
+	+ "  SELECT _FUNC_(ST_LineString(1.5,2.5, 3.0,2.2), 2) FROM src LIMIT 1;  -- POINT(3.0 2.2)\n"
 	)
 @HivePdkUnitTests(
 	cases = {
