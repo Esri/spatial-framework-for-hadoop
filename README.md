@@ -1,16 +1,16 @@
-# spatial-framework-hadoop
+# spatial-framework-for-hadoop
 
 The Spatial Framework for Hadoop allows developers and data scientists to use the Hadoop data processing system for spatial data analysis.
 
-For applications and samples that use this framework, head over to [Spatial Applications for Hadoop](https://github.com/Esri/spatial-tools-hadoop).
+For applications and samples that use this framework, head over to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## Features
 
-* **[JSON Utilities](https://github.com/Esri/spatial-framework-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
- * [Javadoc](http://esri.github.com/spatial-framework-hadoop/json/)
-* **[Hive Spatial](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
- * [UDF Documentation](https://github.com/Esri/spatial-framework-hadoop/wiki/UDF-Documentation)
- * [JSON Serde](https://github.com/Esri/spatial-framework-hadoop/wiki/Hive-JSON-SerDe)
+* **[JSON Utilities](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Utilities)** - Utilities for interacting with JSON exported from ArcGIS
+ * [Javadoc](http://esri.github.com/spatial-framework-for-hadoop/json/)
+* **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** - User-Defined Functions and SerDes for spatial analysis in Hive
+ * [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
+ * [JSON Serde](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
 
 ## Getting Started
 
@@ -33,7 +33,7 @@ dir.esri.lib=/path/to/esri/lib
 
 ## Dependencies
 
-* [Esri Geometry API Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
+* [Esri Geometry API for Java](https://github.com/Esri/geometry-api-java) - Java geometry library for spatial data processing 
 
 ## Requirements
 
@@ -69,8 +69,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-hadoop/master/license.txt) file.
+A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-for-hadoop/master/license.txt) file.
 
-[](Esri Tags: ArcGIS, Hadoop, Big-Data, GeoProcessing, JSON, Oozie, Workflow, Java)
+[](Esri Tags: ArcGIS, GIS, Big Data, Hadoop, Hive, Geoprocessing, Oozie, Workflow, JSON, Java)
 [](Esri Language: Python)
 
