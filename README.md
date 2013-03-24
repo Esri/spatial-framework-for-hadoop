@@ -69,6 +69,6 @@ limitations under the License.
 A copy of the license is available in the 
 repository's [license.txt]( https://raw.github.com/Esri/spatial-framework-for-hadoop/master/license.txt) file.
 
-[](Esri Tags: ArcGIS, GIS, Big Data, Hadoop, Hive, Geoprocessing, Oozie, Workflow, JSON, Java)
-[](Esri Language: Python)
+[](Esri Tags: ArcGIS, GIS, Big Data, Hadoop, Hive, Geoprocessing, Oozie, Workflow, JSON, Python)
+[](Esri Language: Java)
 
