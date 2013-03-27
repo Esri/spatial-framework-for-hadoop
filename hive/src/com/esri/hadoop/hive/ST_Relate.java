@@ -10,12 +10,12 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
 	name = "ST_Relate",
-	value = "_FUNC_(geometry1, geometry2) - return true if geometry1 has the specified DE-9IM relationship with geometry2",
+	value = "_FUNC_(ST_Geometry1, ST_Geometry2) - return true if ST_Geometry1 has the specified DE-9IM relationship with ST_Geometry2",
 	extended = "Example:\n" + 
-	"SELECT _FUNC_(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), '****T****') from src LIMIT 1;  -- true\n" + 
-	"SELECT _FUNC_(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), 'T********') from src LIMIT 1;  -- false\n" +
-	"SELECT _FUNC_(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), 'T********') from src LIMIT 1;  -- true\n" + 
-	"SELECT _FUNC_(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), '****T****') from src LIMIT 1;  -- false\n"
+	"  SELECT _FUNC_(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), '****T****') from src LIMIT 1;  -- true\n" + 
+	"  SELECT _FUNC_(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), 'T********') from src LIMIT 1;  -- false\n" +
+	"  SELECT _FUNC_(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), 'T********') from src LIMIT 1;  -- true\n" + 
+	"  SELECT _FUNC_(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), '****T****') from src LIMIT 1;  -- false\n"
 	)
 
 public class ST_Relate extends ST_GeometryRelational {
@@ -42,8 +42,13 @@ public class ST_Relate extends ST_GeometryRelational {
 			return null;
 		}
 
-		resultBoolean.set(ogcGeom1.relate(ogcGeom2, relation));
-		return resultBoolean;
+		try {
+			resultBoolean.set(ogcGeom1.relate(ogcGeom2, relation));
+			return resultBoolean;
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_Relate: " + e);
+		    return null;
+		}
 	}
 
 }

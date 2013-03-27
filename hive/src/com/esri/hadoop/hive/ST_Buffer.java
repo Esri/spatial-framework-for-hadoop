@@ -10,8 +10,9 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
 	name = "ST_Buffer",
-	value = "_FUNC_(geometry, distance) - geometry buffered by distance",
-	extended = ""	
+	value = "_FUNC_(ST_Geometry, distance) - ST_Geometry buffered by distance",
+	extended = "Example:\n"
+	+ "  SELECT _FUNC_(ST_Point(0, 0), 1) FROM src LIMIT 1;   -- polygon approximating a unit circle\n"
 	)
 public class ST_Buffer extends ST_GeometryProcessing {
 

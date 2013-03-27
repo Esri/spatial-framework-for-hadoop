@@ -9,11 +9,11 @@ import org.apache.hadoop.io.BytesWritable;
 import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
-	name = "ST_Intersects",
-	value = "_FUNC_(geometry1, geometry2) - return true if geometry1 intersects geometry2",
-	extended = "Example:\n" + 
-	"SELECT _FUNC_(st_linestring(0,0, 1,1), st_linestring(1,1, 0,0)) from src LIMIT 1;  -- return true\n" + 
-	"SELECT _FUNC_(st_linestring(0,0, 1,1), st_linestring(1,0, 0,1)) from src LIMIT 1;  -- return false\n"	
+	name = "ST_Disjoint",
+	value = "_FUNC_(ST_Geometry1, ST_Geometry2) - return true if ST_Geometry1 intersects ST_Geometry2",
+	extended = "Example:\n" +
+	"SELECT _FUNC_(ST_LineString(0,0, 0,1), ST_LineString(1,1, 1,0)) from src LIMIT 1;  -- return true\n" +
+	"SELECT _FUNC_(ST_LineString(0,0, 1,1), ST_LineString(1,0, 0,1)) from src LIMIT 1;  -- return false\n"	
 	)
 
 public class ST_Disjoint extends ST_GeometryRelational {

@@ -19,8 +19,10 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 @Description(
 	name = "ST_AsGeoJSON",
 	value = "_FUNC_(geometry) - return GeoJSON representation of geometry\n",
-	extended = "Example:\n" + 
-	" SELECT _FUNC_(ST_Point(1.0, 2.0)) from onerow; -- {\"type\":\"Point\", \"coordinates\":[1.0, 2.0]}\n"
+	extended = "Example:\n" +
+	"  SELECT _FUNC_(ST_Point(1.0, 2.0)) from onerow; -- {\"type\":\"Point\", \"coordinates\":[1.0, 2.0]}\n" +
+	"Note : \n" +
+	" ST_AsGeoJSON returns null, until the underlying implementation is available in geometry-api-java.\n"
 	)
 @HivePdkUnitTests(
 	cases = { 
