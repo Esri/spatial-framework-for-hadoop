@@ -17,7 +17,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 @Description(
 	name = "ST_AsJSON",
 	value = "_FUNC_(ST_Geometry) - return JSON representation of ST_Geometry\n",
-	extended = "Example:\n" + 
+	extended = "Example:\n" +
 	"  SELECT _FUNC_(ST_Point(1.0, 2.0)) from onerow; -- {\"x\":1.0,\"y\":2.0}\n" +
 	"  SELECT _FUNC_(ST_SetSRID(ST_Point(1, 1), 4326)) from onerow; -- {\"x\":1.0,\"y\":1.0,\"spatialReference\":{\"wkid\":4326}}")
 @HivePdkUnitTests(

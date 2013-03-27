@@ -20,7 +20,7 @@ import com.esri.core.geometry.ogc.OGCMultiPolygon;
 	)
 
 public class ST_GeometryN extends ST_GeometryAccessor {
-	static final Log LOG = LogFactory.getLog(ST_IsClosed.class.getName());
+	static final Log LOG = LogFactory.getLog(ST_GeometryN.class.getName());
 
 	public BytesWritable evaluate(BytesWritable geomref, IntWritable index) {
 		if (geomref == null || geomref.getLength() == 0 || index == null) {

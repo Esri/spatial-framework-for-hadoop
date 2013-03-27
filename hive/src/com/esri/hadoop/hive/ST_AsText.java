@@ -17,8 +17,8 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 @Description(
 	name = "ST_AsText",
 	value = "_FUNC_(ST_Geometry) - return Well-Known Text (WKT) representation of ST_Geometry\n",
-	extended = "Example:\n" + 
-	" SELECT _FUNC_(ST_Point(1, 2)) FROM onerow;  --  POINT (1 2)\n"
+	extended = "Example:\n" +
+	"  SELECT _FUNC_(ST_Point(1, 2)) FROM onerow;  --  POINT (1 2)\n"
 	)
 @HivePdkUnitTests(
 	cases = { 

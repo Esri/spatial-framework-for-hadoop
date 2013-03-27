@@ -25,7 +25,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 						result = "MULTIPOINT (1.1 2.2, 3.3 4.4)"
 						),
 				@HivePdkUnitTest(
-						query = "SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4, 1, 4, 4, 4, 8, 8, 1))) FROM onerow",
+						query = "SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4,1, 4,8, 8,1))) FROM onerow",
 						result = "MULTIPOLYGON (((4 1, 8 1, 4 8, 4 4, 1 4, 1 1, 4 1)))"
 						),
 				@HivePdkUnitTest(
