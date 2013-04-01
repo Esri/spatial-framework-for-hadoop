@@ -12,7 +12,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
 	name = "ST_AsBinary",
-	value = "_FUNC_(ST_Geometry) - return Well-Known Text (WKT) representation of geometry\n",
+	value = "_FUNC_(ST_Geometry) - return Well-Known Binary (WKB) representation of geometry\n",
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(ST_Point(1, 2)) FROM onerow; -- WKB representation of POINT (1 2)\n"
 	)
