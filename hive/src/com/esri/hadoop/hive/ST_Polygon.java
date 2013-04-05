@@ -78,7 +78,7 @@ public class ST_Polygon extends ST_Geometry {
 		try {
 			OGCGeometry ogcObj = OGCGeometry.fromText(wkt);
 			ogcObj.setSpatialReference(null);
-			if (ogcObj.geometryType() == "Polygon") {
+			if (ogcObj.geometryType().equals("Polygon")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_POLYGON, GeometryUtils.OGCType.UNKNOWN);

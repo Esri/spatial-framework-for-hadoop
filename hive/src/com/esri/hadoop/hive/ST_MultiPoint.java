@@ -65,7 +65,7 @@ public class ST_MultiPoint extends ST_Geometry {
 		try {
 			OGCGeometry ogcObj = OGCGeometry.fromText(wkt);
 			ogcObj.setSpatialReference(null);
-			if (ogcObj.geometryType() == "MultiPoint") {
+			if (ogcObj.geometryType().equals("MultiPoint")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_MULTIPOINT, GeometryUtils.OGCType.UNKNOWN);

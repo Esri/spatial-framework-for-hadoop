@@ -51,7 +51,7 @@ public class ST_LineFromWKB extends ST_Geometry {
 			byteBuf.put(byteArr);
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
-			if (ogcObj.geometryType() == "LineString") {
+			if (ogcObj.geometryType().equals("LineString")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_LINESTRING, GeometryUtils.OGCType.UNKNOWN);

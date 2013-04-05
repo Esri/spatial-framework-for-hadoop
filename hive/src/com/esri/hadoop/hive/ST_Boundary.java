@@ -50,7 +50,7 @@ public class ST_Boundary extends ST_GeometryProcessing {
 		}
 		try {
 			OGCGeometry boundGeom = ogcGeometry.boundary();
-			if (boundGeom.geometryType() == "MultiLineString" && ((OGCMultiLineString)boundGeom).numGeometries() == 1)
+			if (boundGeom.geometryType().equals("MultiLineString") && ((OGCMultiLineString)boundGeom).numGeometries() == 1)
 				boundGeom = ((OGCMultiLineString)boundGeom).geometryN(0);  // match ST_Boundary/SQL-RDBMS
 			return GeometryUtils.geometryToEsriShapeBytesWritable(boundGeom);
 		} catch (Exception e) {

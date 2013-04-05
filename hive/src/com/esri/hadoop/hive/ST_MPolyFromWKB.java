@@ -52,7 +52,7 @@ public class ST_MPolyFromWKB extends ST_Geometry {
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
 			String gType = ogcObj.geometryType();
-			if (gType == "MultiPolygon" || gType == "Polygon") {
+			if (gType.equals("MultiPolygon") || gType.equals("Polygon")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_MULTIPOLYGON, GeometryUtils.OGCType.UNKNOWN);
