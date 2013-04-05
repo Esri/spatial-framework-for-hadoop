@@ -1,30 +1,41 @@
 package com.esri.hadoop.hive.serde;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 // Hive-0.10 ~ serdeConstants ; Hive-0.9 ~ Constants - reflection below
 //import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
+import org.apache.hadoop.hive.serde2.lazybinary.LazyBinaryStruct;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.objectinspector.StandardStructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
@@ -35,10 +46,11 @@ import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.hadoop.hive.GeometryUtils;
-//import com.esri.hadoop.hive.HiveGeometry;
-
 
 public class JsonSerde implements SerDe {
+	
+	static final Log LOG = LogFactory.getLog(JsonSerde.class.getName());
+	
 	StructObjectInspector rowOI;
 	ArrayList<Writable> row;
 	
@@ -145,8 +157,51 @@ public class JsonSerde implements SerDe {
 		try {
 			JsonParser parser = jsonFactory.createJsonParser(json.toString());
 			
-			EsriFeature feature = parser.readValueAs(EsriFeature.class);
+			JsonToken token = parser.nextToken();
 			
+			while (token != null){
+				
+				if (token == JsonToken.START_OBJECT){
+					if (parser.getCurrentName() == "geometry"){
+						if (geometryColumn > -1){
+							// create geometry and insert into geometry field
+							Geometry geometry =  GeometryEngine.jsonToGeometry(parser).getGeometry();
+							row.set(geometryColumn, GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(geometry, null)));
+						} else {
+							// no geometry in select field set, don't even bother parsing
+							parser.skipChildren();
+						}
+					} else if (parser.getCurrentName() == "attributes"){
+						
+						token = parser.nextToken();
+						
+						while (token != JsonToken.END_OBJECT && token != null){
+							
+							String name = parser.getText().toLowerCase();
+							
+							parser.nextToken();
+							
+							int fieldIndex = columnNames.indexOf(name);
+							
+							if (fieldIndex >= 0){
+								String value = parser.getText();
+								row.set(fieldIndex, new Text(value));
+							}
+							
+							token = parser.nextToken();
+						}
+						
+						token = parser.nextToken();
+					}
+				}
+				
+				token = parser.nextToken();
+			}
+			
+			/*
+			EsriFeature feature = parser.readValueAs(EsriFeature.class);
+			 
+
 			for (int i=0;i<columnNames.size();i++){
 				if (i == geometryColumn)
 				{
@@ -162,6 +217,8 @@ public class JsonSerde implements SerDe {
 					}
 				}
 			}
+			*/
+
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -189,9 +246,57 @@ public class JsonSerde implements SerDe {
 	}
 
 	@Override
-	public Writable serialize(Object arg0, ObjectInspector arg1)
+	public Writable serialize(Object obj, ObjectInspector oi)
 			throws SerDeException {
-		return (Text)arg0;
+
+		StandardStructObjectInspector structOI = (StandardStructObjectInspector)oi;
+		
+		// get list of writables, one for each field in the row
+		List<Object> fieldWritables = structOI.getStructFieldsDataAsList(obj);
+		
+		StringWriter writer = new StringWriter();
+
+		try {
+			JsonGenerator jsonGen = jsonFactory.createJsonGenerator(writer);
+			
+			jsonGen.writeStartObject();
+			
+			// first write attributes
+			jsonGen.writeObjectFieldStart("attributes");
+
+			for (int i=0;i<fieldWritables.size();i++){
+				if (i == geometryColumn) continue; // skip geometry, it comes later
+				
+				Writable writable = (Writable)fieldWritables.get(i);
+				
+				jsonGen.writeObjectField(columnNames.get(i), writable.toString());
+			}
+			
+			jsonGen.writeEndObject();
+			
+			// if geometry column exists, write it
+			if (geometryColumn > -1){
+				BytesWritable bytesWritable = (BytesWritable)fieldWritables.get(geometryColumn);
+				
+				OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(bytesWritable);
+				
+				jsonGen.writeRaw(",\"geometry\":" + GeometryEngine.geometryToJson(null, ogcGeometry.getEsriGeometry()));
+				
+			}
+			
+			jsonGen.writeEndObject();
+			
+			jsonGen.close();
+			
+		} catch (JsonGenerationException e) {
+			LOG.error("Error generating JSON", e);
+			return null;
+		} catch (IOException e) {
+			LOG.error("Error generating JSON", e);
+			return null;
+		} 
+		
+		return new Text(writer.toString());
 	}
 	
 	private static class EsriFeature {
@@ -218,12 +323,8 @@ public class JsonSerde implements SerDe {
 	}
 	
 	@SuppressWarnings("serial")
-	public static class CaseInsensitiveMap extends HashMap<String, Object> {
+	private static class CaseInsensitiveMap extends HashMap<String, Object> {
 
-		public CaseInsensitiveMap(){
-			
-		}
-		
 	    public Object put(String key, Object value) {
 	       return super.put(key.toLowerCase(), value);
 	    }
