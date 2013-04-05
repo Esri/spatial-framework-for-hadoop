@@ -51,7 +51,7 @@ public class ST_PolyFromWKB extends ST_Geometry {
 			byteBuf.put(byteArr);
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
-			if (ogcObj.geometryType() == "Polygon") {
+			if (ogcObj.geometryType().equals("Polygon")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_POLYGON, GeometryUtils.OGCType.UNKNOWN);

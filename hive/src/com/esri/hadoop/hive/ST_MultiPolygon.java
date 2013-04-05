@@ -77,7 +77,7 @@ public class ST_MultiPolygon extends ST_Geometry {
 		try {
 			OGCGeometry ogcObj = OGCGeometry.fromText(wkt);
 			ogcObj.setSpatialReference(null);
-			if (ogcObj.geometryType() == "MultiPolygon") {
+			if (ogcObj.geometryType().equals("MultiPolygon")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_MULTIPOLYGON, GeometryUtils.OGCType.UNKNOWN);

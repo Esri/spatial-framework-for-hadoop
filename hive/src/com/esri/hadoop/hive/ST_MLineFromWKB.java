@@ -52,7 +52,7 @@ public class ST_MLineFromWKB extends ST_Geometry {
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
 			String gType = ogcObj.geometryType();
-			if (gType == "MultiLineString" || gType == "LineString") {
+			if (gType.equals("MultiLineString") || gType.equals("LineString")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_MULTILINESTRING, GeometryUtils.OGCType.UNKNOWN);

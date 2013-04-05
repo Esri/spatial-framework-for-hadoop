@@ -51,7 +51,7 @@ public class ST_PointFromWKB extends ST_Geometry {
 			byteBuf.put(byteArr);
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
-			if (ogcObj.geometryType() == "Point") {
+			if (ogcObj.geometryType().equals("Point")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_POINT, GeometryUtils.OGCType.UNKNOWN);

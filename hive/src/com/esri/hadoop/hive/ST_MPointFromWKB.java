@@ -52,7 +52,7 @@ public class ST_MPointFromWKB extends ST_Geometry {
 			OGCGeometry ogcObj = OGCGeometry.fromBinary(byteBuf);
 			ogcObj.setSpatialReference(spatialReference);
 			String gType = ogcObj.geometryType();
-			if (gType == "MultiPoint" || gType == "Point") {
+			if (gType.equals("MultiPoint") || gType.equals("Point")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_LINESTRING, GeometryUtils.OGCType.UNKNOWN);

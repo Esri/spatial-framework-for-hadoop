@@ -66,7 +66,7 @@ class ST_Point extends ST_Geometry {
 		try {
 			OGCGeometry ogcObj = OGCGeometry.fromText(wkt);
 			ogcObj.setSpatialReference(null);
-			if (ogcObj.geometryType() == "Point") {
+			if (ogcObj.geometryType().equals("Point")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_POINT, GeometryUtils.OGCType.UNKNOWN);

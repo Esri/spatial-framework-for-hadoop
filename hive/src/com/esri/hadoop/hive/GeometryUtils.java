@@ -206,17 +206,17 @@ public class GeometryUtils {
 		try {
 			typeName = ogcGeometry.geometryType();
 
-			if (typeName == "Point")
+			if (typeName.equals("Point"))
 				ogcType = OGCType.ST_POINT;
-			else if (typeName == "LineString")
+			else if (typeName.equals("LineString"))
 				ogcType = OGCType.ST_LINESTRING;
-			else if (typeName == "Polygon")
+			else if (typeName.equals("Polygon"))
 				ogcType = OGCType.ST_POLYGON;
-			else if (typeName == "MultiPoint")
+			else if (typeName.equals("MultiPoint"))
 				ogcType = OGCType.ST_MULTIPOINT;
-			else if (typeName == "MultiLineString")
+			else if (typeName.equals("MultiLineString"))
 				ogcType = OGCType.ST_MULTILINESTRING;
-			else if (typeName == "MultiPolygon")
+			else if (typeName.equals("MultiPolygon"))
 				ogcType = OGCType.ST_MULTIPOLYGON;
 			else
 				ogcType = OGCType.UNKNOWN;

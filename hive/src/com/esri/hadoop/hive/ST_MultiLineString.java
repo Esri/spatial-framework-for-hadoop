@@ -74,7 +74,7 @@ public class ST_MultiLineString extends ST_Geometry {
 		try {
 			OGCGeometry ogcObj = OGCGeometry.fromText(wkt);
 			ogcObj.setSpatialReference(null);
-			if (ogcObj.geometryType() == "MultiLineString") {
+			if (ogcObj.geometryType().equals("MultiLineString")) {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj);
 			} else {
 				LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_MULTILINESTRING, GeometryUtils.OGCType.UNKNOWN);
