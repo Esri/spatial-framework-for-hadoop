@@ -3,7 +3,7 @@
 The __Spatial Framework for Hadoop__ allows developers and data scientists to use the Hadoop data processing system 
 for spatial data analysis.
 
-For applications and samples that use this framework, head over 
+For tools and samples that use this framework, head over 
 to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## Features
