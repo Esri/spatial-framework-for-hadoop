@@ -4,17 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.Version;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.SpatialReference;
-import com.esri.json.deserializer.*;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EsriFeatureClass {
@@ -45,6 +43,18 @@ public class EsriFeatureClass {
 	 */
 	public EsriFeature [] features;
 	
+	
+	/**
+	 * 
+	 * @return JSON string representation of this feature class
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public String toJson() throws JsonGenerationException, JsonMappingException, IOException{
+		return EsriJsonFactory.JsonFromFeatureClass(this);
+	}
+	
 	/**
 	 * 
 	 * @param jsonStream JSON input stream
@@ -54,10 +64,7 @@ public class EsriFeatureClass {
 	 */
 	public static EsriFeatureClass fromJson(InputStream jsonStream) throws JsonParseException, IOException
 	{
-		JsonFactory factory = new JsonFactory();
-		JsonParser parser = factory.createJsonParser(jsonStream);
-		
-		return fromJson(parser);
+		return EsriJsonFactory.FeatureClassFromJson(jsonStream);
 	}
 
 	/**
@@ -69,18 +76,6 @@ public class EsriFeatureClass {
 	 */
 	public static EsriFeatureClass fromJson(JsonParser parser) throws JsonParseException, IOException
 	{	
-		ObjectMapper mapper = new ObjectMapper();
-		parser.setCodec(mapper);
-		
-		SimpleModule module = new SimpleModule("EsriDeserializers", new Version(1, 0, 0, null));
-		
-		// add deserializers for types that can't be mapped field for field from the JSON
-		module.addDeserializer(Geometry.class, new GeometryJsonDeserializer());
-		module.addDeserializer(SpatialReference.class, new SpatialReferenceJsonDeserializer());
-		module.addDeserializer(Geometry.Type.class, new GeometryTypeJsonDeserializer());
-		
-		mapper.registerModule(module);
-		
-		return parser.readValueAs(EsriFeatureClass.class);
+		return EsriJsonFactory.FeatureClassFromJson(parser);
 	}
 }
