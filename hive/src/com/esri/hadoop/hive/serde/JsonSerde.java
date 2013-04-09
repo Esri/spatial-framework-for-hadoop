@@ -66,15 +66,6 @@ public class JsonSerde implements SerDe {
 	
 	// we want to set up the factory only once, so we'll do it in a static constructor
 	static {
-	    ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule("EsriDeserializers", new Version(1, 0, 0, null));
-
-		// add deserializers for types that can't be mapped field for field from the JSON
-		module.addDeserializer(Geometry.class, new GeometryJsonDeserializer());
-		
-		mapper.registerModule(module);
-		
-		jsonFactory.setCodec(mapper);
 
 		// Set up the column name constants for handling both Hive 0.9 & 0.10
 		Class<?> cl;
@@ -276,40 +267,5 @@ public class JsonSerde implements SerDe {
 		} 
 		
 		return new Text(writer.toString());
-	}
-	
-	private static class EsriFeature {
-		/**
-		* Map of attributes
-		*/
-		public CaseInsensitiveMap attributes;
-
-		/**
-		* Geometry associated with this feature
-		*/
-		public Geometry geometry;
-	}
-	
-	private static class GeometryJsonDeserializer extends JsonDeserializer<Geometry> {
-
-		public GeometryJsonDeserializer(){}
-
-		@Override
-		public Geometry deserialize(JsonParser arg0, DeserializationContext arg1)
-		throws IOException, JsonProcessingException {
-		return GeometryEngine.jsonToGeometry(arg0).getGeometry();
-		}
-	}
-	
-	@SuppressWarnings("serial")
-	private static class CaseInsensitiveMap extends HashMap<String, Object> {
-
-	    public Object put(String key, Object value) {
-	       return super.put(key.toLowerCase(), value);
-	    }
-
-	    public Object get(String key) {
-	       return super.get(key.toLowerCase());
-	    }
 	}
 }
