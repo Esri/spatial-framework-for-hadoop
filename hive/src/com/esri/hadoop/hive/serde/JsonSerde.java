@@ -197,27 +197,6 @@ public class JsonSerde implements SerDe {
 				
 				token = parser.nextToken();
 			}
-			
-			/*
-			EsriFeature feature = parser.readValueAs(EsriFeature.class);
-			 
-
-			for (int i=0;i<columnNames.size();i++){
-				if (i == geometryColumn)
-				{
-					OGCGeometry ogcObj = OGCGeometry.createFromEsriGeometry(feature.geometry, null);
-					row.set(i, GeometryUtils.geometryToEsriShapeBytesWritable(ogcObj));
-				} else {
-					Object val = feature.attributes.get(columnNames.get(i));
-					
-					if (val != null){
-						row.set(i, new Text(val.toString()));
-					} else {
-						row.set(i, new Text("???"));
-					}
-				}
-			}
-			*/
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
