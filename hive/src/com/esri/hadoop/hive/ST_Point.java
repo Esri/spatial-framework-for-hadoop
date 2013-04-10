@@ -52,12 +52,17 @@ class ST_Point extends ST_Geometry {
 			LogUtils.Log_ArgumentsNull(LOG);
 			return null;
 		}
-		Point stPt = new Point(x.get(), y.get());
-		if (z != null)
-			stPt.setZ(z.get());
-		if (m != null)
-			stPt.setM(m.get());
-		return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(stPt, null));
+		try {
+			Point stPt = new Point(x.get(), y.get());
+			if (z != null)
+				stPt.setZ(z.get());
+			if (m != null)
+				stPt.setM(m.get());
+			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(stPt, null));
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_Point: " + e);
+		    return null;
+		}
 	}
 
 	// WKT constructor - can use SetSRID on constructed point

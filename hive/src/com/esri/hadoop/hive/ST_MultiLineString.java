@@ -46,26 +46,31 @@ public class ST_MultiLineString extends ST_Geometry {
 			LogUtils.Log_ArgumentsNull(LOG);
 			return null;
 		}
-		
-		Polyline mPolyline = new Polyline();
-		
-		int arg_idx=0;
-		for (List<DoubleWritable> multipath : multipaths)
-		{
-			if (multipath.size() %2 != 0){
-				LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
-				return null;
-			}
-			
-			mPolyline.startPath(multipath.get(0).get(), multipath.get(1).get());
-			
-			for (int i=2;i<multipath.size();i+=2){
-				mPolyline.lineTo(multipath.get(i).get(), multipath.get(i+1).get());
-			}
-			arg_idx++;
+
+		try {
+			Polyline mPolyline = new Polyline();
+
+			int arg_idx=0;
+			for (List<DoubleWritable> multipath : multipaths)
+				{
+					if (multipath.size() %2 != 0){
+						LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
+						return null;
+					}
+
+					mPolyline.startPath(multipath.get(0).get(), multipath.get(1).get());
+
+					for (int i=2;i<multipath.size();i+=2){
+						mPolyline.lineTo(multipath.get(i).get(), multipath.get(i+1).get());
+					}
+					arg_idx++;
+				}
+
+			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPolyline, null, true));
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_MultiLineString: " + e);
+		    return null;
 		}
-		
-		return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPolyline, null, true));
 	}
 
 	// WKT constructor  -  can use SetSRID on constructed multi-linestring

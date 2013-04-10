@@ -41,30 +41,30 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 public class ST_Polygon extends ST_Geometry {
 	
 	static final Log LOG = LogFactory.getLog(ST_Polygon.class.getName());
-	
-	// Assembly constructor
+
+	// Number-pairs constructor
 	public BytesWritable evaluate(DoubleWritable ... xyPairs) throws UDFArgumentLengthException{
-		
+
 		if (xyPairs == null || xyPairs.length < 6 ||  xyPairs.length%2 != 0) {
 			LogUtils.Log_VariableArgumentLengthXY(LOG);
 			return null;
 		}
-		
-		double xStart = xyPairs[0].get(), yStart = xyPairs[1].get();
-		String wkt = "polygon((" + xStart + " " + yStart;
-
-		int i; // index persists after first loop
-		for (i = 2; i < xyPairs.length; i += 2) {
-			wkt += ", " + xyPairs[i] + " " + xyPairs[i+1];
-		}
-		double xEnd = xyPairs[i-2].get(), yEnd = xyPairs[i-1].get();
-		// This counts on the same string getting parsed to double exactly equally
-		if (xEnd != xStart || yEnd != yStart)
-			wkt += ", " + xStart + " " + yStart;  // close the ring
-
-		wkt += "))";
 
 		try {
+			double xStart = xyPairs[0].get(), yStart = xyPairs[1].get();
+			String wkt = "polygon((" + xStart + " " + yStart;
+
+			int i; // index persists after first loop
+			for (i = 2; i < xyPairs.length; i += 2) {
+				wkt += ", " + xyPairs[i] + " " + xyPairs[i+1];
+			}
+			double xEnd = xyPairs[i-2].get(), yEnd = xyPairs[i-1].get();
+			// This counts on the same string getting parsed to double exactly equally
+			if (xEnd != xStart || yEnd != yStart)
+				wkt += ", " + xStart + " " + yStart;  // close the ring
+
+			wkt += "))";
+
 			return evaluate(new Text(wkt));
 		} catch (Exception e) {
 			LogUtils.Log_InternalError(LOG, "ST_Polygon: " + e);

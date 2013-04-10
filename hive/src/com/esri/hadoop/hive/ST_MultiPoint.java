@@ -50,13 +50,18 @@ public class ST_MultiPoint extends ST_Geometry {
 			return null;
 		}
 
-		MultiPoint mPoint = new MultiPoint();
+		try {
+			MultiPoint mPoint = new MultiPoint();
 
-		for (int i=0;i<xyPairs.length;i+=2){
-			mPoint.add(xyPairs[i].get(), xyPairs[i+1].get());
+			for (int i=0;i<xyPairs.length;i+=2){
+				mPoint.add(xyPairs[i].get(), xyPairs[i+1].get());
+			}
+
+			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPoint, null, true));
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_MultiPoint: " + e);
+		    return null;
 		}
-
-		return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPoint, null, true));
 	}
 
 	// WKT constructor - can use SetSRID on constructed multi-point

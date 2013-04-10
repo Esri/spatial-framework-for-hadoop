@@ -47,28 +47,33 @@ public class ST_MultiPolygon extends ST_Geometry {
 			return null;
 		}
 
-		Polygon mPolygon = new Polygon();
+		try {
+			Polygon mPolygon = new Polygon();
 
-		int arg_idx=0;
-		for (List<DoubleWritable> multipath : multipaths)
-		{
-			if (multipath.size() %2 != 0){
-				LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
-				return null;
-			}
+			int arg_idx=0;
+			for (List<DoubleWritable> multipath : multipaths)
+				{
+					if (multipath.size() %2 != 0){
+						LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
+						return null;
+					}
 
-			mPolygon.startPath(multipath.get(0).get(), multipath.get(0).get());
-			
-			for (int i=2;i<multipath.size();i+=2){
-				mPolygon.lineTo(multipath.get(i).get(), multipath.get(i+1).get());
-			}
+					mPolygon.startPath(multipath.get(0).get(), multipath.get(0).get());
 
-			mPolygon.closeAllPaths();
+					for (int i=2;i<multipath.size();i+=2){
+						mPolygon.lineTo(multipath.get(i).get(), multipath.get(i+1).get());
+					}
 
-			arg_idx++;
+					mPolygon.closeAllPaths();
+
+					arg_idx++;
+				}
+
+			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPolygon, null, true));
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_MultiPolygon: " + e);
+		    return null;
 		}
-
-		return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPolygon, null, true));
 	}
 
 	// WKT constructor - can use SetSRID on constructed multi-polygon

@@ -43,15 +43,20 @@ public class ST_LineString extends ST_Geometry {
 		if (xyPairs == null || xyPairs.length == 0 ||  xyPairs.length%2 != 0) {
 			return null;
 		}
+
+		try {		
+			Polyline linestring = new Polyline();
+			linestring.startPath(xyPairs[0].get(), xyPairs[1].get());
 		
-		Polyline linestring = new Polyline();
-		linestring.startPath(xyPairs[0].get(), xyPairs[1].get());
+			for (int i=2; i<xyPairs.length; i+=2) {
+				linestring.lineTo(xyPairs[i].get(), xyPairs[i+1].get());
+			}
 		
-		for (int i=2;i<xyPairs.length;i+=2){
-			linestring.lineTo(xyPairs[i].get(), xyPairs[i+1].get());
+			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(linestring, null));
+		} catch (Exception e) {
+		    LogUtils.Log_InternalError(LOG, "ST_LineString: " + e);
+		    return null;
 		}
-		
-		return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(linestring, null));
 	}
 
 	// WKT constructor - can use SetSRID on constructed multi-point
