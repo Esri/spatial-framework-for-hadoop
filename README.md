@@ -32,6 +32,7 @@ processing.
 
 ## Requirements
 
+* Hive 0.10.0 and above (or Hive 0.9.0 patched with [HIVE-2736](https://issues.apache.org/jira/browse/HIVE-2736))
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
 (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the 
