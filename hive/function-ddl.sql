@@ -85,4 +85,5 @@ create temporary function ST_Difference as 'com.esri.hadoop.hive.ST_Difference';
 create temporary function ST_SymmetricDiff as 'com.esri.hadoop.hive.ST_SymmetricDiff';
 create temporary function ST_SymDifference as 'com.esri.hadoop.hive.ST_SymmetricDiff';
 
-create temporary function ST_Aggr_Union as 'com.esri.hadoop.hive.ST_Aggr_Union'
+create temporary function ST_Aggr_Intersection as 'com.esri.hadoop.hive.ST_Aggr_Intersection';
+create temporary function ST_Aggr_Union as 'com.esri.hadoop.hive.ST_Aggr_Union';
