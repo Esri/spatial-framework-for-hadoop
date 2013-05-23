@@ -1,0 +1,581 @@
+hive> desc function extended ST_GeomCollection;
+ST_GeomCollection(wkt) - construct a multi-part ST_Geometry from OGC well-known text
+Synonyms: st_geomcollection
+Example:
+  > SELECT ST_GeomCollection('multipoint ((1 0), (2 3))') FROM src LIMIT 1;  -- constructs ST_MultiPoint
+OGC Compliance Notes : 
+ ST_GeomCollection on Hive does not support collections - only multi-part geometries.
+ST_GeomCollection('POINT(1 1), LINESTRING(2 0,3 0)') -- not supported
+
+hive> desc function extended ST_GeomCollFromShape;
+Function 'ST_GeomCollFromShape' does not exist.
+hive> desc function extended ST_GeomCollFromWKB;
+Function 'ST_GeomCollFromWKB' does not exist.
+hive> desc function extended ST_Geometry;
+Function 'ST_Geometry' does not exist.
+hive> desc function extended ST_GeomFromShape;
+Function 'ST_GeomFromShape' does not exist.
+hive> desc function extended ST_GeomFromText;
+ST_GeomFromText(wkt) - construct an ST_Geometry from OGC well-known text
+Synonyms: st_geomfromtext
+Example:
+  SELECT ST_GeomFromText('linestring (1 0, 2 3)') FROM src LIMIT 1;  -- constructs ST_Linestring
+  SELECT ST_GeomFromText('multipoint ((1 0), (2 3))') FROM src LIMIT 1;  -- constructs ST_MultiPoint
+
+hive> desc function extended ST_GeomFromWKB;
+ST_GeomFromWKB(wkb) - construct an ST_Geometry from OGC well-known binary
+Synonyms: st_geomfromwkb
+Example:
+  SELECT ST_GeomFromWKB(ST_AsBinary(ST_GeomFromText('linestring (1 0, 2 3)'))) FROM src LIMIT 1;  -- constructs ST_Linestring
+  SELECT ST_GeomFromWKB(ST_AsBinary(ST_GeomFromText('multipoint ((1 0), (2 3))'))) FROM src LIMIT 1;  -- constructs ST_MultiPoint
+
+hive> desc function extended ST_GeomFromGeoJSON;
+ST_GeomFromGeoJSON(json) - construct an ST_Geometry from GeoJSON
+Synonyms: st_geomfromgeojson
+Example:
+  SELECT ST_GeomFromGeoJSON('{"type":"Point", "coordinates":[1.2, 2.4]}') FROM src LIMIT 1;  -- constructs ST_Point
+  SELECT ST_GeomFromGeoJSON('{"type":"LineString", "coordinates":[[1,2], [3,4]]}') FROM src LIMIT 1;  -- constructs ST_LineString
+
+hive> desc function extended ST_GeomFromJSON;
+ST_GeomFromJSON(json) - construct an ST_Geometry from Esri JSON
+Synonyms: st_geomfromjson
+Example:
+  SELECT ST_GeomFromJSON('{"x":0.0,"y":0.0}') FROM src LIMIT 1;  -- constructs ST_Point
+
+hive> desc function extended ST_LineFromShape;
+Function 'ST_LineFromShape' does not exist.
+hive> desc function extended ST_LineFromText;
+Function 'ST_LineFromText' does not exist.
+hive> desc function extended ST_LineFromWKB;
+ST_LineFromWKB(wkb) - construct an ST_LineString from OGC well-known binary
+Synonyms: st_linefromwkb
+Example:
+  SELECT ST_LineFromWKB(ST_AsBinary(ST_GeomFromText('linestring (1 0, 2 3)'))) FROM src LIMIT 1;  -- constructs ST_Linestring
+
+hive> desc function extended ST_LineString;
+ST_LineString(x, y, [x, y]*) - constructor for 2D line string
+ST_LineString('linestring( ... )') - constructor for 2D line string
+Synonyms: st_linestring
+Example:
+  SELECT ST_LineString(1, 1, 2, 2, 3, 3) from src LIMIT 1;
+  SELECT ST_LineString('linestring(1 1, 2 2, 3 3)') from src LIMIT 1;
+hive> desc function extended ST_MLineFromShape;
+Function 'ST_MLineFromShape' does not exist.
+hive> desc function extended ST_MLineFromText;
+Function 'ST_MLineFromText' does not exist.
+hive> desc function extended ST_MLineFromWKB;
+ST_MLineFromWKB(wkb) - construct an ST_MultiLineString from OGC well-known binary
+Synonyms: st_mlinefromwkb
+Example:
+  SELECT ST_MLineFromWKB(ST_AsBinary(ST_GeomFromText('multilinestring ((1 0, 2 3), (5 7, 7 5))'))) FROM src LIMIT 1;  -- constructs ST_MultiLineString
+
+hive> desc function extended ST_MPointFromShape;
+Function 'ST_MPointFromShape' does not exist.
+hive> desc function extended ST_MPointFromText;
+Function 'ST_MPointFromText' does not exist.
+hive> desc function extended ST_MPointFromWKB;
+ST_MPointFromWKB(wkb) - construct an ST_MultiPoint from OGC well-known binary
+Synonyms: st_mpointfromwkb
+Example:
+  SELECT ST_MPointFromWKB(ST_AsBinary(ST_GeomFromText('multipoint ((1 0), (2 3))'))) FROM src LIMIT 1;  -- constructs ST_MultiPoint
+
+hive> desc function extended ST_MPolyFromShape;
+Function 'ST_MPolyFromShape' does not exist.
+hive> desc function extended ST_MPolyFromText;
+Function 'ST_MPolyFromText' does not exist.
+hive> desc function extended ST_MPolyFromWKB;
+ST_MPolyFromWKB(wkb) - construct an ST_MultiPolygon from OGC well-known binary
+Synonyms: st_mpolyfromwkb
+Example:
+  SELECT ST_MPolyFromWKB(ST_AsBinary(ST_GeomFromText('multipolygon (((0 0, 1 0, 0 1, 0 0)), ((2 2, 1 2, 2 1, 2 2)))'))) FROM src LIMIT 1;  -- constructs ST_MultiPolygon
+
+hive> desc function extended ST_MultiLineString;
+ST_MultiLineString(array(x1, y1, x2, y2, ... ), array(x1, y1, x2, y2, ... ), ... ) - constructor for 2D multi line string
+ST_MultiLineString('multilinestring( ... )') - constructor for 2D multi line string
+Synonyms: st_multilinestring
+Example:
+  SELECT ST_MultiLineString(array(1, 1, 2, 2), array(10, 10, 20, 20)) from src LIMIT 1;
+  SELECT ST_MultiLineString('multilinestring ((1 1, 2 2), (10 10, 20 20))', 0) from src LIMIT 1;
+hive> desc function extended ST_MultiPoint;
+ST_MultiPoint(x1, y1, x2, y2, x3, y3) - constructor for 2D multipoint
+ST_MultiPoint('multipoint( ... )') - constructor for 2D multipoint
+Synonyms: st_multipoint
+Example:
+  SELECT ST_MultiPoint(1, 1, 2, 2, 3, 3) from src LIMIT 1; -- multipoint with 3 points
+  SELECT ST_MultiPoint('MULTIPOINT ((10 40), (40 30))') from src LIMIT 1; -- multipoint of 2 points
+hive> desc function extended ST_MultiPolygon;
+ST_MultiPolygon(array(x1, y1, x2, y2, ... ), array(x1, y1, x2, y2, ... ), ... ) - constructor for 2D multi polygon
+ST_MultiPolygon('multipolygon ( ... )') - constructor for 2D multi polygon
+Synonyms: st_multipolygon
+Example:
+  SELECT ST_MultiPolygon(array(1, 1, 1, 2, 2, 2, 2, 1), array(3, 3, 3, 4, 4, 4, 4, 3)) from src LIMIT 1;
+  SELECT ST_MultiPolygon('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))') from src LIMIT 1;
+hive> desc function extended ST_Point;
+ST_Point(x, y) - constructor for 2D point
+ST_Point('point (x y)') - constructor for 2D point
+Synonyms: st_point
+Example:
+  SELECT ST_Point(longitude, latitude) from src LIMIT 1;
+  SELECT ST_Point('point (0 0)') from src LIMIT 1;
+hive> desc function extended ST_PointFromShape;
+Function 'ST_PointFromShape' does not exist.
+hive> desc function extended ST_PointFromText;
+Function 'ST_PointFromText' does not exist.
+hive> desc function extended ST_PointFromWKB;
+ST_PointFromWKB(wkb) - construct an ST_Point from OGC well-known binary
+Synonyms: st_pointfromwkb
+Example:
+  SELECT ST_PointFromWKB(ST_AsBinary(ST_GeomFromText('point (1 0))'))) FROM src LIMIT 1;  -- constructs ST_Point
+
+hive> desc function extended ST_PointZ;
+ST_PointZ(x, y, z) - constructor for 3D point
+Synonyms: st_pointz
+Example:
+SELECT ST_PointZ(longitude, latitude, elevation) from src LIMIT 1;
+hive> desc function extended ST_PolyFromShape;
+Function 'ST_PolyFromShape' does not exist.
+hive> desc function extended ST_PolyFromText;
+Function 'ST_PolyFromText' does not exist.
+hive> desc function extended ST_PolyFromWKB;
+ST_PolyFromWKB(wkb) - construct an ST_Polygon from OGC well-known binary
+Synonyms: st_polyfromwkb
+Example:
+  SELECT ST_PolyFromWKB(ST_AsBinary(ST_GeomFromText('polygon ((0 0, 10 0, 0 10, 0 0))'))) FROM src LIMIT 1;  -- constructs ST_Polygon
+
+hive> desc function extended ST_Polygon;
+ST_Polygon(x, y, [x, y]*) - constructor for 2D polygon
+ST_Polygon('polygon( ... )') - constructor for 2D polygon
+Synonyms: st_polygon
+Example:
+  SELECT ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1) from src LIMIT 1;  -- creates a rectangle
+  SELECT ST_Polygon('polygon ((1 1, 4 1, 1 4))') from src LIMIT 1;  -- creates a triangle
+hive> desc function extended ST_Curve;
+Function 'ST_Curve' does not exist.
+hive> desc function extended ST_MultiCurve;
+Function 'ST_MultiCurve' does not exist.
+hive> desc function extended ST_MultiSurface;
+Function 'ST_MultiSurface' does not exist.
+hive> desc function extended ST_Surface;
+Function 'ST_Surface' does not exist.
+hive> desc function extended ST_GeometryType;
+ST_GeometryType(geometry) - return type of geometry
+Synonyms: st_geometrytype
+Example:
+  > SELECT ST_GeometryType(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- ST_Point
+  > SELECT ST_GeometryType(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- ST_LineString
+  > SELECT ST_GeometryType(ST_Polygon(2,0, 2,3, 3,0)) FROM src LIMIT 1;  -- ST_Polygon
+
+hive> desc function extended ST_Entity;
+Function 'ST_Entity' does not exist.
+hive> desc function extended ST_SRID;
+ST_SRID(ST_Geometry) - get the Spatial Reference ID of the geometry
+Synonyms: st_srid
+Example:
+  SELECT ST_SRID(ST_Point(1.5, 2.5)) FROM src LIMIT 1  -- returns SRID 0
+hive> desc function extended ST_IsEmpty;
+ST_IsEmpty(geometry) - return true if the geometry object is empty of geometric information
+Synonyms: st_isempty
+Example:
+  > SELECT ST_IsEmpty(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- false
+  > SELECT ST_IsEmpty(ST_GeomFromText('point empty')) FROM src LIMIT 1;  -- true
+
+hive> desc function extended ST_IsSimple;
+ST_IsSimple(geometry) - return true if geometry is simple
+Synonyms: st_issimple
+Example:
+  > SELECT ST_IsSimple(ST_Point(1.5, 2.5)) FROM src LIMIT 1; -- true
+  > SELECT ST_IsSimple(ST_LineString(0.,0., 1.,1., 0.,1., 1.,0.)) FROM src LIMIT 1; -- false
+
+hive> desc function extended ST_Dimension;
+ST_Dimension(geometry) - return spatial dimension of geometry
+Synonyms: st_dimension
+Example:
+  > SELECT ST_Dimension(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 0
+  > SELECT ST_Dimension(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 1
+  > SELECT ST_Dimension(ST_Polygon(2,0, 2,3, 3,0)) FROM src LIMIT 1;  -- 2
+
+hive> desc function extended ST_CoordDim;
+ST_CoordDim(geometry) - return count of coordinate components
+Synonyms: st_coorddim
+Example:
+  > SELECT ST_CoordDim(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 2
+  > SELECT ST_CoordDim(ST_PointZ(1.5,2.5, 3) FROM src LIMIT 1;  -- 3
+  > SELECT ST_CoordDim(ST_Point(1.5, 2.5, 3., 4.)) FROM src LIMIT 1;  -- 4
+
+hive> desc function extended ST_X;
+ST_X(point) - returns the X coordinate of point
+Synonyms: st_x
+Example:
+  SELECT ST_X(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  --  1.5
+hive> desc function extended ST_Y;
+ST_Y(point) - returns the Y coordinate of point
+Synonyms: st_y
+Example:
+  SELECT ST_Y(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  --  2.5
+hive> desc function extended ST_MinX;
+ST_MinX(geometry) - returns the minimum X coordinate of geometry
+Synonyms: st_minx
+Example:
+  > SELECT ST_MinX(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 1.5
+  > SELECT ST_MinX(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 3.0
+
+hive> desc function extended ST_MaxX;
+ST_MaxX(geometry) - returns the maximum X coordinate of geometry
+Synonyms: st_maxx
+Example:
+  > SELECT ST_MaxX(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 1.5
+  > SELECT ST_MaxX(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 3.0
+
+hive> desc function extended ST_MinY;
+ST_MinY(geometry) - returns the minimum Y coordinate of geometry
+Synonyms: st_miny
+Example:
+  > SELECT ST_MinY(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 2.5
+  > SELECT ST_MinY(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 2.2
+
+hive> desc function extended ST_MaxY;
+ST_MaxY(geometry) - returns the maximum Y coordinate of geometry
+Synonyms: st_maxy
+Example:
+  > SELECT ST_MaxY(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 2.5
+  > SELECT ST_MaxY(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 2.5
+
+hive> desc function extended ST_Is3D;
+ST_Is3D(geometry) - return true if the geometry object is three-dimensional
+Synonyms: st_is3d
+Example:
+  > SELECT ST_Is3D(ST_Polygon(1,1, 1,4, 4,4, 4,1)) FROM src LIMIT 1;  -- false
+  > SELECT ST_Is3D(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- false
+  > SELECT ST_Is3D(ST_Point(3., 4.)) FROM src LIMIT 1;  -- false
+  > SELECT ST_Is3D(ST_PointZ(3., 4., 2)) FROM src LIMIT 1;  -- true
+
+hive> desc function extended ST_Z;
+ST_Z(point) - returns the Z coordinate of point
+Synonyms: st_z
+Example:
+  SELECT ST_Z(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  --  1.5
+hive> desc function extended ST_MinZ;
+ST_MinZ(geometry) - returns the minimum Z coordinate of geometry
+Synonyms: st_minz
+Example:
+  SELECT ST_MinZ(ST_PointZ(1.5, 2.5, 2)) FROM src LIMIT 1;  -- 2
+  SELECT ST_MinZ(ST_LineString('linestring z (1.5 2.5 2, 3.0 2.2 1)')) FROM src LIMIT 1;  -- 1
+
+hive> desc function extended ST_MaxZ;
+ST_MaxZ(geometry) - returns the maximum Z coordinate of geometry
+Synonyms: st_maxz
+Example:
+  SELECT ST_MaxZ(ST_PointZ(1.5, 2.5, 2)) FROM src LIMIT 1;  -- 2
+  SELECT ST_MaxZ(ST_LineString('linestring z (1.5 2.5 2, 3.0 2.2 1)')) FROM src LIMIT 1;  -- 1
+
+hive> desc function extended ST_IsMeasured;
+ST_IsMeasured(geometry) - return true if the geometry object is three-dimensional
+Synonyms: st_ismeasured
+Example:
+  > SELECT ST_IsMeasured(ST_Polygon(1,1, 1,4, 4,4, 4,1)) FROM src LIMIT 1;  -- false
+  > SELECT ST_IsMeasured(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- false
+  > SELECT ST_IsMeasured(ST_Point(3., 4.)) FROM src LIMIT 1;  -- false
+  > SELECT ST_IsMeasured(ST_PointM(3., 4., 2)) FROM src LIMIT 1;  -- true
+
+hive> desc function extended ST_M;
+ST_M(geometry) - return true if the geometry object is three-dimensional
+Synonyms: st_m
+Example:
+  > SELECT ST_M(ST_PointM(3., 4., 2)) FROM src LIMIT 1;  -- 2
+
+hive> desc function extended ST_MinM;
+ST_MinM(geometry) - returns the minimum M coordinate of geometry
+Synonyms: st_minm
+Example:
+  SELECT ST_MinM(ST_PointM(1.5, 2.5, 2)) FROM src LIMIT 1;  -- 2
+  SELECT ST_MinM(ST_LineString('linestring m (1.5 2.5 2, 3.0 2.2 1)')) FROM src LIMIT 1;  -- 1
+
+hive> desc function extended ST_MaxM;
+ST_MaxM(geometry) - returns the maximum M coordinate of geometry
+Synonyms: st_maxm
+Example:
+  SELECT ST_MaxM(ST_PointM(1.5, 2.5, 2)) FROM src LIMIT 1;  -- 2
+  SELECT ST_MaxM(ST_LineString('linestring m (1.5 2.5 2, 3.0 2.2 1)')) FROM src LIMIT 1;  -- 1
+
+hive> desc function extended ST_IsClosed;
+ST_IsClosed(ST_[Multi]LineString) - return true if the linestring or multi-line is closed
+Synonyms: st_isclosed
+Example:
+  SELECT ST_IsClosed(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- true
+  SELECT ST_IsClosed(ST_LineString(0.,0., 3.,4.)) FROM src LIMIT 1;  -- false
+
+hive> desc function extended ST_IsRing;
+ST_IsRing(ST_LineString) - return true if the linestring is closed & simple
+Synonyms: st_isring
+Example:
+  SELECT ST_IsRing(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- true
+  SELECT ST_IsRing(ST_LineString(0.,0., 1.,1., 1.,2., 2.,1., 1.,1., 0.,0.)) FROM src LIMIT 1;  -- false
+  SELECT ST_IsRing(ST_LineString(0.,0., 3.,4.)) FROM src LIMIT 1;  -- false
+
+hive> desc function extended ST_Length;
+ST_Length(line) - returns the length of line
+Synonyms: st_length
+Example:
+  SELECT ST_Length(ST_Line(0.0,0.0, 3.0,4.0)) FROM src LIMIT 1;  --  5.0
+hive> desc function extended ST_GeodesicLengthWGS84;
+ST_GeodesicLengthWGS84(line) - returns distance along line on WGS84 spheroid, in meters, for geographic coordinates
+Synonyms: st_geodesiclengthwgs84
+Example:
+ SELECT ST_GeodesicLengthWGS84(ST_Linestring(0.0,0.0, 0.3,0.4)) FROM src LIMIT 1; -- 55km
+ SELECT ST_GeodesicLengthWGS84(ST_Linestring(0.0,80.0, 0.3,80.4)) FROM src LIMIT 1; -- 45km
+
+hive> desc function extended ST_Area;
+ST_Area(ST_Polygon) - returns the area of polygon or multipolygon
+Synonyms: st_area
+Example:
+  SELECT ST_Area(ST_Polygon(1,1, 1,4, 4,4, 4,1)) FROM src LIMIT 1;  --  9.0
+hive> desc function extended ST_NumPoints;
+ST_NumPoints(geometry) - return the number of points in the geometry
+Synonyms: st_numpoints
+Example:
+  > SELECT ST_NumPoints(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- 1
+  > SELECT ST_NumPoints(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- 2
+  > SELECT ST_NumPoints(ST_GeomFromText('polygon ((0 0, 10 0, 0 10, 0 0))')) FROM src LIMIT 1;  -- 4
+
+hive> desc function extended ST_PointN;
+ST_PointN(ST_Geometry, n) - returns the point that is the nth vertex in an ST_Linestring or ST_MultiPoint (1-based index)
+Synonyms: st_pointn
+Example:
+  SELECT ST_PointN(ST_LineString(1.5,2.5, 3.0,2.2), 2) FROM src LIMIT 1;  -- POINT(3.0 2.2)
+
+hive> desc function extended ST_StartPoint;
+ST_StartPoint(geometry) - returns the first point of an ST_Linestring
+Synonyms: st_startpoint
+Example:
+  > SELECT ST_StartPoint(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- POINT(1.5 2.5)
+
+hive> desc function extended ST_EndPoint;
+ST_EndPoint(geometry) - returns the last point of an ST_Linestring
+Synonyms: st_endpoint
+Example:
+  > SELECT ST_EndPoint(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- POINT(3.0 2.0)
+
+hive> desc function extended ST_ExteriorRing;
+ST_ExteriorRing(polygon) - return linestring which is the exterior ring of the polygon
+Synonyms: st_exteriorring
+Example:
+  SELECT ST_ExteriorRing(ST_Polygon(1,1, 1,4, 4,1)) FROM src LIMIT 1;  -- LINESTRING(1 1, 4 1, 1 4, 1 1)
+  SELECT ST_ExteriorRing(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) FROM src LIMIT 1;  -- LINESTRING (8 0, 0 8, 0 0, 8 0)
+
+hive> desc function extended ST_NumInteriorRing;
+ST_NumInteriorRing(ST_Polygon) - return the number of interior rings in the polygon
+Synonyms: st_numinteriorring
+Example:
+  SELECT ST_NumInteriorRing(ST_Polygon(1,1, 1,4, 4,1)) FROM src LIMIT 1;  -- 0
+  SELECT ST_NumInteriorRing(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) FROM src LIMIT 1;  -- 1
+
+hive> desc function extended ST_InteriorRingN;
+ST_InteriorRingN(ST_Polygon, n) - return ST_LineString which is the nth interior ring of the ST_Polygon (1-based index)
+Synonyms: st_interiorringn
+Example:
+  SELECT ST_InteriorRingN(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1) FROM src LIMIT 1;  -- LINESTRING (1 1, 5 1, 1 5, 1 1)
+
+hive> desc function extended ST_NumGeometries;
+ST_NumGeometries(ST_GeometryCollection) - return the number of geometries in the geometry collection
+Synonyms: st_numgeometries
+Example:
+  SELECT ST_NumGeometries(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))')) FROM src LIMIT 1;  -- 4
+  SELECT ST_NumGeometries(ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))')) FROM src LIMIT 1;  -- 2
+
+hive> desc function extended ST_GeometryN;
+ST_GeometryN(ST_GeometryCollection, n) - return the nth ST_Geometry in the collection (1-based index)
+Synonyms: st_geometryn
+Example:
+  SELECT ST_GeometryN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))'), 3) FROM src LIMIT 1;  -- ST_Point(20 20)
+  SELECT ST_GeometryN(ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))'), 2) FROM src LIMIT 1;  -- ST_Linestring(20 20, 7 8)
+
+hive> desc function extended ST_Centroid;
+ST_Centroid(polygon) - returns the point that is the center of the polygon's envelope
+Synonyms: st_centroid
+Example:
+  > SELECT ST_Centroid(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))')) FROM src LIMIT 1;  -- POINT(3 3)
+  > SELECT ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))')) FROM src LIMIT 1;  -- POINT(4 4)
+
+hive> desc function extended ST_PointOnSurface;
+Function 'ST_PointOnSurface' does not exist.
+hive> desc function extended ST_AsBinary;
+ST_AsBinary(ST_Geometry) - return Well-Known Binary (WKB) representation of geometry
+
+Synonyms: st_asbinary
+Example:
+  SELECT ST_AsBinary(ST_Point(1, 2)) FROM onerow; -- WKB representation of POINT (1 2)
+
+hive> desc function extended ST_AsText;
+ST_AsText(ST_Geometry) - return Well-Known Text (WKT) representation of ST_Geometry
+
+Synonyms: st_astext
+Example:
+  SELECT ST_AsText(ST_Point(1, 2)) FROM onerow;  --  POINT (1 2)
+
+hive> desc function extended ST_AsGeoJSON;
+ST_AsGeoJSON(geometry) - return GeoJSON representation of geometry
+
+Synonyms: st_asgeojson
+Example:
+  SELECT ST_AsGeoJSON(ST_Point(1.0, 2.0)) from onerow; -- {"type":"Point", "coordinates":[1.0, 2.0]}
+Note : 
+ ST_AsGeoJSON returns null, until the underlying implementation is available in geometry-api-java.
+
+hive> desc function extended ST_AsJSON;
+ST_AsJSON(ST_Geometry) - return JSON representation of ST_Geometry
+
+Synonyms: st_asjson
+Example:
+  SELECT ST_AsJSON(ST_Point(1.0, 2.0)) from onerow; -- {"x":1.0,"y":2.0}
+  SELECT ST_AsJSON(ST_SetSRID(ST_Point(1, 1), 4326)) from onerow; -- {"x":1.0,"y":1.0,"spatialReference":{"wkid":4326}}
+hive> desc function extended ST_Contains;
+ST_Contains(geometry1, geometry2) - return true if geometry1 contains geometry2
+Synonyms: st_contains
+Example:
+SELECT ST_Contains(st_polygon(1,1, 1,4, 4,4, 4,1), st_point(2, 3) from src LIMIT 1;  -- return true
+SELECT ST_Contains(st_polygon(1,1, 1,4, 4,4, 4,1), st_point(8, 8) from src LIMIT 1;  -- return false
+hive> desc function extended ST_Crosses;
+ST_Crosses(geometry1, geometry2) - return true if geometry1 crosses geometry2
+Synonyms: st_crosses
+Example:
+SELECT ST_Crosses(st_linestring(0,0, 1,1), st_linestring(1,0, 0,1)) from src LIMIT 1;  -- return true
+SELECT ST_Crosses(st_linestring(2,0, 2,3), st_polygon(1,1, 1,4, 4,4, 4,1)) from src LIMIT 1;  -- return true
+SELECT ST_Crosses(st_linestring(0,2, 0,1), ST_linestring(2,0, 1,0)) from src LIMIT 1;  -- return false
+hive> desc function extended ST_Disjoint;
+ST_Disjoint(ST_Geometry1, ST_Geometry2) - return true if ST_Geometry1 intersects ST_Geometry2
+Synonyms: st_disjoint
+Example:
+SELECT ST_Disjoint(ST_LineString(0,0, 0,1), ST_LineString(1,1, 1,0)) from src LIMIT 1;  -- return true
+SELECT ST_Disjoint(ST_LineString(0,0, 1,1), ST_LineString(1,0, 0,1)) from src LIMIT 1;  -- return false
+
+hive> desc function extended ST_EnvIntersects;
+ST_EnvIntersects(ST_Geometry1, ST_Geometry2) - return true if the envelopes of ST_Geometry1 and ST_Geometry2 intersect
+Synonyms: st_envintersects
+Example:
+SELECT ST_EnvIntersects(ST_LineString(0,0, 1,1), ST_LineString(1,3, 2,2)) from src LIMIT 1;  -- return false
+SELECT ST_EnvIntersects(ST_LineString(0,0, 2,2), ST_LineString(1,0, 3,2)) from src LIMIT 1;  -- return true
+
+hive> desc function extended ST_Equals;
+ST_Equals(geometry1, geometry2) - return true if geometry1 equals geometry2
+Synonyms: st_equals
+Example:
+SELECT ST_Equals(st_linestring(0,0, 1,1), st_linestring(1,1, 0,0)) from src LIMIT 1;  -- return true
+SELECT ST_Equals(st_linestring(0,0, 1,1), st_linestring(1,0, 0,1)) from src LIMIT 1;  -- return false
+
+hive> desc function extended ST_Intersects;
+ST_Intersects(geometry1, geometry2) - return true if geometry1 intersects geometry2
+Synonyms: st_intersects
+Example:
+SELECT ST_Intersects(ST_LineString(2,0, 2,3), ST_Polygon(1,1, 4,1, 4,4, 1,4))) from src LIMIT 1;  -- return true
+SELECT ST_Intersects(ST_LineString(8,7, 7,8), ST_Polygon(1,1, 4,1, 4,4, 1,4)) from src LIMIT 1;  -- return false
+
+hive> desc function extended ST_OrderingEquals;
+Function 'ST_OrderingEquals' does not exist.
+hive> desc function extended ST_Overlaps;
+ST_Overlaps(geometry1, geometry2) - return true if geometry1 overlaps geometry2
+Synonyms: st_overlaps
+Example:
+SELECT ST_Overlaps(st_polygon(2,0, 2,3, 3,0), st_polygon(1,1, 1,4, 4,4, 4,1)) from src LIMIT 1;  -- return true
+SELECT ST_Overlaps(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1)) from src LIMIT 1;  -- return false
+hive> desc function extended ST_Relate;
+ST_Relate(ST_Geometry1, ST_Geometry2) - return true if ST_Geometry1 has the specified DE-9IM relationship with ST_Geometry2
+Synonyms: st_relate
+Example:
+  SELECT ST_Relate(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), '****T****') from src LIMIT 1;  -- true
+  SELECT ST_Relate(st_polygon(2,0, 2,1, 3,1), ST_Polygon(1,1, 1,4, 4,4, 4,1), 'T********') from src LIMIT 1;  -- false
+  SELECT ST_Relate(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), 'T********') from src LIMIT 1;  -- true
+  SELECT ST_Relate(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), '****T****') from src LIMIT 1;  -- false
+
+hive> desc function extended ST_Touches;
+ST_Touches(geometry1, geometry2) - return true if geometry1 touches geometry2
+Synonyms: st_touches
+Example:
+SELECT ST_Touches(st_point(1, 2), st_polygon(1, 1, 1, 4, 4, 4, 4, 1)) from src LIMIT 1;  -- return true
+SELECT ST_Touches(st_point(8, 8), st_polygon(1, 1, 1, 4, 4, 4, 4, 1)) from src LIMIT 1;  -- return false
+hive> desc function extended ST_Within;
+ST_Within(geometry1, geometry2) - return true if geometry1 is within geometry2
+Synonyms: st_within
+Example:
+SELECT ST_Within(st_point(2, 3), st_polygon(1,1, 1,4, 4,4, 4,1)) from src LIMIT 1;  -- return true
+SELECT ST_Within(st_point(8, 8), st_polygon(1,1, 1,4, 4,4, 4,1)) from src LIMIT 1;  -- return false
+hive> desc function extended ST_Boundary;
+ST_Boundary(ST_Geometry) - boundary of the input ST_Geometry
+Synonyms: st_boundary
+Example:
+  SELECT ST_Boundary(ST_LineString(0,1, 1,0))) FROM src LIMIT 1;   -- MULTIPOINT((1 0),(0 1))
+  SELECT ST_Boundary(ST_Polygon(1,1, 4,1, 1,4)) FROM src LIMIT 1;  -- LINESTRING(1 1, 4 1, 1 4, 1 1)
+
+hive> desc function extended ST_Buffer;
+ST_Buffer(ST_Geometry, distance) - ST_Geometry buffered by distance
+Synonyms: st_buffer
+Example:
+  SELECT ST_Buffer(ST_Point(0, 0), 1) FROM src LIMIT 1;   -- polygon approximating a unit circle
+
+hive> desc function extended ST_ConvexHull;
+Function 'ST_ConvexHull' does not exist.
+hive> desc function extended ST_Envelope;
+ST_Envelope(ST_Geometry) - the envelope of the ST_Geometry
+Synonyms: st_envelope
+Example:
+SELECT ST_Envelope(ST_LineString(0,0, 2,2)) from src LIMIT 1;  -- POLYGON ((0 0, 2 0, 2 2, 0 2, 0 0))
+SELECT ST_Envelope(ST_Polygon(2,0, 2,3, 3,0)) from src LIMIT 1;  -- POLYGON ((2 0, 3 0, 3 3, 2 3, 2 0))
+OGC Compliance Notes : 
+ In the case of a point or a vertical or horizontal line, ST_Envelope may either apply a tolerance or return an empty envelope.
+hive> desc function extended ST_Difference;
+ST_Difference(ST_Geometry1, ST_Geometry2) - return the difference of ST_Geometry1 - ST_Geometry2
+Synonyms: st_difference
+Examples:
+ > SELECT ST_AsText(ST_Difference(ST_MultiPoint(1, 1, 1.5, 1.5, 2, 2), ST_Point(1.5, 1.5))) FROM onerow; 
+ MULTIPOINT (1 1, 2 2)
+ > SELECT ST_AsText(ST_Difference(ST_Polygon(0, 0, 0, 10, 10, 10, 10, 0), ST_Polygon(0, 0, 0, 5, 5, 5, 5, 0))) from onerow;
+ MULTIPOLYGON (((10 0, 10 10, 0 10, 0 5, 5 5, 5 0, 10 0)))
+
+
+hive> desc function extended ST_Intersection;
+ST_Intersection(ST_Geometry1, ST_Geometry2) - intersection of ST_Geometry1 & ST_Geometry2
+Synonyms: st_intersection
+Example:
+  SELECT ST_AsText(ST_Intersection(ST_Point(1,1), ST_Point(1,1))) FROM onerow; -- POINT (1 1)
+  SELECT ST_AsText(ST_Intersection(ST_GeomFromText('linestring(0 2, 0 0, 2 0)'), ST_GeomFromText('linestring(0 3, 0 1, 1 0, 3 0)'))) FROM onerow; -- MULTILINESTRING ((1 0, 2 0), (0 2, 0 1))
+  SELECT ST_AsText(ST_Intersection(ST_LineString(0,2, 2,3), ST_Polygon(1,1, 4,1, 4,4, 1,4))) FROM onerow; -- MULTILINESTRING ((1 2.5, 2 3))
+  SELECT ST_AsText(ST_Intersection(ST_Polygon(2,0, 2,3, 3,0), ST_Polygon(1,1, 4,1, 4,4, 1,4))) FROM onerow; -- MULTIPOLYGON (((2.67 1, 2 3, 2 1, 2.67 1)))
+OGC Compliance Notes : 
+ In the case where the two geometries intersect in a lower dimension, ST_Intersection may drop the lower-dimension intersections, or output a closed linestring.
+SELECT ST_AsText(ST_Intersection(ST_Polygon(2,0, 3,1, 2,1), ST_Polygon(1,1, 4,1, 4,4, 1,4))) FROM onerow; -- MULTIPOLYGON EMPTY or LINESTRING (2 1, 3 1, 2 1)
+
+hive> desc function extended ST_Union;
+ST_Union(ST_Geometry, ST_Geometry, ...) - returns an ST_Geometry as the union of the supplied ST_Geometries
+Synonyms: st_union
+Example: SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4, 1, 4, 4, 4, 8, 8, 1))) FROM onerow;
+MULTIPOLYGON (((4 1, 8 1, 4 8, 4 4, 1 4, 1 1, 4 1)))
+hive> desc function extended ST_SymmetricDiff;
+ST_SymmetricDiff(ST_Geometry1, ST_Geometry2) - return the symmetric difference between ST_Geometry1 & ST_Geometry2
+Synonyms: st_symmetricdiff
+Examples:
+ > SELECT ST_AsText(ST_SymmetricDiff(ST_LineString('linestring(0 2, 2 2)'), ST_LineString('linestring(1 2, 3 2)'))) FROM onerow; 
+ MULTILINESTRING((0 2, 1 2), (2 2, 3 2))
+ > SELECT ST_AsText(ST_SymmetricDiff(ST_SymmetricDiff(ST_Polygon('polygon((0 0, 2 0, 2 2, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 3 1, 3 3, 1 3, 1 1))'))) from onerow;
+ MULTIPOLYGON (((0 0, 2 0, 2 1, 1 1, 1 2, 0 2, 0 0)), ((3 1, 3 3, 1 3, 1 2, 2 2, 2 1, 3 1)))
+
+hive> desc function extended ST_Aggr_ConvexHull;
+ST_Aggr_ConvexHull(ST_Geometry) - aggregate convex hull of all geometries passed
+Synonyms: st_aggr_convexhull
+Example:
+  SELECT ST_Aggr_ConvexHull(geometry) FROM source; -- return convex hull of all geometries in source
+hive> desc function extended ST_Aggr_Intersection;
+ST_Aggr_Intersection(ST_Geometry) - aggregate intersection of all geometries passed
+Synonyms: st_aggr_intersection
+Example:
+  SELECT ST_Aggr_Intersection(geometry) FROM source; -- return intersection of all geometries in source
+hive> desc function extended ST_Aggr_Union;
+ST_Aggr_Union(ST_Geometry) - aggregate union of all geometries passed
+Synonyms: st_aggr_union
+Example:
+  SELECT ST_Aggr_Union(geometry) FROM source; -- return union of all geometries in source
+hive> desc function extended ST_GeoSize;
+Function 'ST_GeoSize' does not exist.
+hive> desc function extended ST_Transform;
+Function 'ST_Transform' does not exist.
+hive> desc function extended ST_Equalsrs;
+Function 'ST_Equalsrs' does not exist.
+hive> 
