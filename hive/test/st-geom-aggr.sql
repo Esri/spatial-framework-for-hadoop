@@ -1,0 +1,12 @@
+select ST_AsText(ST_Aggr_Intersection(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 0;
+select ST_AsText(ST_Aggr_Intersection(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 1;
+select ST_AsText(ST_Aggr_Intersection(ST_LineString(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 2;
+select ST_AsText(ST_Aggr_Intersection(ST_Point(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 3;
+select ST_AsText(ST_Aggr_Union(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 0;
+select ST_AsText(ST_Aggr_Union(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 1;
+select ST_AsText(ST_Aggr_Union(ST_LineString(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 2;
+select ST_AsText(ST_Aggr_Union(ST_Point(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 3;
+select ST_AsText(ST_Aggr_ConvexHull(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 0;
+select ST_AsText(ST_Aggr_ConvexHull(ST_Polygon(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 1;
+select ST_AsText(ST_Aggr_ConvexHull(ST_LineString(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 2;
+select ST_AsText(ST_Aggr_ConvexHull(ST_Point(wkt))) from com_esri_hadoop_hive_aggr_tests where testcase = 3;
