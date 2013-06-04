@@ -19,9 +19,10 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	)
 
 public class ST_Aggr_Intersection extends UDAF {
+	static final Log LOG = LogFactory.getLog(ST_Aggr_Intersection.class.getName());
+
 	public static class AggrIntersectionBinaryEvaluator implements UDAFEvaluator {
 
-		static final Log LOG = LogFactory.getLog(ST_Aggr_Intersection.class.getName());
 		private OGCGeometry isectGeom = null;
 		SpatialReference spatialRef = null;
 		int firstWKID = -2;
@@ -49,8 +50,7 @@ public class ST_Aggr_Intersection extends UDAF {
 					spatialRef = SpatialReference.create(firstWKID);
 				}
 			} else if (firstWKID != GeometryUtils.getWKID(geomref)) {
-				LogUtils.Log_SRIDMismatch(LOG, geomref,
-										  GeometryUtils.geometryToEsriShapeBytesWritable(isectGeom));
+				LogUtils.Log_SRIDMismatch(LOG, geomref, firstWKID);
 				return false;
 			}
 
@@ -73,6 +73,7 @@ public class ST_Aggr_Intersection extends UDAF {
 		 * Merge the current state of this evaluator with the result of another evaluator's terminatePartial()
 		 */
 		public boolean merge(BytesWritable other) throws HiveException {
+			// for our purposes, merge is the same as iterate
 			return iterate(other);
 		}
 
