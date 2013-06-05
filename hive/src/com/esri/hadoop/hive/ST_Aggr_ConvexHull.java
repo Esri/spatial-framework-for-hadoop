@@ -15,7 +15,6 @@ import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.hadoop.hive.GeometryUtils.OGCType;
 
 @Description(
 		name = "ST_Aggr_ConvexHull",
@@ -82,7 +81,7 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		}
 
 		public BytesWritable terminatePartial() throws HiveException {
-			condAggregateBuffer(true);
+			maybeAggregateBuffer(true);
 			if (geometries.size() == 1) {
 				OGCGeometry rslt = OGCGeometry.createFromEsriGeometry(geometries.get(0), spatialRef);
 				return GeometryUtils.geometryToEsriShapeBytesWritable(rslt);
@@ -106,14 +105,14 @@ public class ST_Aggr_ConvexHull extends UDAF {
 
 		private void addGeometryToBuffer(Geometry geom) throws HiveException {
 			geometries.add(geom);
-			condAggregateBuffer(false);
+			maybeAggregateBuffer(false);
 		}
 
 		/*
 		 * If the right conditions are met (or force == true), create a convex hull of the geometries
 		 * in the current buffer
 		 */
-		protected void condAggregateBuffer(boolean force) throws HiveException {
+		protected void maybeAggregateBuffer(boolean force) throws HiveException {
 
 			if (force || geometries.size() > MAX_BUFFER_SIZE){
 				Geometry[] geomArray = new Geometry[geometries.size()];

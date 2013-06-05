@@ -54,6 +54,9 @@ public class ST_Aggr_Union extends UDAF {
 				if (firstWKID != GeometryUtils.WKID_UNKNOWN) {
 					spatialRef = SpatialReference.create(firstWKID);
 				}
+				// Need new geometry cursors both initially and after every terminatePartial(),
+				// because the geometry cursors can not be re-used after extracting the
+				// unioned geometry with GeometryCursor.next().
 				//Create an empty listener.
 				lgc = new ListeningGeometryCursor();
 				//Obtain union operator - after taking note of spatial reference.
