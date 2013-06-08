@@ -16,6 +16,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
+import org.apache.hadoop.hive.serde2.lazy.LazyPrimitive;
 import org.apache.hadoop.hive.serde2.lazybinary.LazyBinaryStruct;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
@@ -234,10 +235,17 @@ public class JsonSerde implements SerDe {
 			// first write attributes
 			jsonGen.writeObjectFieldStart("attributes");
 
-			for (int i=0;i<fieldWritables.size();i++){
-				if (i == geometryColumn) continue; // skip geometry, it comes later
-				
-				Writable writable = (Writable)fieldWritables.get(i);
+			for (int i = 0; i < fieldWritables.size(); i++) {
+				if (i == geometryColumn)
+					continue; // skip geometry, it comes later
+
+				Writable writable;
+				Object tmpObj = fieldWritables.get(i);
+				if (tmpObj instanceof LazyPrimitive) {  // usually Text, but have seen LazyString
+					writable = ((LazyPrimitive)(tmpObj)).getWritableObject();
+				} else {
+					writable = (Writable)tmpObj;
+				}
 				
 				jsonGen.writeObjectField(columnNames.get(i), writable.toString());
 			}
