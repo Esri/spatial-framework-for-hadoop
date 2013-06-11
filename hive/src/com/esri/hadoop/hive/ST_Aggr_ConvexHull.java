@@ -23,14 +23,13 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 			+ "  SELECT _FUNC_(geometry) FROM source; -- return convex hull of all geometries in source"
 		)
 
-// Idea: Geometry Collection
 public class ST_Aggr_ConvexHull extends UDAF {
 	static final Log LOG = LogFactory.getLog(ST_Aggr_ConvexHull.class.getName());
 
-	public static class AggrIntersectionBinaryEvaluator implements UDAFEvaluator {
+	public static class AggrConvexHullBinaryEvaluator implements UDAFEvaluator {
 
-		protected int MAX_BUFFER_SIZE = 1000;
-		protected ArrayList<Geometry> geometries = new ArrayList<Geometry>(MAX_BUFFER_SIZE);
+		private int MAX_BUFFER_SIZE = 1000;
+		private ArrayList<Geometry> geometries = new ArrayList<Geometry>(MAX_BUFFER_SIZE);
 		SpatialReference spatialRef = null;
 		int firstWKID = -2;
 		
@@ -38,7 +37,7 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		 * Initialize evaluator
 		 */
 		@Override
-			public void init(){
+		public void init() {
 
 			if (geometries.size() > 0){
 				geometries.clear();
@@ -48,9 +47,10 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		/*
 		 * Iterate is called once per row in a table
 		 */
-		public boolean iterate(BytesWritable geomref) throws HiveException{
+		public boolean iterate(BytesWritable geomref) throws HiveException {
 
 			if (geomref == null) {
+				LogUtils.Log_ArgumentsNull(LOG);
 				return false;
 			}
 
@@ -73,11 +73,8 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		 * Merge the current state of this evaluator with the result of another evaluator's terminatePartial()
 		 */
 		public boolean merge(BytesWritable other) throws HiveException {
-			if (other == null){
-				return false;
-			}
-			addGeometryToBuffer(other);
-			return true;
+			// for our purposes, merge is the same as iterate
+			return iterate(other);
 		}
 
 		public BytesWritable terminatePartial() throws HiveException {
@@ -98,7 +95,7 @@ public class ST_Aggr_ConvexHull extends UDAF {
 			return terminatePartial();
 		}
 
-		protected void addGeometryToBuffer(BytesWritable geomref) throws HiveException {
+		private void addGeometryToBuffer(BytesWritable geomref) throws HiveException {
 			OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geomref);
 			addGeometryToBuffer(ogcGeometry.getEsriGeometry());
 		}
@@ -112,7 +109,7 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		 * If the right conditions are met (or force == true), create a convex hull of the geometries
 		 * in the current buffer
 		 */
-		protected void maybeAggregateBuffer(boolean force) throws HiveException {
+		private void maybeAggregateBuffer(boolean force) throws HiveException {
 
 			if (force || geometries.size() > MAX_BUFFER_SIZE){
 				Geometry[] geomArray = new Geometry[geometries.size()];
@@ -120,7 +117,7 @@ public class ST_Aggr_ConvexHull extends UDAF {
 				geometries.clear();
 
 				try {
-					LOG.trace("performing convexHull");
+					//LOG.trace("performing convexHull");
 					Geometry[] convexResult = GeometryEngine.convexHull(geomArray, true);
 					Collections.addAll(geometries, convexResult);  // expect one
 				} catch (Exception e) {
