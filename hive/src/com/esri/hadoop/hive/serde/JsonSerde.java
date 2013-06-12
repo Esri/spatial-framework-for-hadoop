@@ -10,8 +10,6 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-// Hive-0.10 ~ serdeConstants ; Hive-0.9 ~ Constants - reflection below
-//import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
@@ -46,6 +44,7 @@ import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.hadoop.hive.GeometryUtils;
+import com.esri.hadoop.shims.HiveShims;
 
 public class JsonSerde implements SerDe {
 
@@ -72,45 +71,14 @@ public class JsonSerde implements SerDe {
 	ArrayList<ObjectInspector> columnOIs;
 	
 	boolean [] columnSet; 
-
-	// we want to set up the factory only once, so we'll do it in a static constructor
-	static {
-
-		// Set up the column name constants for handling both Hive 0.9 & 0.10
-		Class<?> cl;
-		try {      // hive-0.10
-			cl = Class.forName("org.apache.hadoop.hive.serde.serdeConstants");
-		} catch (ClassNotFoundException e) {
-			try {  // hive-0.9
-				cl = Class.forName("org.apache.hadoop.hive.serde.Constants");
-			} catch (ClassNotFoundException x) {
-				cl = null;
-			} 
-		}
-		if (cl != null) {
-			try {
-				Object constantClass = cl.newInstance();
-				columnNameConstant = (String)cl.getField("LIST_COLUMNS").get(constantClass);
-				columnTypeConstant = (String)cl.getField("LIST_COLUMN_TYPES").get(constantClass);
-
-			} catch (Exception e) {  // InstantiationException, IllegalAccessException;
-				// remain null       // IllegalArgumentException, SecurityException, ...
-			}                        // ... IllegalAccessException, NoSuchFieldException
-		}
-	}
 	
 	@Override
 	public void initialize(Configuration arg0, Properties tbl)
 			throws SerDeException {
 
 	    // Read the configuration parameters
-		if (columnNameConstant == null || columnTypeConstant == null) {
-			String blame = (columnNameConstant == null ? "name" : "type");
-			throw new SerDeException("Internal error regarding constant for " + blame);
-		}
-		
-		String columnNameProperty = tbl.getProperty(columnNameConstant);
-		String columnTypeProperty = tbl.getProperty(columnTypeConstant);
+		String columnNameProperty = tbl.getProperty(HiveShims.serdeConstants.LIST_COLUMNS);
+		String columnTypeProperty = tbl.getProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES);
 
 		ArrayList<TypeInfo> typeInfos = TypeInfoUtils
 				.getTypeInfosFromTypeString(columnTypeProperty);
