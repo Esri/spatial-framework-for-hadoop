@@ -15,6 +15,8 @@ select ST_GeometryType(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 
 select ST_X(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
 select ST_Y(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
 select ST_MinY(ST_GeomFromGeoJson('{"type":"LineString", "coordinates":[[1,2], [3,4]]}')) from onerow;
+select ST_GeometryType(ST_GeomFromGeoJson(ST_AsGeoJson(ST_Point(1.2, 2.4)))) from onerow;
+select ST_GeometryType(ST_GeomFromGeoJson(ST_AsGeoJson(ST_LineString(1,2, 3,4)))) from onerow;
 select ST_NumPoints(ST_Polygon(1.5,2.5, 3.0,2.2, 2.2,1.1)) from onerow;
 select ST_NumPoints(ST_Polygon(1.5,2.5, 3.0,2.2, 2.2,1.1, 1.5, 2.5)) from onerow;
 select ST_NumPoints(ST_Polygon(0.1,2.2, 3.0,2.2, 2.2,1.1, 0.1, 2.2)) from onerow;

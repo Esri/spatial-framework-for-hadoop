@@ -104,18 +104,18 @@ hive> select ST_AsJson(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 
 {"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}
 hive> select ST_AsText(ST_GeomFromGeoJson('{"type":"LineString", "coordinates":[[1,2], [3,4]]}')) from onerow;
 LINESTRING (1 2, 3 4)
-hive> select ST_AsText(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
-POINT (1.2 2.4)
-hive> select ST_AsJson(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
-{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}
 hive> select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}')) from onerow;
 {"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}
 hive> select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
 {"x":1.2,"y":2.4}
 hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}')) from onerow;
-tbd
+{"type":"Point","coordinates":[1.2,2.4]}
 hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
-tbd
+{"type":"Point","coordinates":[1.2,2.4]}
+hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_Point(1.2, 2.4)))) from onerow;
+POINT (1.2 2.4)
+hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_LineString(1,2, 3,4)))) from onerow;
+LINESTRING (1 2, 3 4)
 hive> select ST_AsText(ST_Boundary(ST_LineString(0,1, 1,0))) from onerow;
 MULTIPOINT ((0 1), (1 0))
 hive> select ST_AsText(ST_Boundary(ST_Polygon(1,1, 4,1, 1,4))) from onerow;

@@ -419,7 +419,8 @@ Synonyms: st_asgeojson
 Example:
   SELECT ST_AsGeoJSON(ST_Point(1.0, 2.0)) from onerow; -- {"type":"Point", "coordinates":[1.0, 2.0]}
 Note : 
- ST_AsGeoJSON returns null, until the underlying implementation is available in geometry-api-java.
+ ST_AsGeoJSON outputs the _geometry_ contents but not _crs_.
+ ST_AsGeoJSON requires geometry-api-java version 10632fd830 or later.
 
 hive> desc function extended ST_AsJSON;
 ST_AsJSON(ST_Geometry) - return JSON representation of ST_Geometry
@@ -512,7 +513,10 @@ Example:
   SELECT ST_Buffer(ST_Point(0, 0), 1) FROM src LIMIT 1;   -- polygon approximating a unit circle
 
 hive> desc function extended ST_ConvexHull;
-Function 'ST_ConvexHull' does not exist.
+ST_ConvexHull(ST_Geometry, ST_Geometry, ...) - returns an ST_Geometry as the convex hull of the supplied ST_Geometries
+Synonyms: st_convexhull
+Example: SELECT ST_AsText(ST_ConvexHull(ST_Point(0, 0), ST_Point(0, 1), ST_Point(1, 1))) FROM onerow;
+MULTIPOLYGON (((0 0, 1 1, 0 1, 0 0)))
 hive> desc function extended ST_Envelope;
 ST_Envelope(ST_Geometry) - the envelope of the ST_Geometry
 Synonyms: st_envelope
