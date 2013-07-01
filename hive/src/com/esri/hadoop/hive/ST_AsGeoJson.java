@@ -27,12 +27,12 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 			result = "{\"type\":\"Point\", \"coordinates\":[1.0, 2.0]}"
 			),
 		@HivePdkUnitTest(
-			query = "SELECT ST_AsGeoJSON(ST_MultiLineString(array(1, 1, 2, 2, 3, 3), array(10, 10, 11, 11, 12, 12))) from onerow",
-			result = "todo"
+			query = "SELECT ST_AsGeoJSON(ST_MultiLineString(array(1, 1, 2, 2, 3, 3), array(7,7, 8,8, 9,9))) from onerow",
+			result = "{\"type\":\"MultiLineString\",\"coordinates\":[[[1.0,1.0],[2.0,2.0],[3.0,3.0]],[[7.0,7.0],[8.0,8.0],[9.0,9.0]]]}"
 			),
 		@HivePdkUnitTest(
 			query = "SELECT ST_AsGeoJSON(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)) from onerow",
-			result = "todo"
+			result = "{\"type\":\"Polygon\",\"coordinates\":[[[1.0,1.0],[1.0,4.0],[4.0,4.0],[4.0,1.0],[1.0,1.0]]]}"
 			)
 		}
 	)
@@ -47,7 +47,7 @@ public class ST_AsGeoJson extends ST_Geometry {
 		}
 
 		OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geomref);
-		if (ogcGeometry == null){
+		if (ogcGeometry == null) {
 			LogUtils.Log_ArgumentsNull(LOG);
 			return null;
 		}
