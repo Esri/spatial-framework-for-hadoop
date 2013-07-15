@@ -55,6 +55,7 @@ select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":43
 select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
 select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}')) from onerow;
 select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
+SELECT ST_AsGeoJSON(ST_MultiLineString(array(1, 1, 2, 2, 3, 3), array(10, 10, 11, 11, 12, 12))) from onerow;
 select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_Point(1.2, 2.4)))) from onerow;
 select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_LineString(1,2, 3,4)))) from onerow;
 select ST_AsText(ST_Boundary(ST_LineString(0,1, 1,0))) from onerow;

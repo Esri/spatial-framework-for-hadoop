@@ -420,7 +420,7 @@ Example:
   SELECT ST_AsGeoJSON(ST_Point(1.0, 2.0)) from onerow; -- {"type":"Point", "coordinates":[1.0, 2.0]}
 Note : 
  ST_AsGeoJSON outputs the _geometry_ contents but not _crs_.
- ST_AsGeoJSON requires geometry-api-java version 10632fd830 or later.
+ ST_AsGeoJSON requires geometry-api-java version 1.1 or later.
 
 hive> desc function extended ST_AsJSON;
 ST_AsJSON(ST_Geometry) - return JSON representation of ST_Geometry

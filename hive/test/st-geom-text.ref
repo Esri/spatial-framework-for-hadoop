@@ -94,8 +94,8 @@ hive> select ST_AsText(ST_SetSRID(ST_GeomFromText('MultiLineString((0 80, 0.03 8
 LINESTRING (0 80, 0.03 80.04)
 hive> select ST_AsText(ST_GeomFromText('MultiLineString((0 80, 0.03 80.04))', 4326)) from onerow;
 MULTILINESTRING ((0 80, 0.03 80.04))
-hive> select ST_AsJson(ST_Intersection(st_linestring(0,0, 1,1), ST_linestring(2,2, 3,3))) from onerow;
-{"paths":[]}
+hive> select ST_AsJson(ST_Intersection(ST_Linestring(0,0, 1,1), ST_Linestring(2,2, 3,3))) from onerow;
+{"rings":[]}
 hive> select ST_AsJson(ST_GeomFromJson('{"x":0.0,"y":0.0}')) from onerow;
 {"x":0.0,"y":0.0}
 hive> select ST_AsText(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
@@ -112,6 +112,8 @@ hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{
 {"type":"Point","coordinates":[1.2,2.4]}
 hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
 {"type":"Point","coordinates":[1.2,2.4]}
+hive> SELECT ST_AsGeoJSON(ST_MultiLineString(array(1, 1, 2, 2, 3, 3), array(10, 10, 11, 11, 12, 12))) from onerow;
+{"type":"MultiLineString","coordinates":[[[1.0,1.0],[2.0,2.0],[3.0,3.0]],[[10.0,10.0],[11.0,11.0],[12.0,12.0]]]}
 hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_Point(1.2, 2.4)))) from onerow;
 POINT (1.2 2.4)
 hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_LineString(1,2, 3,4)))) from onerow;
