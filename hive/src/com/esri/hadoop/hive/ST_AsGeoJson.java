@@ -3,7 +3,6 @@ package com.esri.hadoop.hive;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
-import org.apache.hadoop.hive.ql.exec.UDF;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hive.pdk.HivePdkUnitTest;
@@ -18,7 +17,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	"  SELECT _FUNC_(ST_Point(1.0, 2.0)) from onerow; -- {\"type\":\"Point\", \"coordinates\":[1.0, 2.0]}\n" +
 	"Note : \n" +
 	" ST_AsGeoJSON outputs the _geometry_ contents but not _crs_.\n" +
-	" ST_AsGeoJSON requires geometry-api-java version 10632fd830 or later.\n"
+	" ST_AsGeoJSON requires geometry-api-java version 1.1 or later.\n"
 	)
 @HivePdkUnitTests(
 	cases = { 
@@ -38,6 +37,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	)
 
 public class ST_AsGeoJson extends ST_Geometry {
+	static final Text resultText = new Text();
 	static final Log LOG = LogFactory.getLog(ST_AsGeoJson.class.getName());
 
 	public Text evaluate(BytesWritable geomref) {
@@ -54,7 +54,8 @@ public class ST_AsGeoJson extends ST_Geometry {
 
 		try {
 			String outJson = ogcGeometry.asGeoJson();
-			return new Text(outJson);
+			resultText.set(outJson);
+			return resultText;
 		} catch (Exception e) {
 			LogUtils.Log_InternalError(LOG, "ST_AsGeoJSON: " + e);
 			return null;
