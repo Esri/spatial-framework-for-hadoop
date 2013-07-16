@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Esri/spatial-framework-for-hadoop.png?branch=master)](https://travis-ci.org/Esri/spatial-framework-for-hadoop)
 # spatial-framework-for-hadoop
 
 The __Spatial Framework for Hadoop__ allows developers and data scientists to use the Hadoop data processing system 
