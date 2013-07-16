@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Esri/spatial-framework-for-hadoop.png?branch=master)](https://travis-ci.org/Esri/spatial-framework-for-hadoop)
 # spatial-framework-for-hadoop
 
 The __Spatial Framework for Hadoop__ allows developers and data scientists to use the Hadoop data processing system 
@@ -18,12 +19,21 @@ Functions and SerDes for spatial analysis in Hive
 
 ## Getting Started
 
+### Maven
+
+Build as you would any other Mavenized repository.  All dependencies are pulled automatically. 
+
+### Ant
+
+Ant build files are also available
+
 At the root level of this repository, you can build a single jar with everything in the framework 
 using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each 
 framework component (i.e., `hive\build.xml`).
 
 The build files use [Maven Ant Tasks](http://maven.apache.org/ant-tasks/download.html) for dependency 
 management. You will need the jar in a place Ant can find it (i.e., `~/.ant/lib/maven-ant-tasks-2.1.3.jar`).
+
 
 ## Dependencies
 
@@ -32,6 +42,7 @@ processing.
 
 ## Requirements
 
+* Hive 0.10.0 and above (or Hive 0.9.0 patched with [HIVE-2736](https://issues.apache.org/jira/browse/HIVE-2736))
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
 (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the 
