@@ -19,7 +19,6 @@
 		</license>
   </licenses>
 
-<!--
 	<parent>
   	<groupId>org.sonatype.oss</groupId>
   	<artifactId>oss-parent</artifactId>
@@ -31,7 +30,7 @@
 		<developerConnection>scm:git:git@github.com:Esri/spatial-framework-for-hadoop.git</developerConnection>
 		<url>git@github.com:Esri/spatial-framework-for-hadoop.git</url>
 	</scm>
--->
+
 
   <modules>
     <module>hive</module>
