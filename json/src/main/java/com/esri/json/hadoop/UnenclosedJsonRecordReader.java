@@ -26,20 +26,33 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	private BufferedReader inputReader;
 	private FileSplit fileSplit;
 	
-	long fileLength;
 	
-	int readerPosition = 0;
+	long readerPosition;
+	long start, end;
+	private boolean firstParenConsumed = false;
 	
 	public UnenclosedJsonRecordReader(InputSplit split, Configuration conf) throws IOException
 	{
 		fileSplit = (FileSplit)split;
-		fileLength = fileSplit.getLength();
 		
 		Path filePath = fileSplit.getPath();
+		
+		start = fileSplit.getStart();
+		end = fileSplit.getLength() + start;
+		
+		readerPosition = start;
+		
+		//System.out.println("read bytes " + start + " -> " + end);
 		
 		FileSystem fs = filePath.getFileSystem(conf);
 		
 		inputReader = new BufferedReader(new InputStreamReader(fs.open(filePath)));
+		
+		if (start != 0) {
+			// split starts inside the json
+			inputReader.skip(start);
+			findNextRecordStart();
+		}
 	}
 	
 	@Override
@@ -65,9 +78,55 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 
 	@Override
 	public float getProgress() throws IOException {
-		return (float)readerPosition/fileLength;
+		return (float)(readerPosition-start)/(end-start);
 	}
-
+	
+	private void findNextRecordStart() throws IOException {
+		char chr;
+		char lastImportantChar = 0;
+		
+		long resetPosition = readerPosition;
+		
+		//System.out.println("start=" + readerPosition);
+		//System.out.print("skipped=");
+		System.out.println("skipping");
+		while (readerPosition < end) {
+			
+			chr = (char)inputReader.read();
+			readerPosition++;
+			System.out.println(chr);
+			
+			switch (chr) {
+			case '{':
+				lastImportantChar = '{';
+				inputReader.mark(100);
+				resetPosition = readerPosition;
+				continue;
+			case '"':
+				if (lastImportantChar == '{') {
+					lastImportantChar = '"';
+					continue;
+				} 
+				break;
+			case 'a': case 'g':
+				if (lastImportantChar == '"') {
+					//System.out.println("\nfinished=" + readerPosition);
+					// this means that we have seen {"a or {"g, which means we found the record start
+					inputReader.reset();
+					readerPosition = resetPosition;
+					firstParenConsumed = true;
+					return;
+				}
+			}
+			
+			if (lastImportantChar == '{' && Character.isWhitespace(chr)) {
+				// carry on
+			} else {
+				lastImportantChar = 0;
+			}
+		}
+	}
+	
 	@Override
 	public boolean next(LongWritable key, Text value) throws IOException {
 		/*
@@ -86,13 +145,24 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		 * 
 		 * We will count '{' and '}' to find the beginning and end of each record, while ignoring braces in string literals
 		 */
-		int paren_depth = 0;
-		int chr = 0;
-		char lit_char = 0;
 		
+		if (readerPosition >= end) {
+			return false;
+		}
+		
+		int chr = 0;
+		int paren_depth = 0;
+		char lit_char = 0;
 		boolean first_paren_found = false;
 		
 		StringBuilder sb = new StringBuilder(2000);
+		
+		if (firstParenConsumed) {
+			paren_depth = 1;
+			sb.append("{");
+			first_paren_found = true;
+			firstParenConsumed = false; // this should only ever be true on the very first read
+		}
 		
 		while (paren_depth > 0 || !first_paren_found)
 		{
