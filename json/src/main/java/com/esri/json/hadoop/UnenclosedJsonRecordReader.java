@@ -29,7 +29,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	
 	long readerPosition;
 	long start, end;
-	private boolean firstParenConsumed = false;
+	private boolean firstBraceConsumed = false;
 	
 	public UnenclosedJsonRecordReader(InputSplit split, Configuration conf) throws IOException
 	{
@@ -81,20 +81,24 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		return (float)(readerPosition-start)/(end-start);
 	}
 	
+	/**
+	 * Given an arbitrary byte offset into a unenclosed JSON document, 
+	 * find the start of the next record in the document.  Discard trailing
+	 * bytes from the previous record if we happened to seek to the middle
+	 * of it
+	 * 
+	 * @throws IOException
+	 */
 	private void findNextRecordStart() throws IOException {
 		char chr;
 		char lastImportantChar = 0;
 		
 		long resetPosition = readerPosition;
-		
-		//System.out.println("start=" + readerPosition);
-		//System.out.print("skipped=");
-		System.out.println("skipping");
+	
 		while (readerPosition < end) {
 			
 			chr = (char)inputReader.read();
 			readerPosition++;
-			System.out.println(chr);
 			
 			switch (chr) {
 			case '{':
@@ -110,11 +114,10 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				break;
 			case 'a': case 'g':
 				if (lastImportantChar == '"') {
-					//System.out.println("\nfinished=" + readerPosition);
 					// this means that we have seen {"a or {"g, which means we found the record start
 					inputReader.reset();
 					readerPosition = resetPosition;
-					firstParenConsumed = true;
+					firstBraceConsumed = true;
 					return;
 				}
 			}
@@ -151,26 +154,28 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		}
 		
 		int chr = 0;
-		int paren_depth = 0;
+		int brace_depth = 0;
 		char lit_char = 0;
-		boolean first_paren_found = false;
+		boolean first_brace_found = false;
 		
 		StringBuilder sb = new StringBuilder(2000);
 		
-		if (firstParenConsumed) {
-			paren_depth = 1;
+		if (firstBraceConsumed) {
+			// first open bracket was consumed by the findNextRecordStart() method, update
+			// initial state accordingly
+			brace_depth = 1;
 			sb.append("{");
-			first_paren_found = true;
-			firstParenConsumed = false; // this should only ever be true on the very first read
+			first_brace_found = true;
+			firstBraceConsumed = false; // this should only ever be true on the very first read
 		}
 		
-		while (paren_depth > 0 || !first_paren_found)
+		while (brace_depth > 0 || !first_brace_found)
 		{
 			chr = inputReader.read();
 			readerPosition++;
 			
 			if (chr < 0){
-				if (first_paren_found){
+				if (first_brace_found){
 					// last record was invalid
 					LOG.error("Parsing error : EOF occured before record ended");
 				}
@@ -204,32 +209,32 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 			case '{':
 				if (lit_char == 0) // not in string literal, so increase paren depth
 				{
-					paren_depth++;
-					first_paren_found = true;
+					brace_depth++;
+					first_brace_found = true;
 					key.set(readerPosition); // set record key to the char offset of the first '{'
 				}
 				break;
 			case '}':
 				if (lit_char == 0) // not in string literal, so decrease paren depth
 				{
-					paren_depth--;
+					brace_depth--;
 				}
 				break;
 			}
 			
-			if (paren_depth < 0){
+			if (brace_depth < 0){
 				// found more '}'s than we did '{'s
 				LOG.error("Parsing error : unmatched '}' in record");
 				return false;
 			}
 			
-			if (first_paren_found){
+			if (first_brace_found){
 				sb.append((char)chr);
 			}
 		}
 		
 		// no '{' found before EOF.  Not an error as this could mean that there is extra white-space at the end
-		if (!first_paren_found){
+		if (!first_brace_found){
 			return false;
 		}
 		
