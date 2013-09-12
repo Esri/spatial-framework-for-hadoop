@@ -46,7 +46,8 @@
     <hadoop.version>1.1.1</hadoop.version>
     <hive.version>0.10.0</hive.version>
     <jackson.version>1.8.8</jackson.version>
-	<geometry.version>1.1.1</geometry.version>
+	  <geometry.version>1.1.1</geometry.version>
+    <junit.version>4.11</junit.version>
 
     <!-- Versions for plugins -->
     <compiler.plugin.version>2.3.2</compiler.plugin.version>
@@ -116,6 +117,14 @@
         <artifactId>esri-geometry-api</artifactId>
         <version>${geometry.version}</version>
       </dependency>
+      
+      <dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+      
     </dependencies>
   </dependencyManagement>
 
