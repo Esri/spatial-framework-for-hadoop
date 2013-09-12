@@ -94,7 +94,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		
 		while (true) {
 
-			// check to see if the last token scanned by the parser was a {
+			// scan until we reach a {
 			while (next != '{') {
 				next = inputReader.read(); readerPosition++;
 				
