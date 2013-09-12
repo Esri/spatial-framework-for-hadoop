@@ -86,6 +86,8 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	 * bytes from the previous record if we happened to seek to the middle
 	 * of it
 	 * 
+	 * Record boundary definied as : \{\s*"(attributes|geometry)"\s*:\s*\{
+	 * 
 	 * @throws IOException
 	 */
 	private boolean moveToRecordStart() throws JsonParseException, IOException {
@@ -200,11 +202,11 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		 * The JSON will look like this (white-space ignored)
 		 * 
 		 * { // start record 1
-		 * 	"attrubites" : {}
+		 * 	"attributes" : {}
 		 *  "geometry" : {}
 		 * } // end record 1
 		 * { // start record 2
-		 * 	"attrubites" : {}
+		 * 	"attributes" : {}
 		 *  "geometry" : {}
 		 * } // end record 2
 		 * 
