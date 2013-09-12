@@ -42,9 +42,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		end = fileSplit.getLength() + start;
 		
 		readerPosition = start;
-		
-		//System.out.println("read bytes " + start + " -> " + end);
-		
+
 		FileSystem fs = filePath.getFileSystem(conf);
 		
 		inputReader = new BufferedReader(new InputStreamReader(fs.open(filePath)));
@@ -95,24 +93,17 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		long resetPosition = readerPosition;
 		
 		while (true) {
-			
-			// check to see if the last token scanned by the parser was a {
-			if (next != '{') {
-				while (true) {
-					next = inputReader.read(); readerPosition++;
-					
-					// end of stream, no good
-					if (next < 0) {
-						return false;
-					}
 
-					if ((char)next == '{') 
-					{
-						break;
-					}
+			// check to see if the last token scanned by the parser was a {
+			while (next != '{') {
+				next = inputReader.read(); readerPosition++;
+				
+				// end of stream, no good
+				if (next < 0) {
+					return false;
 				}
 			}
-
+			
 			resetPosition = readerPosition;
 			inputReader.mark(100);
 			
