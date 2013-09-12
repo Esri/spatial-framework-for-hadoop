@@ -14,6 +14,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.RecordReader;
+import org.codehaus.jackson.JsonParseException;
 
 /**
  * 
@@ -51,7 +52,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		if (start != 0) {
 			// split starts inside the json
 			inputReader.skip(start);
-			findNextRecordStart();
+			moveToRecordStart();
 		}
 	}
 	
@@ -89,47 +90,117 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	 * 
 	 * @throws IOException
 	 */
-	private void findNextRecordStart() throws IOException {
-		char chr;
-		char lastImportantChar = 0;
-		
+	private boolean moveToRecordStart() throws JsonParseException, IOException {
+		int next = 0;
 		long resetPosition = readerPosition;
-	
-		while (readerPosition < end) {
+		
+		while (true) {
 			
-			chr = (char)inputReader.read();
-			readerPosition++;
+			// check to see if the last token scanned by the parser was a {
+			if (next != '{') {
+				while (true) {
+					next = inputReader.read(); readerPosition++;
+					
+					// end of stream, no good
+					if (next < 0) {
+						return false;
+					}
+
+					if ((char)next == '{') 
+					{
+						break;
+					}
+				}
+			}
+
+			resetPosition = readerPosition;
+			inputReader.mark(100);
 			
-			switch (chr) {
-			case '{':
-				lastImportantChar = '{';
-				inputReader.mark(100);
-				resetPosition = readerPosition;
-				continue;
-			case '"':
-				if (lastImportantChar == '{') {
-					lastImportantChar = '"';
-					continue;
-				} 
-				break;
-			case 'a': case 'g':
-				if (lastImportantChar == '"') {
-					// this means that we have seen {"a or {"g, which means we found the record start
-					inputReader.reset();
-					readerPosition = resetPosition;
-					firstBraceConsumed = true;
-					return;
+			// ok last char was '{', skip till we get to a '"'
+			while (true) {
+				next = inputReader.read(); readerPosition++;
+				
+				// end of stream, no good
+				if (next < 0) {
+					return false;
+				}
+				
+				if (!Character.isWhitespace((char)next)) {
+					break;
 				}
 			}
 			
-			if (lastImportantChar == '{' && Character.isWhitespace(chr)) {
-				// carry on
-			} else {
-				lastImportantChar = 0;
+			if (next != '"') {
+				continue;
+			}
+			
+			String fieldName = "";
+			// next should be a field name of attributes or geometry
+			while (true) {
+				next = inputReader.read(); readerPosition++;
+				
+				// end of stream, no good
+				if (next < 0) {
+					return false;
+				}
+				
+				if (next == '"') {
+					break;
+				}
+				
+				fieldName += (char)next;
+			}
+			
+			if (!(fieldName.equals("attributes") || fieldName.equals("geometry"))) {
+				// not the field name we were expecting, start over
+				continue;
+			}
+			
+			// ok last char was '"', skip till we get to a ':'
+			while (true) {
+				next = inputReader.read(); readerPosition++;
+				
+				// end of stream, no good
+				if (next < 0) {
+					return false;
+				}
+				
+				if (!Character.isWhitespace((char)next)) {
+					break;
+				}
+			}
+			
+			if (next != ':') {
+				continue;
+			}
+			
+			// and finally, if the next char is a {, we know for sure that this is a valid record
+			while (true) {
+				next = inputReader.read(); readerPosition++;
+				
+				// end of stream, no good
+				if (next < 0) {
+					return false;
+				}
+				
+				if (!Character.isWhitespace((char)next)) {
+					break;
+				}
+			}
+			
+			if (next == '{') {
+				// at this point we can be sure that we have found the record boundary
+				break;
 			}
 		}
+		
+		inputReader.reset();
+		readerPosition = resetPosition;
+		
+		firstBraceConsumed = true;
+		
+		return true;
 	}
-	
 	@Override
 	public boolean next(LongWritable key, Text value) throws IOException {
 		/*
@@ -167,6 +238,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 			sb.append("{");
 			first_brace_found = true;
 			firstBraceConsumed = false; // this should only ever be true on the very first read
+			key.set(readerPosition - 1);
 		}
 		
 		while (brace_depth > 0 || !first_brace_found)
@@ -210,8 +282,10 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				if (lit_char == 0) // not in string literal, so increase paren depth
 				{
 					brace_depth++;
-					first_brace_found = true;
-					key.set(readerPosition); // set record key to the char offset of the first '{'
+					if (!first_brace_found) {
+						first_brace_found = true;
+						key.set(readerPosition - 1); // set record key to the char offset of the first '{'
+					}
 				}
 				break;
 			case '}':
