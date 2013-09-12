@@ -86,7 +86,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	 * bytes from the previous record if we happened to seek to the middle
 	 * of it
 	 * 
-	 * Record boundary definied as : \{\s*"(attributes|geometry)"\s*:\s*\{
+	 * Record boundary defined as : \{\s*"(attributes|geometry)"\s*:\s*\{
 	 * 
 	 * @throws IOException
 	 */
