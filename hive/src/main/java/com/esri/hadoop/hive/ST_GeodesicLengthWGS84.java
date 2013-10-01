@@ -19,8 +19,8 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 @Description(name = "ST_GeodesicLengthWGS84",
    value = "_FUNC_(line) - returns distance along line on WGS84 spheroid, in meters, for geographic coordinates",
    extended = "Example:\n"
-   + " SELECT _FUNC_(ST_Linestring(0.0,0.0, 0.3,0.4)) FROM src LIMIT 1; -- 55km\n"
-   + " SELECT _FUNC_(ST_Linestring(0.0,80.0, 0.3,80.4)) FROM src LIMIT 1; -- 45km\n"
+   + " SELECT _FUNC_(ST_SetSRID(ST_Linestring(0.0,0.0, 0.3,0.4), 4326)) FROM src LIMIT 1; -- 55km\n"
+   + " SELECT _FUNC_(ST_GeomFromText('MultiLineString((0.0 80.0, 0.3 80.4))', 4326)) FROM src LIMIT 1; -- 45km\n"
 )
 @HivePdkUnitTests(
 	cases = {
