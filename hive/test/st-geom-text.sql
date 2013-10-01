@@ -32,6 +32,9 @@ select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))')))
 select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))'))) from onerow;
 select ST_AsText(ST_Centroid(ST_MultiPolygon(array(1,1, 1,2, 2,2, 2,1), array(3,3, 3,4, 4,4, 4,3)))) from onerow;
 select ST_Area(ST_Buffer(ST_GeomFromText('point (0 0)'), 1)) from onerow;
+select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,-80, -179.98, -80.03), 4326)) from onerow;
+select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,80, -179.98, 80.03), 4326)) from onerow;
+select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,-0.01, -179.98, 0.02), 4326)) from onerow;
 select ST_AsText(ST_Buffer(ST_GeomFromText('polygon ((0 0, 3 0, 3 2, 5 2, 5 5, 2 5, 2 3, 0 3, 0 0))'), -1)) from onerow;
 select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))'))) from onerow;
 select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))'))) from onerow;

@@ -321,8 +321,8 @@ hive> desc function extended ST_GeodesicLengthWGS84;
 ST_GeodesicLengthWGS84(line) - returns distance along line on WGS84 spheroid, in meters, for geographic coordinates
 Synonyms: st_geodesiclengthwgs84
 Example:
- SELECT ST_GeodesicLengthWGS84(ST_Linestring(0.0,0.0, 0.3,0.4)) FROM src LIMIT 1; -- 55km
- SELECT ST_GeodesicLengthWGS84(ST_Linestring(0.0,80.0, 0.3,80.4)) FROM src LIMIT 1; -- 45km
+ SELECT ST_GeodesicLengthWGS84(ST_SetSRID(ST_Linestring(0.0,0.0, 0.3,0.4), 4326)) FROM src LIMIT 1; -- 55km
+ SELECT ST_GeodesicLengthWGS84(ST_GeomFromText('MultiLineString((0.0 80.0, 0.3 80.4))', 4326)) FROM src LIMIT 1; -- 45km
 
 hive> desc function extended ST_Area;
 ST_Area(ST_Polygon) - returns the area of polygon or multipolygon
