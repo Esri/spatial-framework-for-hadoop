@@ -42,6 +42,7 @@ import org.codehaus.jackson.JsonToken;
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.MapGeometry;
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.hadoop.hive.GeometryUtils;
 import com.esri.hadoop.shims.HiveShims;
@@ -244,8 +245,10 @@ public class JsonSerde implements SerDe {
 					if (parser.getCurrentName() == "geometry") {
 						if (geometryColumn > -1) {
 							// create geometry and insert into geometry field
-							Geometry geometry =  GeometryEngine.jsonToGeometry(parser).getGeometry();
-							row.set(geometryColumn, GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(geometry, null)));
+							MapGeometry mapGeom =  GeometryEngine.jsonToGeometry(parser);
+							row.set(geometryColumn,
+									GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mapGeom.getGeometry(),
+																													  mapGeom.getSpatialReference())));
 						} else {
 							// no geometry in select field set, don't even bother parsing
 							parser.skipChildren();
@@ -352,7 +355,8 @@ public class JsonSerde implements SerDe {
 				
 				OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(bytesWritable);
 				
-				jsonGen.writeRaw(",\"geometry\":" + GeometryEngine.geometryToJson(null, ogcGeometry.getEsriGeometry()));
+				jsonGen.writeRaw(",\"geometry\":" + GeometryEngine.geometryToJson(ogcGeometry.getEsriSpatialReference(),
+																				  ogcGeometry.getEsriGeometry()));
 				
 			}
 
