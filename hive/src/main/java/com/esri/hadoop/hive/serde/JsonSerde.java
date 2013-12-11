@@ -40,7 +40,6 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonToken;
 
-import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MapGeometry;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -245,8 +244,8 @@ public class JsonSerde implements SerDe {
 					if (parser.getCurrentName() == "geometry") {
 						if (geometryColumn > -1) {
 							// create geometry and insert into geometry field
-							MapGeometry mapGeom =  GeometryEngine.jsonToGeometry(parser);
-							row.set(geometryColumn,
+							MapGeometry mapGeom = GeometryEngine.jsonToGeometry(parser);
+							row.set(geometryColumn, mapGeom == null ? null :
 									GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mapGeom.getGeometry(),
 																													  mapGeom.getSpatialReference())));
 						} else {
@@ -352,12 +351,13 @@ public class JsonSerde implements SerDe {
 			// if geometry column exists, write it
 			if (geometryColumn > -1) {
 				BytesWritable bytesWritable = (BytesWritable)fieldWritables.get(geometryColumn);
-				
-				OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(bytesWritable);
-				
-				jsonGen.writeRaw(",\"geometry\":" + GeometryEngine.geometryToJson(ogcGeometry.getEsriSpatialReference(),
+				if (bytesWritable == null) {
+					jsonGen.writeObjectField("geometry", null);
+				} else {
+					OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(bytesWritable);
+					jsonGen.writeRaw(",\"geometry\":" + GeometryEngine.geometryToJson(ogcGeometry.getEsriSpatialReference(),
 																				  ogcGeometry.getEsriGeometry()));
-				
+				}				
 			}
 
 			jsonGen.writeEndObject();
