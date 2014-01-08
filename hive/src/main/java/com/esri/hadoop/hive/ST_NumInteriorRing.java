@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCPolygon;
@@ -19,22 +18,22 @@ import com.esri.core.geometry.ogc.OGCPolygon;
 	+ "  SELECT _FUNC_(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) FROM src LIMIT 1;  -- 1\n"
 	)
 
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_NumInteriorRing(ST_Polygon('polygon ((1 1, 4 1, 1 4))')) from onerow",
-			result = "0"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_NumInteriorRing(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) from onerow",
-			result = "1"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_NumInteriorRing(null) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_NumInteriorRing(ST_Polygon('polygon ((1 1, 4 1, 1 4))')) from onerow",
+//			result = "0"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_NumInteriorRing(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) from onerow",
+//			result = "1"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_NumInteriorRing(null) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_NumInteriorRing extends ST_GeometryAccessor {
 	static final Log LOG = LogFactory.getLog(ST_NumInteriorRing.class.getName());

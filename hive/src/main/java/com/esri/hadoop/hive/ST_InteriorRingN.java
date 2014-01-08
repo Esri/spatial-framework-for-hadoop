@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCLineString;
@@ -18,18 +17,18 @@ import com.esri.core.geometry.ogc.OGCPolygon;
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1) FROM src LIMIT 1;  -- LINESTRING (1 1, 5 1, 1 5, 1 1)\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_InteriorRingN(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1), ST_LineString('linestring(1 1, 5 1, 1 5, 1 1)')) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_InteriorRingN(null, 1) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_InteriorRingN(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1), ST_LineString('linestring(1 1, 5 1, 1 5, 1 1)')) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_InteriorRingN(null, 1) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_InteriorRingN extends ST_GeometryProcessing {
 	static final Log LOG = LogFactory.getLog(ST_InteriorRingN.class.getName());

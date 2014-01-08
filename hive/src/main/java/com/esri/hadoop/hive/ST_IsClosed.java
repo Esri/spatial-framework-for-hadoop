@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.MultiPath;
 import com.esri.core.geometry.Point;
@@ -20,34 +19,34 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	+ "  SELECT _FUNC_(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- true\n"
 	+ "  SELECT _FUNC_(ST_LineString(0.,0., 3.,4.)) FROM src LIMIT 1;  -- false\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(ST_LineString(0.,0., 3.,4.)) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2), (6 2, 7 8))')) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2, 0 0), (6 2, 7 8))')) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2, 0 0), (6 2, 7 5, 6 8, 6 2))')) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsClosed(null) from onerow",
-			result = "null"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(ST_LineString(0.,0., 3.,4.)) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2), (6 2, 7 8))')) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2, 0 0), (6 2, 7 8))')) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(ST_MultiLineString('multilinestring ((0 0, 3 4, 2 2, 0 0), (6 2, 7 5, 6 8, 6 2))')) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsClosed(null) from onerow",
+//			result = "null"
+//			)
+//		}
+//	)
 
 public class ST_IsClosed extends ST_GeometryAccessor {
 	public static final BooleanWritable resultBoolean = new BooleanWritable();

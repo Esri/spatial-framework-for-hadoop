@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
@@ -17,14 +16,14 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	value = "_FUNC_(ST_Geometry, ST_Geometry, ...) - returns an ST_Geometry as the convex hull of the supplied ST_Geometries",
 	extended = "Example: SELECT ST_AsText(ST_ConvexHull(ST_Point(0, 0), ST_Point(0, 1), ST_Point(1, 1))) FROM onerow;\n" + 
 		"MULTIPOLYGON (((0 0, 1 1, 0 1, 0 0)))")
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "SELECT ST_AsText(ST_ConvexHull(ST_Point(0, 0), ST_Point(0, 1), ST_Point(1, 1))) FROM onerow",
-			result = "MULTIPOLYGON (((0 0, 1 1, 0 1, 0 0)))"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "SELECT ST_AsText(ST_ConvexHull(ST_Point(0, 0), ST_Point(0, 1), ST_Point(1, 1))) FROM onerow",
+//			result = "MULTIPOLYGON (((0 0, 1 1, 0 1, 0 0)))"
+//			)
+//		}
+//	)
 
 public class ST_ConvexHull extends ST_GeometryProcessing{
 	

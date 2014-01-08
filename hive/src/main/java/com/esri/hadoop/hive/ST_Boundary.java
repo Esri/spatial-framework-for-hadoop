@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCMultiLineString;
@@ -17,18 +16,18 @@ import com.esri.core.geometry.ogc.OGCMultiLineString;
 	+ "  SELECT _FUNC_(ST_LineString(0,1, 1,0))) FROM src LIMIT 1;   -- MULTIPOINT((1 0),(0 1))\n"
 	+ "  SELECT _FUNC_(ST_Polygon(1,1, 4,1, 1,4)) FROM src LIMIT 1;  -- LINESTRING(1 1, 4 1, 1 4, 1 1)\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_Boundary(ST_Linestring('linestring (10 10, 20 20)'))) from onerow",
-			result = "ST_MULTIPOINT"
-			 ),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_Boundary(ST_Linestring('linestring (10 10, 20 20)')), ST_GeomFromText('multipoint ((10 10), (20 20))')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_Boundary(ST_Linestring('linestring (10 10, 20 20)'))) from onerow",
+//			result = "ST_MULTIPOINT"
+//			 ),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_Boundary(ST_Linestring('linestring (10 10, 20 20)')), ST_GeomFromText('multipoint ((10 10), (20 20))')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 // The boundary of a point (or multipoint) is the empty set  OGC 4.18, 6.1.5
 // The boundary of a closed curve is empty; non-closed curve, its 2 end points  OGC 6.1.6.1

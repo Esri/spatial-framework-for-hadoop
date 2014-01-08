@@ -6,8 +6,7 @@ import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 // DoubleWritable - must use hive-serde2; the other one produces struct {value:d.d}
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCPoint;
@@ -17,30 +16,30 @@ import com.esri.core.geometry.ogc.OGCPoint;
    extended = "Example:\n"
    + "  SELECT _FUNC_(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  --  1.5"
 )
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_Z(ST_Point(1,2,3)) from onerow",
-			result = "3.0"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Z(ST_PointZ(0., 3., 1)) from onerow",
-			result = "1.0"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Z(ST_Point('pointzm (0. 3. 1. 2.)')) from onerow",
-			result = "1.0"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Z(ST_Point(1,2)) from onerow",
-			result = "null"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Z(null) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_Z(ST_Point(1,2,3)) from onerow",
+//			result = "3.0"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Z(ST_PointZ(0., 3., 1)) from onerow",
+//			result = "1.0"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Z(ST_Point('pointzm (0. 3. 1. 2.)')) from onerow",
+//			result = "1.0"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Z(ST_Point(1,2)) from onerow",
+//			result = "null"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Z(null) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_Z extends ST_GeometryAccessor {
 	public static final DoubleWritable resultDouble = new DoubleWritable();

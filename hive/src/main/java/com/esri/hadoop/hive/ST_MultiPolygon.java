@@ -10,8 +10,7 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -23,18 +22,18 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(array(1, 1, 1, 2, 2, 2, 2, 1), array(3, 3, 3, 4, 4, 4, 4, 3)) from src LIMIT 1;\n" + 
 	"  SELECT _FUNC_('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))') from src LIMIT 1;")
-@HivePdkUnitTests(
-	cases = { 
-		@HivePdkUnitTest(
-			query = "select st_asjson(st_multipolygon(array(1, 1, 1, 2, 2, 2, 2, 1), array(3, 3, 3, 4, 4, 4, 4, 3))) from onerow;",
-			result = "{\"rings\":[[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]],[[3.0,3.0],[3.0,4.0],[4.0,4.0],[4.0,3.0],[3.0,3.0]]]}"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_MultiPolygon('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))'), ST_GeomCollection('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))')) from onerow",
-			result = "true"
-			)
-		}
-)
+//@HivePdkUnitTests(
+//	cases = { 
+//		@HivePdkUnitTest(
+//			query = "select st_asjson(st_multipolygon(array(1, 1, 1, 2, 2, 2, 2, 1), array(3, 3, 3, 4, 4, 4, 4, 3))) from onerow;",
+//			result = "{\"rings\":[[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]],[[3.0,3.0],[3.0,4.0],[4.0,4.0],[4.0,3.0],[3.0,3.0]]]}"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_MultiPolygon('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))'), ST_GeomCollection('multipolygon (((0 0, 0 1, 1 0, 0 0)), ((2 2, 2 3, 3 2, 2 2)))')) from onerow",
+//			result = "true"
+//			)
+//		}
+//)
 public class ST_MultiPolygon extends ST_Geometry {
 	
 	static final Log LOG = LogFactory.getLog(ST_MultiPolygon.class.getName());

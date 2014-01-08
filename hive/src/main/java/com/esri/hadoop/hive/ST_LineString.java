@@ -7,8 +7,7 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Polyline;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -21,18 +20,18 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(1, 1, 2, 2, 3, 3) from src LIMIT 1;\n" + 
 	"  SELECT _FUNC_('linestring(1 1, 2 2, 3 3)') from src LIMIT 1;")
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_Linestring('linestring (10 10, 20 20)')) from onerow",
-			result = "ST_LINESTRING"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_Linestring('linestring (10 10, 20 20)'), ST_GeomFromText('linestring (10 10, 20 20)')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_Linestring('linestring (10 10, 20 20)')) from onerow",
+//			result = "ST_LINESTRING"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_Linestring('linestring (10 10, 20 20)'), ST_GeomFromText('linestring (10 10, 20 20)')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 public class ST_LineString extends ST_Geometry {
 	static final Log LOG = LogFactory.getLog(ST_LineString.class.getName());

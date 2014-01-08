@@ -6,7 +6,6 @@
 		<dependency groupId="org.apache.hadoop" artifactId="hadoop-core" version="0.20.2"/>
 		<dependency groupId="org.apache.hive" artifactId="hive-exec" version="0.10.0"/>
 		<dependency groupId="org.apache.hive" artifactId="hive-serde" version="0.10.0"/>
-		<dependency groupId="org.apache.hive" artifactId="hive-pdk" version="0.10.0"/>
 		<dependency groupId="com.esri.geometry" artifactId="esri-geometry-api" version="1.1.1"/>
 	</artifact:dependencies>
 	
