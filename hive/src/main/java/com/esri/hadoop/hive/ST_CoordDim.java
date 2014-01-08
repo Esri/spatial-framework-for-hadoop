@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -18,26 +17,26 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	+ "  > SELECT _FUNC_(ST_PointZ(1.5,2.5, 3) FROM src LIMIT 1;  -- 3\n"
 	+ "  > SELECT _FUNC_(ST_Point(1.5, 2.5, 3., 4.)) FROM src LIMIT 1;  -- 4\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_CoordDim(ST_Point(0., 3.)) from onerow",
-			result = "2"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_CoordDim(ST_PointZ(0., 3., 1)) from onerow",
-			result = "3"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_CoordDim(ST_Point(0., 3., 1., 2.)) from onerow",
-			result = "4"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_CoordDim(null) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_CoordDim(ST_Point(0., 3.)) from onerow",
+//			result = "2"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_CoordDim(ST_PointZ(0., 3., 1)) from onerow",
+//			result = "3"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_CoordDim(ST_Point(0., 3., 1., 2.)) from onerow",
+//			result = "4"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_CoordDim(null) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_CoordDim extends ST_GeometryAccessor {
 	public static final IntWritable resultInt = new IntWritable();

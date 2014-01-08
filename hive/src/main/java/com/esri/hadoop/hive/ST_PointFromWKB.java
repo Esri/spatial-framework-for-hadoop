@@ -6,8 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -18,18 +17,18 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_AsBinary(ST_GeomFromText('point (1 0))'))) FROM src LIMIT 1;  -- constructs ST_Point\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_PointFromWKB(ST_AsBinary(ST_GeomFromText('point (10 10)')))) from onerow",
-			result = "ST_POINT"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_PointFromWKB(ST_AsBinary(ST_GeomFromText('point (10 10)'))), ST_GeomFromText('point (10 10)')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_PointFromWKB(ST_AsBinary(ST_GeomFromText('point (10 10)')))) from onerow",
+//			result = "ST_POINT"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_PointFromWKB(ST_AsBinary(ST_GeomFromText('point (10 10)'))), ST_GeomFromText('point (10 10)')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 public class ST_PointFromWKB extends ST_Geometry {
 

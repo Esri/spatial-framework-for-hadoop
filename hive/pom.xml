@@ -41,11 +41,6 @@
       <groupId>org.apache.hive</groupId>
       <artifactId>hive-serde</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.hive</groupId>
-      <artifactId>hive-pdk</artifactId>
-    </dependency>
     
   </dependencies>
 

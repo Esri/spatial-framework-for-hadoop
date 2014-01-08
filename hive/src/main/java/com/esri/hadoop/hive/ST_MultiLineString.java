@@ -10,8 +10,7 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Polyline;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -23,18 +22,18 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(array(1, 1, 2, 2), array(10, 10, 20, 20)) from src LIMIT 1;\n" + 
 	"  SELECT _FUNC_('multilinestring ((1 1, 2 2), (10 10, 20 20))', 0) from src LIMIT 1;")
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select st_asjson(ST_MultiLineString(1, 1, 2, 2, 3, 3)) from onerow",
-			result = "{\"points\":[[1.0,1.0],[2.0,2.0],[3.0,3.0]]}"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_MultiLinestring('multilinestring ((2 4, 10 10), (20 20, 7 8))'), ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))')) from onerow",
-			result = "true"
-			)
-		}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select st_asjson(ST_MultiLineString(1, 1, 2, 2, 3, 3)) from onerow",
+//			result = "{\"points\":[[1.0,1.0],[2.0,2.0],[3.0,3.0]]}"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_MultiLinestring('multilinestring ((2 4, 10 10), (20 20, 7 8))'), ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))')) from onerow",
+//			result = "true"
+//			)
+//		}
+//)
 public class ST_MultiLineString extends ST_Geometry {
 	
 	static final Log LOG = LogFactory.getLog(ST_MultiLineString.class.getName());

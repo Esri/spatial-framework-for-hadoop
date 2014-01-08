@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCLineString;
@@ -19,26 +18,26 @@ import com.esri.core.geometry.ogc.OGCLineString;
 	+ "  SELECT _FUNC_(ST_LineString(0.,0., 1.,1., 1.,2., 2.,1., 1.,1., 0.,0.)) FROM src LIMIT 1;  -- false\n"
 	+ "  SELECT _FUNC_(ST_LineString(0.,0., 3.,4.)) FROM src LIMIT 1;  -- false\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_IsRing(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsRing(ST_LineString(0.,0., 3.,4.)) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsRing(ST_LineString(0.,0., 1.,1., 1.,2., 2.,1., 1.,1., 0.,0.)) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsRing(null) from onerow",
-			result = "null"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_IsRing(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsRing(ST_LineString(0.,0., 3.,4.)) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsRing(ST_LineString(0.,0., 1.,1., 1.,2., 2.,1., 1.,1., 0.,0.)) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsRing(null) from onerow",
+//			result = "null"
+//			)
+//		}
+//	)
 
 public class ST_IsRing extends ST_GeometryAccessor {
 	public static final BooleanWritable resultBoolean = new BooleanWritable();

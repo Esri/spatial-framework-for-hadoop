@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
@@ -18,22 +17,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 		value = "_FUNC_(ST_Geometry, ST_Geometry, ...) - returns an ST_Geometry as the union of the supplied ST_Geometries",
 		extended = "Example: SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4, 1, 4, 4, 4, 8, 8, 1))) FROM onerow;\n" + 
 		"MULTIPOLYGON (((4 1, 8 1, 4 8, 4 4, 1 4, 1 1, 4 1)))")
-@HivePdkUnitTests(
-		cases = {
-				@HivePdkUnitTest(
-						query = "SELECT ST_AsText(ST_Union(ST_Point(1.1, 2.2), ST_Point(3.3, 4.4))) FROM onerow",
-						result = "MULTIPOINT (1.1 2.2, 3.3 4.4)"
-						),
-				@HivePdkUnitTest(
-						query = "SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4,1, 4,8, 8,1))) FROM onerow",
-						result = "MULTIPOLYGON (((4 1, 8 1, 4 8, 4 4, 1 4, 1 1, 4 1)))"
-						),
-				@HivePdkUnitTest(
-						query = "SELECT ST_AsText(ST_Union(ST_Point(1.1, 2.2), ST_Point(3.3, 4.4), ST_Point(5.5, 6.6), ST_Point(1.1, 2.2))) FROM onerow",
-						result = "MULTIPOINT (1.1 2.2, 3.3 4.4, 5.5 6.6)"
-						)
-			}
-		)
+//@HivePdkUnitTests(
+//		cases = {
+//				@HivePdkUnitTest(
+//						query = "SELECT ST_AsText(ST_Union(ST_Point(1.1, 2.2), ST_Point(3.3, 4.4))) FROM onerow",
+//						result = "MULTIPOINT (1.1 2.2, 3.3 4.4)"
+//						),
+//				@HivePdkUnitTest(
+//						query = "SELECT ST_AsText(ST_Union(ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1), ST_Polygon(4,1, 4,8, 8,1))) FROM onerow",
+//						result = "MULTIPOLYGON (((4 1, 8 1, 4 8, 4 4, 1 4, 1 1, 4 1)))"
+//						),
+//				@HivePdkUnitTest(
+//						query = "SELECT ST_AsText(ST_Union(ST_Point(1.1, 2.2), ST_Point(3.3, 4.4), ST_Point(5.5, 6.6), ST_Point(1.1, 2.2))) FROM onerow",
+//						result = "MULTIPOINT (1.1 2.2, 3.3 4.4, 5.5 6.6)"
+//						)
+//			}
+//		)
 public class ST_Union extends ST_GeometryProcessing
 {		
 	static final Log LOG = LogFactory.getLog(ST_Union.class.getName());

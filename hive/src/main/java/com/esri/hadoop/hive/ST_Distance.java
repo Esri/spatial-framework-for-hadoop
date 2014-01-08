@@ -6,8 +6,7 @@ import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 // DoubleWritable - must use hive-serde2; the other one produces struct {value:d.d}
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -16,22 +15,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
    extended = "Example:\n"
    + "  SELECT _FUNC_(ST_Point(0.0,0.0), ST_Point(3.0,4.0)) FROM src LIMIT 1;  --  5.0"
 )
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_Distance(ST_Point(0.0,0.0), ST_Point(3.0,4.0)) from onerow",
-			result = "5.0"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Distance(ST_LineString(0,0, 1,1), ST_LineString(2,1, 3,0)) from onerow",
-			result = "11"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Distance(null) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_Distance(ST_Point(0.0,0.0), ST_Point(3.0,4.0)) from onerow",
+//			result = "5.0"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Distance(ST_LineString(0,0, 1,1), ST_LineString(2,1, 3,0)) from onerow",
+//			result = "11"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Distance(null) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_Distance extends ST_GeometryAccessor {
 	public static final DoubleWritable resultDouble = new DoubleWritable();

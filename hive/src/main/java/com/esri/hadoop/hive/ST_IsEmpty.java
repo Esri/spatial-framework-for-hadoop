@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -17,26 +16,26 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	+ "  > SELECT _FUNC_(ST_Point(1.5, 2.5)) FROM src LIMIT 1;  -- false\n"
 	+ "  > SELECT _FUNC_(ST_GeomFromText('point empty')) FROM src LIMIT 1;  -- true\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_IsEmpty(ST_GeomFromText('point empty')) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsEmpty(ST_Intersection(st_point(2,0), ST_Point(1,1))) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsEmpty(ST_GeomFromText('point (10.02 20.01)')) from onerow",
-			result = "false"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_IsEmpty(null) from onerow",
-			result = "null"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_IsEmpty(ST_GeomFromText('point empty')) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsEmpty(ST_Intersection(st_point(2,0), ST_Point(1,1))) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsEmpty(ST_GeomFromText('point (10.02 20.01)')) from onerow",
+//			result = "false"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_IsEmpty(null) from onerow",
+//			result = "null"
+//			)
+//		}
+//	)
 
 public class ST_IsEmpty extends ST_GeometryAccessor {
 	public static final BooleanWritable resultBoolean = new BooleanWritable();

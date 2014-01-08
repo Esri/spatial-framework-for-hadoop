@@ -11,8 +11,7 @@ import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MultiPath;
 import com.esri.core.geometry.Point;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -22,22 +21,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
    + " SELECT _FUNC_(ST_SetSRID(ST_Linestring(0.0,0.0, 0.3,0.4), 4326)) FROM src LIMIT 1; -- 55km\n"
    + " SELECT _FUNC_(ST_GeomFromText('MultiLineString((0.0 80.0, 0.3 80.4))', 4326)) FROM src LIMIT 1; -- 45km\n"
 )
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select substr(ST_GeodesicLengthWGS84(ST_GeomFromText('LineString(0 0, 0.03 0.04)', 4326)), 1, 5) from onerow",
-			result = "5542."
-			),
-		@HivePdkUnitTest(
-			query = "select substr(ST_GeodesicLengthWGS84(ST_GeomFromText('MultiLineString((0 80, 0.03 80.04))', 4326)), 1, 5) from onerow",
-			result = "4503."
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Length(null) from onerow",
-			result = "null"
-			)
-	}
-)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select substr(ST_GeodesicLengthWGS84(ST_GeomFromText('LineString(0 0, 0.03 0.04)', 4326)), 1, 5) from onerow",
+//			result = "5542."
+//			),
+//		@HivePdkUnitTest(
+//			query = "select substr(ST_GeodesicLengthWGS84(ST_GeomFromText('MultiLineString((0 80, 0.03 80.04))', 4326)), 1, 5) from onerow",
+//			result = "4503."
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Length(null) from onerow",
+//			result = "null"
+//			)
+//	}
+//)
 
 public class ST_GeodesicLengthWGS84 extends ST_GeometryAccessor {
 	public static final DoubleWritable resultDouble = new DoubleWritable();

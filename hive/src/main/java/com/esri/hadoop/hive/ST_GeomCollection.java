@@ -5,8 +5,7 @@ import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
@@ -23,22 +22,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	"ST_GeomCollection('POINT(1 1), LINESTRING(2 0,3 0)') -- not supported\n"
 	)
 
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_GeomCollection('MULTIPOINT ((10 40), (40 30))'), ST_GeomFromText('MULTIPOINT ((10 40), (40 30))')) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_GeomCollection('multilinestring ((2 4, 10 10), (20 20, 7 8))'), ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))')) from onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_GeomCollection('multipolygon (((3 3, 4 6, 5 3, 3 3)),((8 24, 9 25, 1 28, 8 24)))'), ST_GeomFromText('multipolygon (((3 3, 4 6, 5 3, 3 3)),((8 24, 9 25, 1 28, 8 24)))')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_GeomCollection('MULTIPOINT ((10 40), (40 30))'), ST_GeomFromText('MULTIPOINT ((10 40), (40 30))')) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_GeomCollection('multilinestring ((2 4, 10 10), (20 20, 7 8))'), ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))')) from onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_GeomCollection('multipolygon (((3 3, 4 6, 5 3, 3 3)),((8 24, 9 25, 1 28, 8 24)))'), ST_GeomFromText('multipolygon (((3 3, 4 6, 5 3, 3 3)),((8 24, 9 25, 1 28, 8 24)))')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 public class ST_GeomCollection extends ST_Geometry {
 

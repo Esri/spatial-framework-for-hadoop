@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.MultiPath;
@@ -21,30 +20,30 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_LineString(1.5,2.5, 3.0,2.2), 2) FROM src LIMIT 1;  -- POINT(3.0 2.2)\n"
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_X(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 2)) from onerow",
-			result = "40"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Y(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 2)) from onerow",
-			result = "30"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_X(ST_PointN(ST_GeomFromtext('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 1)) from onerow",
-			result = "10.02"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Y(ST_PointN(ST_GeomFromtext('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 1)) from onerow",
-			result = "20.01"
-			),
-		@HivePdkUnitTest(
-			query = "ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 5) from onerow",
-			result = "null"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_X(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 2)) from onerow",
+//			result = "40"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Y(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 2)) from onerow",
+//			result = "30"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_X(ST_PointN(ST_GeomFromtext('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 1)) from onerow",
+//			result = "10.02"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Y(ST_PointN(ST_GeomFromtext('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 1)) from onerow",
+//			result = "20.01"
+//			),
+//		@HivePdkUnitTest(
+//			query = "ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 5) from onerow",
+//			result = "null"
+//			)
+//		}
+//	)
 
 public class ST_PointN extends ST_GeometryAccessor {
 	static final Log LOG = LogFactory.getLog(ST_PointN.class.getName());

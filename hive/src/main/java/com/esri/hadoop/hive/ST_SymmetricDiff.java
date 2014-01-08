@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -18,22 +17,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	+ " > SELECT ST_AsText(_FUNC_(ST_SymmetricDiff(ST_Polygon('polygon((0 0, 2 0, 2 2, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 3 1, 3 3, 1 3, 1 1))'))) from onerow;\n"
 	+ " MULTIPOLYGON (((0 0, 2 0, 2 1, 1 1, 1 2, 0 2, 0 0)), ((3 1, 3 3, 1 3, 1 2, 2 2, 2 1, 3 1)))\n" 
 	)
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "SELECT ST_Equals(ST_SymmetricDiff(ST_LineString('linestring(0 2, 2 2)'), ST_LineString('linestring(1 2, 3 2)')), ST_GeomFromText('multilinestring((0 2, 1 2), (2 2, 3 2))')) FROM onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "SELECT ST_Equals(ST_SymmetricDiff(ST_Polygon('polygon((0 0, 2 0, 2 2, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 3 1, 3 3, 1 3, 1 1))')), ST_MultiPolygon('multipolygon(((0 0, 2 0, 2 1, 1 1, 1 2, 0 2, 0 0)), ((3 1, 3 3, 1 3, 1 2, 2 2, 2 1, 3 1)))')) FROM onerow",
-			result = "true"
-			),
-		@HivePdkUnitTest(
-			query = "SELECT ST_SymmetricDiff(ST_Point(0,0), null) from onerow",
-			result = "null"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "SELECT ST_Equals(ST_SymmetricDiff(ST_LineString('linestring(0 2, 2 2)'), ST_LineString('linestring(1 2, 3 2)')), ST_GeomFromText('multilinestring((0 2, 1 2), (2 2, 3 2))')) FROM onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "SELECT ST_Equals(ST_SymmetricDiff(ST_Polygon('polygon((0 0, 2 0, 2 2, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 3 1, 3 3, 1 3, 1 1))')), ST_MultiPolygon('multipolygon(((0 0, 2 0, 2 1, 1 1, 1 2, 0 2, 0 0)), ((3 1, 3 3, 1 3, 1 2, 2 2, 2 1, 3 1)))')) FROM onerow",
+//			result = "true"
+//			),
+//		@HivePdkUnitTest(
+//			query = "SELECT ST_SymmetricDiff(ST_Point(0,0), null) from onerow",
+//			result = "null"
+//			)
+//		}
+//	)
 
 public class ST_SymmetricDiff extends ST_GeometryProcessing {
 	

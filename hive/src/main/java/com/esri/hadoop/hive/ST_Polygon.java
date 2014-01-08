@@ -8,8 +8,7 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -21,22 +20,22 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(1, 1, 1, 4, 4, 4, 4, 1) from src LIMIT 1;  -- creates a rectangle\n" + 
 	"  SELECT _FUNC_('polygon ((1 1, 4 1, 1 4))') from src LIMIT 1;  -- creates a triangle")
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_Polygon('polygon ((0 0, 10 0, 0 10, 0 0))')) from onerow",
-			result = "ST_POLYGON"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) from onerow",
-			result = "ST_POLYGON"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_Polygon('polygon ((0 0, 10 0, 0 10, 0 0))'), ST_GeomFromText('polygon ((0 0, 10 0, 0 10, 0 0))')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_Polygon('polygon ((0 0, 10 0, 0 10, 0 0))')) from onerow",
+//			result = "ST_POLYGON"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))')) from onerow",
+//			result = "ST_POLYGON"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_Polygon('polygon ((0 0, 10 0, 0 10, 0 0))'), ST_GeomFromText('polygon ((0 0, 10 0, 0 10, 0 0))')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 public class ST_Polygon extends ST_Geometry {
 	

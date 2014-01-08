@@ -7,8 +7,7 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hive.pdk.HivePdkUnitTest;
-import org.apache.hive.pdk.HivePdkUnitTests;
+
 
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -20,18 +19,18 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	extended = "Example:\n" +
 	"  SELECT _FUNC_(longitude, latitude) from src LIMIT 1;\n" + 
 	"  SELECT _FUNC_('point (0 0)') from src LIMIT 1;")
-@HivePdkUnitTests(
-	cases = {
-		@HivePdkUnitTest(
-			query = "select ST_GeometryType(ST_Point('point (10.02 20.01)')) from onerow",
-			result = "ST_POINT"
-			),
-		@HivePdkUnitTest(
-			query = "select ST_Equals(ST_Point('point (10.02 20.01)'), ST_GeomFromText('point (10.02 20.01)')) from onerow",
-			result = "true"
-			)
-		}
-	)
+//@HivePdkUnitTests(
+//	cases = {
+//		@HivePdkUnitTest(
+//			query = "select ST_GeometryType(ST_Point('point (10.02 20.01)')) from onerow",
+//			result = "ST_POINT"
+//			),
+//		@HivePdkUnitTest(
+//			query = "select ST_Equals(ST_Point('point (10.02 20.01)'), ST_GeomFromText('point (10.02 20.01)')) from onerow",
+//			result = "true"
+//			)
+//		}
+//	)
 
 class ST_Point extends ST_Geometry {
 	static final Log LOG = LogFactory.getLog(ST_Point.class.getName());
