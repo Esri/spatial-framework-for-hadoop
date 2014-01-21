@@ -32,7 +32,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //		}
 //	)
 
-class ST_Point extends ST_Geometry {
+public class ST_Point extends ST_Geometry {
 	static final Log LOG = LogFactory.getLog(ST_Point.class.getName());
 
 	// Number-pair constructor - 2D
