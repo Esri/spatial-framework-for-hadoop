@@ -39,7 +39,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //)
 
 public class ST_GeodesicLengthWGS84 extends ST_GeometryAccessor {
-	public final DoubleWritable resultDouble = new DoubleWritable();
+	final DoubleWritable resultDouble = new DoubleWritable();
 	static final Log LOG = LogFactory.getLog(ST_GeodesicLengthWGS84.class.getName());
 
 	public DoubleWritable evaluate(BytesWritable geomref) {

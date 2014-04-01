@@ -20,7 +20,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 public class ST_Crosses extends ST_GeometryRelational {
 
 	static final Log LOG = LogFactory.getLog(ST_Crosses.class.getName());
-	public final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 
 	public BooleanWritable evaluate(BytesWritable geometryref1, BytesWritable geometryref2)
 	{

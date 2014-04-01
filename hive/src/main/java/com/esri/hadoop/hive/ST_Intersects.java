@@ -18,7 +18,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 public class ST_Intersects extends ST_GeometryRelational {
 
-	public final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_Intersects.class.getName());
 
 	public BooleanWritable evaluate(BytesWritable geometryref1, BytesWritable geometryref2)

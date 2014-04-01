@@ -42,7 +42,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //	)
 
 public class ST_IsSimple extends ST_GeometryAccessor {
-	public final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_IsSimple.class.getName());
 
 	public BooleanWritable evaluate(BytesWritable geomref) {

@@ -42,7 +42,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //)
 
 public class ST_MinM extends ST_GeometryAccessor {
-	public final DoubleWritable resultDouble = new DoubleWritable();
+	final DoubleWritable resultDouble = new DoubleWritable();
 	static final Log LOG = LogFactory.getLog(ST_MinM.class.getName());
 
 	public DoubleWritable evaluate(BytesWritable geomref) {

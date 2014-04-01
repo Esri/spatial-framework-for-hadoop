@@ -51,7 +51,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //)
 
 public class ST_MinX extends ST_GeometryAccessor {
-	public final DoubleWritable resultDouble = new DoubleWritable();
+	final DoubleWritable resultDouble = new DoubleWritable();
 	static final Log LOG = LogFactory.getLog(ST_MinX.class.getName());
 
 	public DoubleWritable evaluate(BytesWritable geomref) {

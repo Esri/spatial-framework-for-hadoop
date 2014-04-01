@@ -19,7 +19,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 public class ST_Equals extends ST_GeometryRelational {
 
 	static final Log LOG = LogFactory.getLog(ST_Equals.class.getName());
-	public final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 	
 	public BooleanWritable evaluate(BytesWritable geometryref1, BytesWritable geometryref2)
 	{
