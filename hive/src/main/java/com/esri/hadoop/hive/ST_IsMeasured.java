@@ -40,7 +40,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //)
 
 public class ST_IsMeasured extends ST_GeometryAccessor {
-	public static final BooleanWritable resultBoolean = new BooleanWritable();
+	public final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_IsMeasured.class.getName());
 
 	public BooleanWritable evaluate(BytesWritable geomref) {

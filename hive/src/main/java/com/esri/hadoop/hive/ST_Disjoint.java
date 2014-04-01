@@ -18,7 +18,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 public class ST_Disjoint extends ST_GeometryRelational {
 
-	public static final BooleanWritable resultBoolean = new BooleanWritable();
+	public final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_Disjoint.class.getName());
 
 	public BooleanWritable evaluate(BytesWritable geometryref1, BytesWritable geometryref2)

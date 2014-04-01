@@ -36,7 +36,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //	)
 
 public class ST_AsGeoJson extends ST_Geometry {
-	static final Text resultText = new Text();
+	final Text resultText = new Text();
 	static final Log LOG = LogFactory.getLog(ST_AsGeoJson.class.getName());
 
 	public Text evaluate(BytesWritable geomref) {
