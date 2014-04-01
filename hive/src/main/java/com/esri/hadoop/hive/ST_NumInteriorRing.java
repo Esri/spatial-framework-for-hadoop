@@ -37,7 +37,7 @@ import com.esri.core.geometry.ogc.OGCPolygon;
 
 public class ST_NumInteriorRing extends ST_GeometryAccessor {
 	static final Log LOG = LogFactory.getLog(ST_NumInteriorRing.class.getName());
-	public static final IntWritable resultInt = new IntWritable();
+	final IntWritable resultInt = new IntWritable();
 
 	public IntWritable evaluate(BytesWritable geomref) {
 		if (geomref == null || geomref.getLength() == 0) {

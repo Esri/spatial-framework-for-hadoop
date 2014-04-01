@@ -20,7 +20,7 @@ import com.esri.core.geometry.ogc.OGCMultiPolygon;
 	)
 
 public class ST_NumGeometries extends ST_GeometryAccessor {
-	public static final IntWritable resultInt = new IntWritable();
+	final IntWritable resultInt = new IntWritable();
 	static final Log LOG = LogFactory.getLog(ST_NumGeometries.class.getName());
 
 	public IntWritable evaluate(BytesWritable geomref) {

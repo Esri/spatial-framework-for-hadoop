@@ -34,7 +34,7 @@ import com.esri.core.geometry.ogc.OGCPoint;
 //)
 
 public class ST_Y extends ST_GeometryAccessor {
-	public static final DoubleWritable resultDouble = new DoubleWritable();
+	final DoubleWritable resultDouble = new DoubleWritable();
 	static final Log LOG = LogFactory.getLog(ST_Y.class.getName());
 
 	public DoubleWritable evaluate(BytesWritable geomref) {

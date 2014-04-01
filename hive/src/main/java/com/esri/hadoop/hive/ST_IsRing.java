@@ -40,7 +40,7 @@ import com.esri.core.geometry.ogc.OGCLineString;
 //	)
 
 public class ST_IsRing extends ST_GeometryAccessor {
-	public static final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_IsRing.class.getName());
 
 	public BooleanWritable evaluate(BytesWritable geomref) {

@@ -19,7 +19,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 public class ST_Contains extends ST_GeometryRelational {
 
 	static final Log LOG = LogFactory.getLog(ST_Contains.class.getName());
-	public static final BooleanWritable resultBoolean = new BooleanWritable();
+	final BooleanWritable resultBoolean = new BooleanWritable();
 
 	public BooleanWritable evaluate(BytesWritable geometryref1, BytesWritable geometryref2)
 	{

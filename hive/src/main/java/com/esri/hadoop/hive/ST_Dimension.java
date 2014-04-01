@@ -51,7 +51,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //)
 
 public class ST_Dimension extends ST_GeometryAccessor {
-	public static final IntWritable resultInt = new IntWritable();
+	final IntWritable resultInt = new IntWritable();
 	static final Log LOG = LogFactory.getLog(ST_Dimension.class.getName());
 
 	public IntWritable evaluate(BytesWritable geomref) {
