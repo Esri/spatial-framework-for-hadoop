@@ -84,7 +84,7 @@ public class JsonSerde implements SerDe {
 				.getTypeInfosFromTypeString(columnTypeProperty);
 
 		columnNames = new ArrayList<String>();
-		columnNames.addAll(Arrays.asList(columnNameProperty.split(",")));
+		columnNames.addAll(Arrays.asList(columnNameProperty.toLowerCase().split(",")));
 
 		numColumns = columnNames.size();
 		
