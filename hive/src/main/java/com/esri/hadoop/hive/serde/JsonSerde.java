@@ -23,7 +23,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StandardStructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
-import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.BytesWritable;
@@ -75,6 +74,8 @@ public class JsonSerde implements SerDe {
 	@Override
 	public void initialize(Configuration arg0, Properties tbl)
 			throws SerDeException {
+				
+		geometryColumn = -1;
 
 	    // Read the configuration parameters
 		String columnNameProperty = tbl.getProperty(HiveShims.serdeConstants.LIST_COLUMNS);
@@ -99,7 +100,7 @@ public class JsonSerde implements SerDe {
 				throw new SerDeException("Only primitive field types are accepted");
 			}
 			
-			if (colTypeInfo.equals(TypeInfoFactory.binaryTypeInfo)) {
+			if (colTypeInfo.getTypeName().equals("binary")) {
 
 				if (geometryColumn >= 0) {
 					// only one column can be defined as binary for geometries
