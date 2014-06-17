@@ -1,6 +1,5 @@
 package com.esri.hadoop.hive;
 
-
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
@@ -24,7 +23,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 		)
 public class ST_Contains extends GenericUDF {
 
-	private static Logger LOG = Logger.getLogger(ST_ContainsGeneric.class);
+	private static Logger LOG = Logger.getLogger(ST_Contains.class);
 	
 	private static final int NUM_ARGS = 2;
 	private static final int GEOM_1 = 0;
@@ -36,10 +35,8 @@ public class ST_Contains extends GenericUDF {
 	private transient OperatorContains opContains = OperatorContains.local();
 	private transient boolean firstRun = true;
 	
-	public ST_Contains() {
-		
-	}
-	
+	private transient boolean geom1IsAccelerated = false;
+
 	@Override
 	public ObjectInspector initialize(ObjectInspector[] OIs)
 			throws UDFArgumentException {
@@ -57,6 +54,7 @@ public class ST_Contains extends GenericUDF {
 		}
 
 		firstRun = true;
+		geom1IsAccelerated = false;
 		
 		return PrimitiveObjectInspectorFactory.javaBooleanObjectInspector;
 	}
@@ -70,22 +68,23 @@ public class ST_Contains extends GenericUDF {
 		if (geom1 == null || geom2 == null) {
 			return false;
 		}
-		
-		if (firstRun) {
-			if (geomHelper1.isConstant()) {
-				opContains.accelerateGeometry(geom1.getEsriGeometry(), 
-						geom1.getEsriSpatialReference(), GeometryAccelerationDegree.enumMedium);
-				LOG.info("Accelerating geometry1");
-			}
 
-			firstRun = false;
+		if (firstRun && geomHelper1.isConstant()) {
+			
+			// accelerate geometry 1 for quick contains operations since it is constant
+			geom1IsAccelerated = opContains.accelerateGeometry(geom1.getEsriGeometry(), 
+					geom1.getEsriSpatialReference(), GeometryAccelerationDegree.enumMedium);
 		}
+
+		firstRun = false;
 		
 		return opContains.execute(geom1.getEsriGeometry(), geom2.getEsriGeometry(), geom1.getEsriSpatialReference(), null);
 	}
 
 	public void close() {
-		OperatorContains.deaccelerateGeometry(geomHelper1.getConstantGeometry().getEsriGeometry());
+		if (geom1IsAccelerated && geomHelper1 != null && geomHelper1.getConstantGeometry() != null) {
+			OperatorContains.deaccelerateGeometry(geomHelper1.getConstantGeometry().getEsriGeometry());
+		}
 	}
 	
 	@Override
