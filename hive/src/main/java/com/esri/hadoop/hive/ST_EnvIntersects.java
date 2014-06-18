@@ -36,7 +36,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 //	}
 //)
 
-public class ST_EnvIntersects extends ST_GeometryRelational {
+public class ST_EnvIntersects extends ST_Geometry {
 
 	final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_EnvIntersects.class.getName());

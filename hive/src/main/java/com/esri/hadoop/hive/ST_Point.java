@@ -48,7 +48,7 @@ public class ST_Point extends ST_Geometry {
 	// Number-list constructor - ZM
 	public BytesWritable evaluate(DoubleWritable x, DoubleWritable y, DoubleWritable z, DoubleWritable m) {
 		if (x == null || y == null) {
-			LogUtils.Log_ArgumentsNull(LOG);
+			//LogUtils.Log_ArgumentsNull(LOG);
 			return null;
 		}
 		try {
@@ -57,9 +57,10 @@ public class ST_Point extends ST_Geometry {
 				stPt.setZ(z.get());
 			if (m != null)
 				stPt.setM(m.get());
-			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(stPt, null));
+			BytesWritable ret = GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(stPt, null));
+			return ret;
 		} catch (Exception e) {
-		    LogUtils.Log_InternalError(LOG, "ST_Point: " + e);
+		    //LogUtils.Log_InternalError(LOG, "ST_Point: " + e);
 		    return null;
 		}
 	}
@@ -82,5 +83,4 @@ public class ST_Point extends ST_Geometry {
 			return null;
 		}
 	}
-
 }

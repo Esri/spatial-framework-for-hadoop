@@ -18,7 +18,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 	"  SELECT _FUNC_(st_linestring(0,0, 3,3), ST_linestring(1,1, 4,4), '****T****') from src LIMIT 1;  -- false\n"
 	)
 
-public class ST_Relate extends ST_GeometryRelational {
+public class ST_Relate extends ST_Geometry {
 
 	final BooleanWritable resultBoolean = new BooleanWritable();
 	static final Log LOG = LogFactory.getLog(ST_Relate.class.getName());
