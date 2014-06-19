@@ -17,7 +17,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
  *
  */
 public abstract class ST_GeometryRelational extends GenericUDF {
-	private static Logger LOG = Logger.getLogger(ST_Contains.class);
+	private static Logger LOG = Logger.getLogger(ST_GeometryRelational.class);
 	
 	private static final int NUM_ARGS = 2;
 	private static final int GEOM_1 = 0;
@@ -75,7 +75,7 @@ public abstract class ST_GeometryRelational extends GenericUDF {
 
 		if (firstRun && geomHelper1.isConstant()) {
 			
-			// accelerate geometry 1 for quick contains operations since it is constant
+			// accelerate geometry 1 for quick relation operations since it is constant
 			geom1IsAccelerated = opSimpleRelation.accelerateGeometry(geom1.getEsriGeometry(), 
 					geom1.getEsriSpatialReference(), GeometryAccelerationDegree.enumMedium);
 		}
