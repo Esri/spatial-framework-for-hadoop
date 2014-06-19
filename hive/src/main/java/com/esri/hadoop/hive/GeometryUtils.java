@@ -1,14 +1,11 @@
 package com.esri.hadoop.hive;
 
-import java.io.DataOutput;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.WritableBinaryObjectInspector;
-import org.apache.hadoop.io.BinaryComparable;
 import org.apache.hadoop.io.BytesWritable;
 
 import com.esri.core.geometry.*;
@@ -59,7 +56,6 @@ public class GeometryUtils {
 	private static Cache<BytesWritable, OGCGeometry> geometryCache = 
 			CacheBuilder.newBuilder()
 			.weakKeys() // don't hold on to BytesWritable keys if they aren't referenced anymore
-			.weakValues() // same with geometries
 			.expireAfterAccess(10, TimeUnit.SECONDS)
 			.maximumSize(10000)
 			.build();
@@ -82,15 +78,15 @@ public class GeometryUtils {
 	}
 
 	public static BytesWritable geometryToEsriShapeBytesWritable(OGCGeometry geometry) {		
-		return new LazyGeometryBytesWritable(geometry);
+		return new CachedGeometryBytesWritable(geometry);
 	}
 
 	public static OGCGeometry geometryFromEsriShape(BytesWritable geomref) {
 
 		// this geomref might actually be a LazyGeometryBytesWritable which
 		// means we don't need to deserialize from bytes
-		if (geomref instanceof LazyGeometryBytesWritable) {
-			return ((LazyGeometryBytesWritable)geomref).getGeometry();
+		if (geomref instanceof CachedGeometryBytesWritable) {
+			return ((CachedGeometryBytesWritable)geomref).getGeometry();
 		}
 		
 		// check for a cache hit to previously created geometries
@@ -286,70 +282,16 @@ public class GeometryUtils {
 	}
 	
 
-	public static class LazyGeometryBytesWritable extends BytesWritable {
-		
-		public boolean serialized = false;
+	public static class CachedGeometryBytesWritable extends BytesWritable {
 		OGCGeometry cachedGeom;
 		
-		public LazyGeometryBytesWritable(OGCGeometry geom) {
+		public CachedGeometryBytesWritable(OGCGeometry geom) {
 			cachedGeom = geom;
-		}
-		
-		private void ensureSerialized() {
-			if (!serialized) {
-				super.set(serialize(cachedGeom));
-				serialized = true;
-			}
+			super.set(serialize(cachedGeom));
 		}
 		
 		public OGCGeometry getGeometry() {
 			return cachedGeom;
-		}
-		
-		@Override 
-		public int getLength() {
-			ensureSerialized();
-			return super.getLength();
-		}
-		
-		@Override
-		public byte[] getBytes() {
-			ensureSerialized();
-			return super.getBytes();
-		}
-		
-		public byte[] get() {
-			return getBytes();
-		}
-		
-		@Override
-		public void write(DataOutput out) throws IOException {
-			ensureSerialized();
-			super.write(out);
-		}
-		
-		@Override
-		public boolean equals(Object other) {
-			ensureSerialized();
-			return super.equals(other);
-		}
-		
-		@Override
-		public int hashCode() {
-			ensureSerialized();
-			return super.hashCode();
-		}
-		
-		@Override
-		public int compareTo(BinaryComparable other) {
-			ensureSerialized();
-			return super.compareTo(other);
-		}
-		
-		@Override
-		public int compareTo(byte[] other, int off, int len) {
-			ensureSerialized();
-			return super.compareTo(other, off, len);
 		}
 	}
 }
