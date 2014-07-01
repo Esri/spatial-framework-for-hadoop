@@ -2,14 +2,16 @@ package com.esri.hadoop.hive;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.WritableBinaryObjectInspector;
 import org.apache.hadoop.io.BytesWritable;
 
-
 import com.esri.core.geometry.*;
 import com.esri.core.geometry.ogc.*;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 public class GeometryUtils {
 	
 	private static final int SIZE_WKID = 4;
@@ -47,10 +49,18 @@ public class GeometryUtils {
 		OGCType.ST_MULTIPOLYGON
 	};
 	
-	public static final WritableBinaryObjectInspector geometryTransportObjectInspector = PrimitiveObjectInspectorFactory.writableBinaryObjectInspector;
+	public static final WritableBinaryObjectInspector geometryTransportObjectInspector = 
+			PrimitiveObjectInspectorFactory.writableBinaryObjectInspector;
 
+	
+	private static Cache<BytesWritable, OGCGeometry> geometryCache = 
+			CacheBuilder.newBuilder()
+			.weakKeys() // don't hold on to BytesWritable keys if they aren't referenced anymore
+			.expireAfterAccess(10, TimeUnit.SECONDS)
+			.maximumSize(10000)
+			.build();
+	
 	/**
-	 * 
 	 * @param geomref1
 	 * @param geomref2
 	 * @return return true if both geometries are in the same spatial reference
@@ -67,11 +77,27 @@ public class GeometryUtils {
 		return serialize(geometry, wkid, type);
 	}
 
-	public static BytesWritable geometryToEsriShapeBytesWritable(OGCGeometry geometry) {
-		return serialize(geometry);
+	public static BytesWritable geometryToEsriShapeBytesWritable(OGCGeometry geometry) {		
+		return new CachedGeometryBytesWritable(geometry);
 	}
 
 	public static OGCGeometry geometryFromEsriShape(BytesWritable geomref) {
+
+		// this geomref might actually be a LazyGeometryBytesWritable which
+		// means we don't need to deserialize from bytes
+		if (geomref instanceof CachedGeometryBytesWritable) {
+			return ((CachedGeometryBytesWritable)geomref).getGeometry();
+		}
+		
+		// check for a cache hit to previously created geometries
+		OGCGeometry cachedGeom = geometryCache.getIfPresent(geomref);
+		if (cachedGeom != null) {
+			return cachedGeom;
+		}
+		
+		// not in cache or instance of LazyGeometryBytesWritable. now
+		// need to create the geometry from its bytes
+		
 		ByteBuffer bbuf = ByteBuffer.allocate(4);
 		bbuf.order(ByteOrder.LITTLE_ENDIAN);
 	
@@ -91,7 +117,9 @@ public class GeometryUtils {
 					spatialReference = SpatialReference.create(wkid);
 				}
 				Geometry esriGeom = GeometryEngine.geometryFromEsriShape(shapeBytes, Geometry.Type.Unknown);
-				return OGCGeometry.createFromEsriGeometry(esriGeom, spatialReference);
+				OGCGeometry createdGeom = OGCGeometry.createFromEsriGeometry(esriGeom, spatialReference);
+				geometryCache.put(geomref, createdGeom); // add newly created geometry to cache
+				return createdGeom;
 			}
 		}
 	}
@@ -149,9 +177,9 @@ public class GeometryUtils {
 			return OGCType.ST_MULTIPOINT;
 		case Point:
 			return OGCType.ST_POINT;
+		default:
+			return OGCType.UNKNOWN;
 		}
-		
-		return OGCType.UNKNOWN;
 	}
 	
 	private static byte[] getShapeBytes(BytesWritable geomref){
@@ -248,8 +276,22 @@ public class GeometryUtils {
 		setWKID(hiveGeometryBytes, wkid);
 		setType(hiveGeometryBytes, type);
 		
-		return new BytesWritable(shapeWithData);
+		BytesWritable ret = new BytesWritable(shapeWithData);
+		
+		return ret;
 	}
 	
-	
+
+	public static class CachedGeometryBytesWritable extends BytesWritable {
+		OGCGeometry cachedGeom;
+		
+		public CachedGeometryBytesWritable(OGCGeometry geom) {
+			cachedGeom = geom;
+			super.set(serialize(cachedGeom));
+		}
+		
+		public OGCGeometry getGeometry() {
+			return cachedGeom;
+		}
+	}
 }
