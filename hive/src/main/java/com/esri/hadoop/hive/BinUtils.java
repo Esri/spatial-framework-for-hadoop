@@ -21,8 +21,6 @@ public class BinUtils {
 		extentMax = size/2;
 		extentMin = extentMax - size;
 		numCols = (long)(Math.ceil(size / binSize));
-		
-		System.out.println(extentMin + "," + extentMax);
 	}
 	
 	/**
