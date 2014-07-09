@@ -68,7 +68,7 @@ public class ST_Bin extends GenericUDF {
 
 	@Override
 	public String getDisplayString(String[] args) {
-		// TODO Auto-generated method stub
-		return null;
+		assert(args.length == 2);
+		return String.format("st_bin(%s,%s)", args[0], args[1]);
 	}
 }
