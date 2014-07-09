@@ -12,6 +12,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
 import com.esri.core.geometry.ogc.OGCGeometry;
+import com.esri.core.geometry.ogc.OGCPoint;
 
 public class HiveGeometryOIHelper {
 	
@@ -32,12 +33,24 @@ public class HiveGeometryOIHelper {
 		isConstant = ObjectInspectorUtils.isConstantObjectInspector(oi);
 	}
 	
+	public static HiveGeometryOIHelper create(ObjectInspector [] OIs, int argIndex) throws UDFArgumentException {
+		return create(OIs[argIndex], argIndex);
+	}
+	
 	public static HiveGeometryOIHelper create(ObjectInspector oi, int argIndex) throws UDFArgumentException {
 		if (oi.getCategory() != Category.PRIMITIVE) {
-			throw new UDFArgumentException("Only primitive types current supported");
+			throw new UDFArgumentException("Geometry argument must be a primitive type");
 		}
 		
 		return new HiveGeometryOIHelper(oi, argIndex);
+	}
+	
+	public static boolean canCreate(ObjectInspector oi) {
+		if (oi.getCategory() != Category.PRIMITIVE) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -56,6 +69,24 @@ public class HiveGeometryOIHelper {
 	 */
 	public OGCGeometry getConstantGeometry() {
 		return constantGeometry;
+	}
+	
+	/**
+	 * Reads the corresponding geometry from the deferred object list
+	 * or returns the cached geometry if argument is constant. 
+	 * 
+	 * @param args
+	 * @return OGCPoint or null if not a point
+	 * @see #getGeometry(DeferredObject[])
+	 */
+	public OGCPoint getPoint(DeferredObject[] args) {
+		OGCGeometry geometry = getGeometry(args);
+		
+		if (geometry instanceof OGCPoint) {
+			return (OGCPoint)geometry;
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -98,6 +129,7 @@ public class HiveGeometryOIHelper {
 			default: return null;
 		}
 	}
+	
 	
 	@Override
 	public String toString() {
