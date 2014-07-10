@@ -102,3 +102,5 @@ desc function extended ST_Aggr_Union;
 desc function extended ST_GeoSize;
 desc function extended ST_Transform;
 desc function extended ST_Equalsrs;
+desc function extended ST_Bin;
+desc function extended ST_BinEnvelope;

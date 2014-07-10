@@ -583,4 +583,13 @@ hive> desc function extended ST_Transform;
 Function 'ST_Transform' does not exist.
 hive> desc function extended ST_Equalsrs;
 Function 'ST_Equalsrs' does not exist.
+hive> desc function extended ST_Bin;
+ST_Bin(binsize, point) - return bin ID for given point
+
+Synonyms: st_bin
+hive> desc function extended ST_BinEnvelope;
+ST_BinEnvelope(binsize, point) - return bin envelope for given point
+ST_BinEnvelope(binsize, binid) - return bin envelope for given bin ID
+
+Synonyms: st_binenvelope
 hive> 
