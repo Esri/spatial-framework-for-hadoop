@@ -88,3 +88,6 @@ create temporary function ST_SymDifference as 'com.esri.hadoop.hive.ST_Symmetric
 create temporary function ST_Aggr_ConvexHull as 'com.esri.hadoop.hive.ST_Aggr_ConvexHull';
 create temporary function ST_Aggr_Intersection as 'com.esri.hadoop.hive.ST_Aggr_Intersection';
 create temporary function ST_Aggr_Union as 'com.esri.hadoop.hive.ST_Aggr_Union';
+
+create temporary function ST_Bin as 'com.esri.hadoop.hive.ST_Bin';
+create temporary function ST_BinEnvelope as 'com.esri.hadoop.hive.ST_BinEnvelope';
