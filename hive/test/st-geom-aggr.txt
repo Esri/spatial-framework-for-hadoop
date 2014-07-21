@@ -1,0 +1,4 @@
+create table com_esri_hadoop_hive_aggr_tests(testcase int, wkt string)
+row format delimited fields terminated by '\t';
+load data local inpath '`pwd`/test/st-geom-aggr.tsv'
+overwrite into table com_esri_hadoop_hive_aggr_tests;
