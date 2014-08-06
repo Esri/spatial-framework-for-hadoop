@@ -75,6 +75,11 @@ public class ST_BinEnvelope extends GenericUDF {
 		
 		if (oiBinId != null) {
 			// argument 1 is a number, attempt to get the envelope with bin ID
+			if (args[1].get() == null) {
+				// null bin ID argument usually means the source point was null or failed to parse
+				return null; 
+			}
+			
 			long binId = PrimitiveObjectInspectorUtils.getLong(args[1].get(), oiBinId);
 			bins.queryEnvelope(binId, env);
 		} else {

@@ -198,6 +198,11 @@ public class JsonSerde implements SerDe {
 	private void generateJsonFromValue(Writable value, int fieldIndex, JsonGenerator jsonGen)
 		throws JsonProcessingException, IOException {
 
+		if (value == null) {
+			jsonGen.writeObjectField(columnNames.get(fieldIndex), null);
+			return;
+		}
+		
 		PrimitiveObjectInspector poi = (PrimitiveObjectInspector)this.columnOIs.get(fieldIndex);
 
 		switch (poi.getPrimitiveCategory()) {
