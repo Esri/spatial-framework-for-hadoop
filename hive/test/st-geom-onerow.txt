@@ -1,5 +1,5 @@
 echo onerow > st-geom-onerow.tsv
-create table onerow(s string);
+create table onerow(s string)
 row format delimited fields terminated by '\t';
 load data local inpath '`pwd`/test/st-geom-onerow.tsv'
 overwrite into table onerow;

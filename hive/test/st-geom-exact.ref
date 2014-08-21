@@ -342,11 +342,13 @@ hive> select ST_Crosses(st_point(1,1), ST_Point(1,1)) from onerow;
 false
 hive> select ST_Crosses(st_point(2,0), ST_Point(1,1)) from onerow;
 false
-hive> select ST_Crosses(st_linestring(0,0, 1,1), ST_linestring(1,0, 0,1)) from onerow;
+hive> select ST_Crosses(ST_Linestring(0,0, 1,1), ST_Linestring(1,0, 0,1)) from onerow;
 true
-hive> select ST_Crosses(st_linestring(0,0, 0,1), ST_linestring(0,0, 1,0)) from onerow;
+hive> select ST_Crosses(ST_Linestring(1,0, 1,2), ST_Linestring(0,1, 2,1)) from onerow;
+true
+hive> select ST_Crosses(ST_Linestring(0,0, 0,1), ST_Linestring(0,0, 1,0)) from onerow;
 false
-hive> select ST_Crosses(st_linestring(0,0, 0,2), ST_linestring(0,1, 1,1)) from onerow;
+hive> select ST_Crosses(ST_Linestring(0,0, 0,2), ST_Linestring(0,1, 1,1)) from onerow;
 false
 hive> select ST_Relate(st_linestring('linestring(0 0, 0 1)'), ST_linestring('linestring(0 0, 1 0)'), '*0*******') from onerow;
 false
@@ -401,6 +403,8 @@ false
 hive> select ST_Intersects(st_linestring(0,0, 1,2, 1,5), ST_linestring(1,1, 1,4, 4,4, 4,1)) from onerow;
 true
 hive> select ST_Intersects(st_linestring(0,0, 1,1), ST_linestring(0,1, 1,0)) from onerow;
+true
+hive> select ST_Intersects(ST_Linestring(1,0, 1,2), ST_Linestring(0,1, 2,1)) from onerow;
 true
 hive> select ST_Intersects(st_linestring(0,0, 0,1), ST_linestring(0,0, 1,0)) from onerow;
 true

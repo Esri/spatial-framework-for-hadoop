@@ -170,9 +170,10 @@ select ST_Crosses(st_linestring(8,7, 7,8), ST_linestring(1,1, 1,4, 4,4, 4,1)) fr
 select ST_Crosses(st_linestring(0,0, 1,2, 1,5), ST_linestring(1,1, 1,4, 4,4, 4,1)) from onerow;
 select ST_Crosses(st_point(1,1), ST_Point(1,1)) from onerow;
 select ST_Crosses(st_point(2,0), ST_Point(1,1)) from onerow;
-select ST_Crosses(st_linestring(0,0, 1,1), ST_linestring(1,0, 0,1)) from onerow;
-select ST_Crosses(st_linestring(0,0, 0,1), ST_linestring(0,0, 1,0)) from onerow;
-select ST_Crosses(st_linestring(0,0, 0,2), ST_linestring(0,1, 1,1)) from onerow;
+select ST_Crosses(ST_Linestring(0,0, 1,1), ST_Linestring(1,0, 0,1)) from onerow;
+select ST_Crosses(ST_Linestring(1,0, 1,2), ST_Linestring(0,1, 2,1)) from onerow;
+select ST_Crosses(ST_Linestring(0,0, 0,1), ST_Linestring(0,0, 1,0)) from onerow;
+select ST_Crosses(ST_Linestring(0,0, 0,2), ST_Linestring(0,1, 1,1)) from onerow;
 select ST_Relate(st_linestring('linestring(0 0, 0 1)'), ST_linestring('linestring(0 0, 1 0)'), '*0*******') from onerow;
 select ST_Relate(st_linestring('linestring(0 0, 0 1)'), ST_linestring('linestring(0 0, 1 0)'), '***0*****') from onerow;
 select ST_Relate(st_linestring('linestring(0 0, 0 1)'), ST_linestring('linestring(0 0, 1 0)'), '****0****') from onerow;
@@ -200,6 +201,7 @@ select ST_Intersects(st_linestring(2,0, 2,3), ST_linestring(1,1, 1,4, 4,4, 4,1))
 select ST_Intersects(st_linestring(8,7, 7,8), ST_linestring(1,1, 1,4, 4,4, 4,1)) from onerow;
 select ST_Intersects(st_linestring(0,0, 1,2, 1,5), ST_linestring(1,1, 1,4, 4,4, 4,1)) from onerow;
 select ST_Intersects(st_linestring(0,0, 1,1), ST_linestring(0,1, 1,0)) from onerow;
+select ST_Intersects(ST_Linestring(1,0, 1,2), ST_Linestring(0,1, 2,1)) from onerow;
 select ST_Intersects(st_linestring(0,0, 0,1), ST_linestring(0,0, 1,0)) from onerow;
 select ST_Intersects(st_linestring(0,0, 0,2), ST_linestring(0,1, 1,1)) from onerow;
 select ST_Intersects(st_point(1,1), ST_Point(1,1)) from onerow;
