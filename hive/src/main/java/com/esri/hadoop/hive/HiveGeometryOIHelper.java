@@ -131,13 +131,16 @@ public class HiveGeometryOIHelper {
 	}
 	
 	private BytesWritable last = null;
-	private boolean bytesReused = true; // always assume bytes are reused until we determine
-										// they aren't
+	
+	// always assume bytes are reused until we determine they aren't
+	private boolean bytesReused = true; 
+	
 	private OGCGeometry getGeometryFromBytes(BytesWritable writable) {
 		
 		if (bytesReused) {
-			if (last != null && last.getBytes() != writable.getBytes()) {
-				System.out.println("geom bytes writable changed, assuming bytes are not reused");
+			if (last != null && last != writable) {
+				// this assumes that the source of these bytes will either always
+				// reuse the bytes or never reuse the bytes.  
 				bytesReused = false;
 			} 
 			last = writable;

@@ -8,7 +8,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.WritableBinaryObj
 import org.apache.hadoop.io.BytesWritable;
 
 import com.esri.core.geometry.*;
-import com.esri.core.geometry.Geometry.GeometryAccelerationDegree;
 import com.esri.core.geometry.ogc.*;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -53,9 +52,9 @@ public class GeometryUtils {
 			PrimitiveObjectInspectorFactory.writableBinaryObjectInspector;
 
 	
-	private static Cache<byte[], OGCGeometry> geometryCache = 
+	private static Cache<BytesWritable, OGCGeometry> geometryCache = 
 			CacheBuilder.newBuilder()
-			.maximumSize(10000)
+			.weakKeys()
 			.build();
 	
 	/**
@@ -96,12 +95,12 @@ public class GeometryUtils {
 		if (geomref instanceof CachedGeometryBytesWritable) {
 			return ((CachedGeometryBytesWritable)geomref).getGeometry();
 		}
-
+		
 		// if geomref bytes are recycled, we can't use the cache because every
 		// key in the cache will be the same byte array
 		if (!bytesRecycled) {
 			// check for a cache hit to previously created geometries
-			OGCGeometry cachedGeom = geometryCache.getIfPresent(geomref.getBytes());
+			OGCGeometry cachedGeom = geometryCache.getIfPresent(geomref);
 
 			if (cachedGeom != null) {
 				return cachedGeom;
@@ -124,14 +123,13 @@ public class GeometryUtils {
 				if (wkid != GeometryUtils.WKID_UNKNOWN){
 					spatialReference = SpatialReference.create(wkid);
 				}
-				
+
 				Geometry esriGeom = OperatorImportFromESRIShape.local().execute(0, Geometry.Type.Unknown, shapeBuffer);
-				//OperatorContains.local().accelerateGeometry(esriGeom, spatialReference, GeometryAccelerationDegree.enumMedium);
 				OGCGeometry createdGeom = OGCGeometry.createFromEsriGeometry(esriGeom, spatialReference);
 				
 				if (!bytesRecycled) {
 					// only add bytes to cache if we know they aren't being recycled
-					geometryCache.put(geomref.getBytes(), createdGeom); 
+					geometryCache.put(geomref, createdGeom); 
 				}
 				
 				return createdGeom;
