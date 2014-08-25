@@ -124,12 +124,27 @@ public class HiveGeometryOIHelper {
 		}
 		
 		switch (oi.getPrimitiveCategory()) {
-			case BINARY: return GeometryUtils.geometryFromEsriShape((BytesWritable)writable);
+			case BINARY: return getGeometryFromBytes((BytesWritable)writable);
 			case STRING: return OGCGeometry.fromText(((Text)writable).toString());
 			default: return null;
 		}
 	}
 	
+	private BytesWritable last = null;
+	private boolean bytesReused = true; // always assume bytes are reused until we determine
+										// they aren't
+	private OGCGeometry getGeometryFromBytes(BytesWritable writable) {
+		
+		if (bytesReused) {
+			if (last != null && last.getBytes() != writable.getBytes()) {
+				System.out.println("geom bytes writable changed, assuming bytes are not reused");
+				bytesReused = false;
+			} 
+			last = writable;
+		}
+		
+		return GeometryUtils.geometryFromEsriShape((BytesWritable)writable, bytesReused);
+	}
 	
 	@Override
 	public String toString() {
