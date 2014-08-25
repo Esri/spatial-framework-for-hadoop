@@ -79,7 +79,7 @@ public class GeometryUtils {
 	}
 
 	public static OGCGeometry geometryFromEsriShape(BytesWritable geomref) {
-		// always assume bytes are recycled and can't be chached by using
+		// always assume bytes are recycled and can't be cached by using
 		// geomref.getBytes() as the key
 		return geometryFromEsriShape(geomref, true);
 	}
