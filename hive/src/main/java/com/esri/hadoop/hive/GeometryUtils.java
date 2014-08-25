@@ -2,7 +2,6 @@ package com.esri.hadoop.hive;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.WritableBinaryObjectInspector;
@@ -55,9 +54,7 @@ public class GeometryUtils {
 	
 	private static Cache<BytesWritable, OGCGeometry> geometryCache = 
 			CacheBuilder.newBuilder()
-			.weakKeys() // don't hold on to BytesWritable keys if they aren't referenced anymore
-			.expireAfterAccess(10, TimeUnit.SECONDS)
-			.maximumSize(10000)
+			.weakKeys()
 			.build();
 	
 	/**
@@ -82,43 +79,59 @@ public class GeometryUtils {
 	}
 
 	public static OGCGeometry geometryFromEsriShape(BytesWritable geomref) {
+		// always assume bytes are recycled and can't be cached by using
+		// geomref.getBytes() as the key
+		return geometryFromEsriShape(geomref, true);
+	}
+	
+	public static OGCGeometry geometryFromEsriShape(BytesWritable geomref, boolean bytesRecycled) {
 
+		if (geomref == null) {
+			return null;
+		}
+		
 		// this geomref might actually be a LazyGeometryBytesWritable which
 		// means we don't need to deserialize from bytes
 		if (geomref instanceof CachedGeometryBytesWritable) {
 			return ((CachedGeometryBytesWritable)geomref).getGeometry();
 		}
 		
-		// check for a cache hit to previously created geometries
-		OGCGeometry cachedGeom = geometryCache.getIfPresent(geomref);
-		if (cachedGeom != null) {
-			return cachedGeom;
+		// if geomref bytes are recycled, we can't use the cache because every
+		// key in the cache will be the same byte array
+		if (!bytesRecycled) {
+			// check for a cache hit to previously created geometries
+			OGCGeometry cachedGeom = geometryCache.getIfPresent(geomref);
+
+			if (cachedGeom != null) {
+				return cachedGeom;
+			}
 		}
 		
-		// not in cache or instance of LazyGeometryBytesWritable. now
+		// not in cache or instance of CachedGeometryBytesWritable. now
 		// need to create the geometry from its bytes
-		
-		ByteBuffer bbuf = ByteBuffer.allocate(4);
-		bbuf.order(ByteOrder.LITTLE_ENDIAN);
-	
 		int wkid = getWKID(geomref);
-		byte [] shapeBytes = getShapeBytes(geomref);
+		ByteBuffer shapeBuffer = getShapeByteBuffer(geomref);
 		
 		//minimum for a shape, even an empty one, is the 4 byte type record
-		if (shapeBytes.length < 4) {
+		if (shapeBuffer.limit() < 4) {
 			return null;
 		} else {
-			bbuf.put(shapeBytes, 0, 4);
-			if (bbuf.getInt(0) == Geometry.Type.Unknown.value()) { //empty Geometry, intentional
+			if (shapeBuffer.getInt(0) == Geometry.Type.Unknown.value()) { //empty Geometry, intentional
 				return null;
 			} else {
 				SpatialReference spatialReference = null;
 				if (wkid != GeometryUtils.WKID_UNKNOWN){
 					spatialReference = SpatialReference.create(wkid);
 				}
-				Geometry esriGeom = GeometryEngine.geometryFromEsriShape(shapeBytes, Geometry.Type.Unknown);
+
+				Geometry esriGeom = OperatorImportFromESRIShape.local().execute(0, Geometry.Type.Unknown, shapeBuffer);
 				OGCGeometry createdGeom = OGCGeometry.createFromEsriGeometry(esriGeom, spatialReference);
-				geometryCache.put(geomref, createdGeom); // add newly created geometry to cache
+				
+				if (!bytesRecycled) {
+					// only add bytes to cache if we know they aren't being recycled
+					geometryCache.put(geomref, createdGeom); 
+				}
+				
 				return createdGeom;
 			}
 		}
@@ -182,14 +195,11 @@ public class GeometryUtils {
 		}
 	}
 	
-	private static byte[] getShapeBytes(BytesWritable geomref){
-		byte [] geometryBytes = geomref.getBytes();
+	private static ByteBuffer getShapeByteBuffer(BytesWritable geomref){
+		byte [] geomBytes = geomref.getBytes();
+		int offset = SIZE_WKID + SIZE_TYPE;
 		
-		byte [] shapeBytes = new byte[geometryBytes.length - SIZE_WKID - SIZE_TYPE];
-		
-		System.arraycopy(geometryBytes, SIZE_WKID + SIZE_TYPE, shapeBytes, 0, shapeBytes.length);
-		
-		return shapeBytes;
+		return ByteBuffer.wrap(geomBytes, offset, geomBytes.length - offset).slice().order(ByteOrder.LITTLE_ENDIAN);
 	}
 	
 	private static BytesWritable serialize(MapGeometry mapGeometry){
