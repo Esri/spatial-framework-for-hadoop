@@ -24,7 +24,7 @@ public class TestUnenclosedJsonRecordReader {
 		
 		return new UnenclosedJsonRecordReader(split, conf);
 	}
-	
+
 	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
@@ -61,6 +61,20 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] { 1, 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 40, 123)));
 		Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 41, 123)));
 		Assert.assertArrayEquals(new int[] { 6, 7, 8 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 240, 340)));
+		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 353, 415)));
+		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 354, 415)));
 		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 355, 415)));
+
+		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 63)));
+		Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 63, 121)));
+		Assert.assertArrayEquals(new int[] { 4 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 121, 187)));
+		Assert.assertArrayEquals(new int[] { 5, 6 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 187, 264)));
+		Assert.assertArrayEquals(new int[] { 7, 8 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 264, 352)));
+		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 352, 412)));
+
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 23)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 23, 41)));
+		// Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 41, 123)));
 	}
+
 }

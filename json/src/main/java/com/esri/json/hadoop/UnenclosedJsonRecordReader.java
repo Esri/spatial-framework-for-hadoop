@@ -213,7 +213,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		 * We will count '{' and '}' to find the beginning and end of each record, while ignoring braces in string literals
 		 */
 		
-		if (readerPosition >= end) {
+		if ( readerPosition + (firstBraceConsumed ? 0 : 1)  >  end ) {
 			return false;
 		}
 		
@@ -225,8 +225,8 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		StringBuilder sb = new StringBuilder(2000);
 		
 		if (firstBraceConsumed) {
-			// first open bracket was consumed by the findNextRecordStart() method, update
-			// initial state accordingly
+			// first open bracket was consumed by the moveToRecordStart() method;
+			// update initial state accordingly
 			brace_depth = 1;
 			sb.append("{");
 			first_brace_found = true;
