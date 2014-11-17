@@ -77,4 +77,32 @@ public class TestUnenclosedJsonRecordReader {
 		// Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 41, 123)));
 	}
 
+	@Test
+	public void TestEscape() throws IOException {
+		//int [] recordBreaks = new int[] { 0, 44, 88, 137, 181, 229, 270, 311, 354 };  //length 395
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 44)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 45)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 46)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 43, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 19, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 44, 140)));
+		Assert.assertArrayEquals(new int[] {2, 3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 45, 140)));
+		Assert.assertArrayEquals(new int[] {4,5,6}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 181, 289)));
+		Assert.assertArrayEquals(new int[] { 8 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 336, 400)));  // 7|{}"
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 14, 45)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 22, 45)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 23, 45)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 24, 45)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 25, 45)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 44, 68)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 44, 69)));
+	}
+
+	@Test
+	public void TestGeomFirst() throws IOException {
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 32, 54)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 48, 54)));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 49, 54)));
+	}
+
 }

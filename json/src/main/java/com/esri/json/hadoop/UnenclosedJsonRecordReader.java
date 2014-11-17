@@ -127,17 +127,20 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				continue;
 			}
 			
+			boolean inEscape = false;
 			String fieldName = "";
 			// next should be a field name of attributes or geometry
 			while (true) {
-				next = inputReader.read(); readerPosition++;
+				next = inputReader.read();
+				readerPosition++;
+				inEscape = (!inEscape && next == '\\');
 				
 				// end of stream, no good
 				if (next < 0) {
 					return false;
 				}
 				
-				if (next == '"') {
+				if (!inEscape && next == '"') {
 					break;
 				}
 				
@@ -234,6 +237,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 			key.set(readerPosition - 1);
 		}
 		
+		boolean inEscape = false;
 		while (brace_depth > 0 || !first_brace_found)
 		{
 			chr = inputReader.read();
@@ -249,10 +253,18 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 			
 			switch (chr)
 			{
+			case '\\':
+				if (lit_char != 0 && !inEscape) {
+					inEscape = true;
+				}
+				break;
 			case '"':
-				if (lit_char == '"')
-				{
-					lit_char = 0; // mark end literal (double-quote)
+				if (lit_char == '"') {
+					if (inEscape) {
+						inEscape = false;
+					} else {
+						lit_char = 0; // mark end literal (double-quote)
+					}
 				} 
 				else if (lit_char == 0)
 				{
@@ -261,9 +273,12 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				// ignored because we found a " inside a ' ' block quote
 				break;
 			case '\'':
-				if (lit_char == '\'')
-				{
-					lit_char = 0; // mark end literal (single-quote)
+				if (lit_char == '\'') {
+					if (inEscape) {
+						inEscape = false;
+					} else {
+						lit_char = 0; // mark end literal (single-quote)
+					}
 				} 
 				else if (lit_char == 0)
 				{
@@ -286,6 +301,9 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				{
 					brace_depth--;
 				}
+				break;
+			default:
+				inEscape = false;
 				break;
 			}
 			
