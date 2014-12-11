@@ -12,8 +12,6 @@ import org.apache.hadoop.mapred.JobConf;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.esri.json.hadoop.UnenclosedJsonRecordReader;
-
 public class TestUnenclosedJsonRecordReader {
 	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
@@ -26,13 +24,17 @@ public class TestUnenclosedJsonRecordReader {
 	}
 
 	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader) throws IOException {
+		return getRecordIndexesInReader(reader, false);
+	}
+
+	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader, boolean flag) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
 		LongWritable key = reader.createKey();
 		Text value = reader.createValue();
 		
 		while (reader.next(key, value)) {
-			int line = value.toString().charAt(23) - '0';
+			int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
 			linesList.add(line);
 			System.out.println(key.get() + " - " + value.toString());
 		}
@@ -96,6 +98,19 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 25, 45)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 44, 68)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 44, 69)));
+	}
+
+	@Test
+	public void TestEsc2() throws IOException {
+		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 44)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 45)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 46)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 43, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 19, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 44, 140)));
+		Assert.assertArrayEquals(new int[] {2, 3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 45, 140)));
+		Assert.assertArrayEquals(new int[] {4,5,6}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 181, 289)));
 	}
 
 	@Test

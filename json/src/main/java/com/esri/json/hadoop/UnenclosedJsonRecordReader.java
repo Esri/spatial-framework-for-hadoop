@@ -90,7 +90,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	 * 
 	 * @throws IOException
 	 */
-	private boolean moveToRecordStart() throws JsonParseException, IOException {
+	private boolean moveToRecordStart() throws /*JsonParseException,*/ IOException {
 		int next = 0;
 		long resetPosition = readerPosition;
 		
@@ -259,35 +259,20 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				}
 				break;
 			case '"':
-				if (lit_char == '"') {
-					if (inEscape) {
-						inEscape = false;
-					} else {
-						lit_char = 0; // mark end literal (double-quote)
-					}
-				} 
-				else if (lit_char == 0)
-				{
-					lit_char = '"'; // mark start literal (double quote)
-				} 
-				// ignored because we found a " inside a ' ' block quote
-				break;
 			case '\'':
-				if (lit_char == '\'') {
-					if (inEscape) {
-						inEscape = false;
-					} else {
-						lit_char = 0; // mark end literal (single-quote)
-					}
-				} 
-				else if (lit_char == 0)
-				{
-					lit_char = '\''; // mark start literal (single quote)
-				} 
-				// ignored because we found a ' inside a " " block quote
+				if (lit_char == 0) {
+					lit_char = (char) chr;  // mark start literal (double/single quote)
+				}
+				else if (inEscape) {
+					inEscape = false;
+				}
+				else if (lit_char == chr) {
+					lit_char = 0;   // mark end literal (double/single-quote)
+				}
+ 				// ignored because we found a ' inside a " " block quote (or vice versa)
 				break;
 			case '{':
-				if (lit_char == 0) // not in string literal, so increase paren depth
+				if (lit_char == 0) // not in string literal, so increase brace depth
 				{
 					brace_depth++;
 					if (!first_brace_found) {
@@ -297,7 +282,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 				}
 				break;
 			case '}':
-				if (lit_char == 0) // not in string literal, so decrease paren depth
+				if (lit_char == 0) // not in string literal, so decrease brace depth
 				{
 					brace_depth--;
 				}
