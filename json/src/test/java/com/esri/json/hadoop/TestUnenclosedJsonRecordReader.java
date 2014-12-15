@@ -10,6 +10,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestUnenclosedJsonRecordReader {
@@ -100,7 +101,7 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertEquals(4, before.length + after.length);
 	}
 
-	@Test  // May not be guaranteed behavior
+	@Ignore  // May not be guaranteed behavior
 	public void TestComma() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 57, 111, ,  };
 		int[] rslt = getRecordIndexesInReader(getReaderFor("unenclosed-json-comma.json", 0, 222), true);
@@ -145,7 +146,7 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 0, 45)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 0, 46)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 19, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 43, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 25, 140)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 44, 140)));
 	}
 
@@ -156,8 +157,8 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 45)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 46)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 19, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 26, 140)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 43, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 44, 140)));
 	}
 
 	@Test
@@ -167,30 +168,31 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 0, 45)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 0, 46)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 19, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 43, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 26, 140)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 44, 140)));
-	}
-
-	@Test
-	public void TestEscOpenLast() throws IOException {
-		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
-		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 44)));
-		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 45)));
-		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 46)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 19, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 43, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 44, 140)));
 	}
 
 	@Test
 	public void TestEscCloseLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 44)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 45)));
+		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 46)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 19, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 25, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 44, 140)));
+	}
+
+	@Test
+	public void TestEscOpenLast() throws IOException {
+		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 0, 45)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 0, 46)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 19, 140)));
-		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 43, 140)));
+		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 26, 140)));
 		Assert.assertArrayEquals(new int[] {1,2,3}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 44, 140)));
+		Assert.assertArrayEquals(new int[] { 6 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 268, 280)));
 	}
 
 	@Test

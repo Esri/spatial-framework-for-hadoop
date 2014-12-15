@@ -149,7 +149,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 			boolean inEscape = false;
 			String fieldName = "";
 			// next should be a field name of attributes or geometry
-			while (true) {
+			while (next != '{') {  // If opening brace, the previous one was quoted
 				next = getChar();
 				if (next < 0) {  // end of stream, no good
 					return false;
