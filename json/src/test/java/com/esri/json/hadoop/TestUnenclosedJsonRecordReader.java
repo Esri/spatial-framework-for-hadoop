@@ -203,11 +203,26 @@ public class TestUnenclosedJsonRecordReader {
 		Assert.assertArrayEquals(new int[] {75, 146}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc-points.json", 70, 148), true));
 	}
 
+	// This tests some multi-byte characters in UTF-8.
+	// If implementing a byte-based approach instead of character-based,
+	// the test itself would probably have to be updated to byte-based offsets
+	@Test
+	public void TestCharacters() throws IOException {
+		//int[] recordBreaks = new int[] { 0, 42, 84, 126, 168, 210, ...};  // character-based offsets
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 0, 42), true));
+		Assert.assertArrayEquals(new int[] {0,42}, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 0, 43), true));
+		Assert.assertArrayEquals(new int[] { 42 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 38, 43), true));
+		Assert.assertArrayEquals(new int[] { 42 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 39, 43), true));
+		Assert.assertArrayEquals(new int[] {84,126,168}, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 43, 200), true));
+		Assert.assertArrayEquals(new int[] {210,252,294,336}, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 200, 400), true));
+	}
+
 	@Test
 	public void TestGeomFirst() throws IOException {
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 32, 54)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 48, 54)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 49, 54)));
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 0, 52), true));
 	}
 
 }
