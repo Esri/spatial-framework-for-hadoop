@@ -69,6 +69,20 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		return new Text();
 	}
 
+	private int getChar() throws IOException {
+		int ch = inputReader.read();
+		readerPosition++;
+		return ch;
+	}
+
+	private int getNonWhite() throws IOException {
+		int ch;
+		do {
+			ch = getChar();
+		} while (Character.isWhitespace((char)ch));
+		return ch;
+	}
+
 	@Override
 	public long getPos() throws IOException {
 		return readerPosition;
@@ -77,20 +91,6 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	@Override
 	public float getProgress() throws IOException {
 		return (float)(readerPosition-start)/(end-start);
-	}
-
-	int getChar() throws IOException {
-		int ch = inputReader.read();
-		readerPosition++;
-		return ch;
-	}
-
-	int getNonWhite() throws IOException {
-		int ch;
-		do {
-			ch = getChar();
-		} while (Character.isWhitespace((char)ch));
-		return ch;
 	}
 
 	/**
@@ -109,17 +109,14 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 
 		// The case of split point exactly at whitespace between records, is
 		// handled by forcing it to the split following, in the interest of
-        // better balancing the splits, by consuming the whitespace in next().
+		// better balancing the splits, by consuming the whitespace in next().
 		// The alternative of forcing it to the split preceding, could be
 		// done like what is commented here.
 		//   while (next != '{' || skipDup > 0) {  // skipDup>0 => record already consumed
 		// 	  next = getChar();
-		// 	  if (next < 0)
-		//  	return false;  // end of stream, no good
-		// 	  if (next == '}')
-		// 		skipDup = -1;  // Definitely not
-		// 	  else if (skipDup == 0)   // no info yet
-		// 		skipDup = 1;   // Possibly so until refuted by '}'
+		// 	  if (next < 0)  return false;   // end of stream, no good
+		// 	  if (next == '}')  skipDup = -1;  // Definitely not
+		// 	  else if (skipDup == 0) skipDup = 1;  // no info - Maybe so until refuted by '}'
 		//   }
 
 		while (true) {
@@ -148,8 +145,13 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 
 			boolean inEscape = false;
 			String fieldName = "";
-			// next should be a field name of attributes or geometry
-			while (next != '{') {  // If opening brace, the previous one was quoted
+			// Next should be a field name of  attributes  or  geometry .
+
+            // If we see another opening brace, the previous one must have been inside
+            // a quoted string literal (after which the double quote we found, was a
+			// closing quote mark rather than the opening quote mark) - start over.
+
+			while (next != '{') {
 				next = getChar();
 				if (next < 0) {  // end of stream, no good
 					return false;
@@ -201,6 +203,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	public boolean next(LongWritable key, Text value) throws IOException {
 		/*
 		 * NOTE : we are not using a JSONParser, so this will not validate JSON structure aside from correct counts of '{' and '}'
+		 * The fact that it may handle some invalid JSON, does not imply that we support invalid JSON.
 		 * 
 		 * The JSON will look like this (white-space ignored)
 		 * 
@@ -237,7 +240,7 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		StringBuilder sb = new StringBuilder(2000);
 		
 		if (firstBraceConsumed) {
-			// first open bracket was consumed by the moveToRecordStart() method;
+			// first open brace was consumed already;
 			// update initial state accordingly
 			brace_depth = 1;
 			sb.append("{");
