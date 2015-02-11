@@ -46,7 +46,7 @@
     <hadoop.version>1.1.1</hadoop.version>
     <hive.version>0.12.0</hive.version>
     <jackson.version>1.8.8</jackson.version>
-	  <geometry.version>1.1.1</geometry.version>
+    <geometry.version>1.2</geometry.version>
     <junit.version>4.11</junit.version>
 
     <!-- Versions for plugins -->
