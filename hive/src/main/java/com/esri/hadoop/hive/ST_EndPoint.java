@@ -11,7 +11,7 @@ import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
-	name = "ST_StartPoint",
+	name = "ST_EndPoint",
 	value = "_FUNC_(geometry) - returns the last point of an ST_Linestring",
 	extended = "Example:\n"
 	+ "  > SELECT _FUNC_(ST_LineString(1.5,2.5, 3.0,2.2)) FROM src LIMIT 1;  -- POINT(3.0 2.0)\n"
