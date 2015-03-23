@@ -4,7 +4,7 @@
 The __Spatial Framework for Hadoop__ allows developers and data scientists to use the Hadoop data processing system 
 for spatial data analysis.
 
-For tools and samples that use this framework, head over 
+For tools, [samples](https://github.com/Esri/gis-tools-for-hadoop/tree/master/samples), and [tutorials](https://github.com/Esri/gis-tools-for-hadoop/wiki) that use this framework, head over 
 to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## What's New
@@ -55,6 +55,8 @@ ArcGIS user submitting the workflow file.
 
 ## Resources
 
+* [GeoData Blog on the ArcGIS Blogs](http://blogs.esri.com/esri/arcgis/author/jonmurphy/)
+* [Big Data Place on GeoNet](https://geonet.esri.com/groups/big-data)
 * [ArcGIS Geodata Resource Center]( http://resources.arcgis.com/en/communities/geodata/)
 * [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
 * [twitter@esri](http://twitter.com/esri)
