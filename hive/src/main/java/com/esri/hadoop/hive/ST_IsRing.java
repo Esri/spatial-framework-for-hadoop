@@ -11,7 +11,7 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCLineString;
 
 @Description(
-	name = "ST_Ring",
+	name = "ST_IsRing",
 	value = "_FUNC_(ST_LineString) - return true if the linestring is closed & simple",
 	extended = "Example:\n"
 	+ "  SELECT _FUNC_(ST_LineString(0.,0., 3.,4., 0.,4., 0.,0.)) FROM src LIMIT 1;  -- true\n"
