@@ -11,6 +11,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 * Huge improvements in performance for Hive `ST_Geometry` UDFs.
  * For example, the [Hive sample](https://github.com/Esri/gis-tools-for-hadoop/tree/master/samples/point-in-polygon-aggregation-hive) with ~175 million points now takes **4 minutes**, down from **75 minutes**, on a 20 node cluster. 
+* [Resource](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions) on Hive compatibility with ST_Geometry
 
 ## Features
 
