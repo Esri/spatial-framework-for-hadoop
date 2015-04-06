@@ -53,11 +53,18 @@ public class ST_GeomFromGeoJson extends GenericUDF {
 
 		return null;
 	}
-	
+
 	@Override
-	public String getDisplayString(String[] arg0) {
-		// TODO Auto-generated method stub
-		return "empty display string";
+	public String getDisplayString(String[] args) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getClass().getName());
+		String delim = "(";
+		for (String arg: args) {
+			sb.append(delim).append(arg);
+			delim = ", ";
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 
 	@Override
