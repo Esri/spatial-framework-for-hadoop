@@ -1,5 +1,2 @@
-hive> select ST_Area(ST_BinEnvelope(1.0, ST_Bin(1.0, ST_Point(0, 0)))) from onerow;
 1.0
-hive> select ST_AsText(ST_BinEnvelope(1.0, ST_Bin(1.0, ST_Point(0, 0)))) from onerow;
 POLYGON ((-0.5 -0.5, 0.5 -0.5, 0.5 0.5, -0.5 0.5, -0.5 -0.5))
-hive> 

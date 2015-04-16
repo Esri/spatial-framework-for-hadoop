@@ -1,165 +1,82 @@
-hive> select ST_AsJson(ST_Polygon(1.5,2.5, 3.0,2.2, 2.2,1.1)) from onerow;
 {"rings":[[[1.5,2.5],[3,2.2],[2.2,1.1],[1.5,2.5]]]}
-hive> select ST_AsJson(ST_Polygon(1.5,2.5, 3.0,2.2, 2.2,1.1, 1.5, 2.5)) from onerow;
 {"rings":[[[1.5,2.5],[3,2.2],[2.2,1.1],[1.5,2.5]]]}
-hive> select ST_AsJson(ST_Polygon(0.1,2.2, 3.0,2.2, 2.2,1.1, 0.1, 2.2)) from onerow;
 {"rings":[[[0.1,2.2],[3,2.2],[2.2,1.1],[0.1,2.2]]]}
-hive> select ST_AsJson(ST_Polygon(1,1, 1,4, 4,4, 4,1)) from onerow;
 {"rings":[[[1,1],[1,4],[4,4],[4,1],[1,1]]]}
-hive> select ST_AsText(ST_Polygon(1,1, 1,4, 4,1)) from onerow;
 POLYGON ((1 1, 4 1, 1 4, 1 1))
-hive> select ST_AsText(ST_Polygon(1,1, 4,1, 1,4)) from onerow;
 POLYGON ((1 1, 4 1, 1 4, 1 1))
-hive> select ST_AsText(ST_Polygon(1,1, 1,4, 4,1, 1,1)) from onerow;
 POLYGON ((1 1, 4 1, 1 4, 1 1))
-hive> select ST_AsText(ST_Polygon(1,1, 4,1, 1,4, 1,1)) from onerow;
 POLYGON ((1 1, 4 1, 1 4, 1 1))
-hive> select st_AsText(ST_Envelope(ST_LineString(0,0, 2,2))) from onerow;
 POLYGON ((0 0, 2 0, 2 2, 0 2, 0 0))
-hive> select st_AsText(ST_Envelope(ST_Polygon(1,1, 4,1, 4,4, 1,4))) from onerow;
 POLYGON ((1 1, 4 1, 4 4, 1 4, 1 1))
-hive> select st_AsText(ST_Envelope(st_polygon(2,0, 2,3, 3,0))) from onerow;
 POLYGON ((2 0, 3 0, 3 3, 2 3, 2 0))
-hive> select ST_AsText(ST_Intersection(ST_Point(1,1), ST_Point(1,1))) from onerow;
 POINT (1 1)
-hive> select ST_AsText(ST_Intersection(ST_LineString(0,2, 0,4), ST_Point(0,3))) from onerow;
 POINT (0 3)
-hive> select ST_AsText(ST_Intersection(ST_GeomFromText('linestring(0 2, 0 0, 2 0)'), ST_GeomFromText('linestring(0 3, 0 1, 1 0, 3 0)'))) from onerow;
 MULTILINESTRING ((1 0, 2 0), (0 2, 0 1))
-hive> select ST_AsText(ST_Intersection(ST_LineString(0,2, 0,4), ST_LineString(0,2, 0,4))) from onerow;
 LINESTRING (0 2, 0 4)
-hive> select ST_AsText(ST_Intersection(ST_LineString(0,2, 0,4), ST_LineString(0,3, 0,5))) from onerow;
 LINESTRING (0 3, 0 4)
-hive> select ST_AsText(ST_Intersection(ST_LineString(0,2, 0,5), ST_LineString(1,3, 0,3, 0,4, 1,4))) from onerow;
 LINESTRING (0 3, 0 4)
-hive> select ST_AsText(ST_Intersection(ST_LineString(0,2, 2,3), ST_Polygon(1,1, 4,1, 4,4, 1,4))) from onerow;
 LINESTRING (1 2.5, 2 3)
-hive> select ST_AsText(ST_Intersection(ST_Polygon(1,1, 1,4, 4,4, 4,1), ST_LineString(1,1, 1,4))) from onerow;
 LINESTRING (1 1, 1 4)
-hive> select ST_AsText(ST_Intersection(ST_Polygon(1,1, 1,4, 4,4, 4,1), ST_LineString(1,3, 1,4, 0,4))) from onerow;
 LINESTRING (1 3, 1 4)
-hive> select ST_AsText(ST_Intersection(ST_Polygon(2,0, 2,3, 3,0), ST_Polygon(1,1, 4,1, 4,4, 1,4))) from onerow;
 POLYGON ((2 1, 2.666666666666667 1, 2 3, 2 1))
-hive> select ST_AsText(ST_Intersection(ST_Polygon(1,0, 3,0, 1,2), ST_Polygon(0,1, 2,1, 0,3))) from onerow;
 POLYGON ((1 1, 2 1, 1 2, 1 1))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((1 0, 3 0, 1 2, 1 0))'), ST_Polygon('polygon((0 1, 2 1, 0 3, 0 1))'))) from onerow;
 POLYGON ((1 1, 2 1, 1 2, 1 1))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((3 0, 3 3, 0 3, 3 0))'), ST_Polygon('polygon((2 2, 5 2, 2 5, 2 2))'))) from onerow;
 POLYGON ((2 2, 3 2, 3 3, 2 3, 2 2))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((2 0, 2 2, 0 2, 2 0))'), ST_Polygon('polygon((1 1, 3 1, 1 3, 1 1))'))) from onerow;
 POLYGON ((1 1, 2 1, 2 2, 1 2, 1 1))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 2 0, 0 2, 0 0))'), ST_Polygon('polygon((0 0, 1 0, 0 1, 0 0))'))) from onerow;
 POLYGON ((0 0, 1 0, 0 1, 0 0))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 3 0, 0 3, 0 0))'), ST_Polygon('polygon((1 1, 2 1, 1 2, 1 1))'))) from onerow;
 POLYGON ((1 1, 2 1, 1 2, 1 1))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 2 0, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 1 0, 0 1, 1 1))'))) from onerow;
 POLYGON ((1 0, 1 1, 0 1, 1 0))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 1 0, 0 1, 0 0))'), ST_Polygon('polygon((0 0, 1 0, 0 1, 0 0))'))) from onerow;
 POLYGON ((0 0, 1 0, 0 1, 0 0))
-hive> select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 3 0, 0 3, 0 0))'), ST_Polygon('polygon((2 2, 2 0, 3 0, 3 3, 0 3, 0 2, 2 2))'))) from onerow;
 MULTIPOLYGON (((2 0, 3 0, 2 1, 2 0)), ((0 2, 1 2, 0 3, 0 2)))
-hive> select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))'))) from onerow;
 POINT (3 3)
-hive> select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))'))) from onerow;
 POINT (4 4)
-hive> select ST_AsText(ST_Centroid(ST_MultiPolygon(array(1,1, 1,2, 2,2, 2,1), array(3,3, 3,4, 4,4, 4,3)))) from onerow;
 POINT (2.5 2.5)
-hive> select ST_Area(ST_Buffer(ST_GeomFromText('point (0 0)'), 1)) from onerow;
 3.139350203046865
-hive> select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,-80, -179.98, -80.03), 4326)) from onerow;
 3438.190416575652
-hive> select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,80, -179.98, 80.03), 4326)) from onerow;
 3438.190416575652
-hive> select ST_GeodesicLengthWGS84(ST_SetSRID(ST_LineString(179.98,-0.01, -179.98, 0.02), 4326)) from onerow;
 5552.589421311623
-hive> select ST_AsText(ST_Buffer(ST_GeomFromText('polygon ((0 0, 3 0, 3 2, 5 2, 5 5, 2 5, 2 3, 0 3, 0 0))'), -1)) from onerow;
 MULTIPOLYGON (((3 3, 4 3, 4 4, 3 4, 3 3)), ((1 1, 2 1, 2 2, 1 2, 1 1)))
-hive> select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))'))) from onerow;
 POINT (3 3)
-hive> select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))'))) from onerow;
 POINT (4 4)
-hive> select ST_AsText(ST_Centroid(ST_MultiPolygon(array(1,1, 1,2, 2,2, 2,1), array(3,3, 3,4, 4,4, 4,3)))) from onerow;
 POINT (2.5 2.5)
-hive> SELECT ST_AsText(ST_Difference(ST_MultiPoint(1, 1, 1.5, 1.5, 2, 2), ST_Point(1.5, 1.5))) FROM onerow;
 MULTIPOINT ((1 1), (2 2))
-hive> SELECT ST_AsText(ST_Difference(ST_Polygon(0, 0, 0, 10, 10, 10, 10, 0), ST_Polygon(0, 0, 0, 5, 5, 5, 5, 0))) from onerow;
 POLYGON ((5 0, 10 0, 10 10, 0 10, 0 5, 5 5, 5 0))
-hive> SELECT ST_AsText(ST_SymmetricDiff(ST_Point('point(0 0)'), ST_Point('point(2 2)'))) FROM onerow;
 MULTIPOINT ((0 0), (2 2))
-hive> SELECT ST_AsText(ST_SymmetricDiff(ST_MultiPoint('multipoint((0 0))'), ST_MultiPoint('multipoint((2 2))'))) FROM onerow;
 MULTIPOINT ((0 0), (2 2))
-hive> SELECT ST_AsText(ST_SymmetricDiff(ST_LineString('linestring(0 2, 2 2)'), ST_LineString('linestring(1 2, 3 2)'))) FROM onerow;
 MULTILINESTRING ((0 2, 1 2), (2 2, 3 2))
-hive> SELECT ST_AsText(ST_SymmetricDiff(ST_Polygon('polygon((0 0, 2 0, 2 2, 0 2, 0 0))'), ST_Polygon('polygon((1 1, 3 1, 3 3, 1 3, 1 1))'))) FROM onerow;
 MULTIPOLYGON (((0 0, 2 0, 2 1, 1 1, 1 2, 0 2, 0 0)), ((2 1, 3 1, 3 3, 1 3, 1 2, 2 2, 2 1)))
-hive> select ST_AsText(ST_SetSRID(ST_MultiLineString(array(0,80, 0.03, 80.04)), 4326)) from onerow;
 LINESTRING (0 80, 0.03 80.04)
-hive> select ST_AsText(ST_SetSRID(ST_MultiLineString(array(0.0, 80.0, 0.03, 80.04)), 4326)) from onerow;
 LINESTRING (0 80, 0.03 80.04)
-hive> select ST_AsText(ST_SetSRID(ST_GeomFromText('MultiLineString((0 80, 0.03 80.04))'), 4326)) from onerow;
 LINESTRING (0 80, 0.03 80.04)
-hive> select ST_AsText(ST_GeomFromText('MultiLineString((0 80, 0.03 80.04))', 4326)) from onerow;
 MULTILINESTRING ((0 80, 0.03 80.04))
-hive> select ST_AsJson(ST_Intersection(ST_Linestring(0,0, 1,1), ST_Linestring(2,2, 3,3))) from onerow;
 {"rings":[]}
-hive> select ST_AsJson(ST_GeomFromJson('{"x":0.0,"y":0.0}')) from onerow;
 {"x":0,"y":0}
-hive> select ST_AsText(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
 POINT (1.2 2.4)
-hive> select ST_AsJson(ST_GeomFromGeoJson('{"type":"Point", "coordinates":[1.2, 2.4]}')) from onerow;
 {"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}
-hive> select ST_AsText(ST_GeomFromGeoJson('{"type":"LineString", "coordinates":[[1,2], [3,4]]}')) from onerow;
 LINESTRING (1 2, 3 4)
-hive> select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}')) from onerow;
 {"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}
-hive> select ST_AsJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
 {"x":1.2,"y":2.4}
-hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid":4326}}')) from onerow;
 {"type":"Point","coordinates":[1.2,2.4]}
-hive> select ST_AsGeoJson(ST_GeomFromJson('{"x":1.2,"y":2.4,"spatialReference":{"wkid": 0}}')) from onerow;
 {"type":"Point","coordinates":[1.2,2.4]}
-hive> SELECT ST_AsGeoJSON(ST_MultiLineString(array(1, 1, 2, 2, 3, 3), array(10, 10, 11, 11, 12, 12))) from onerow;
 {"type":"MultiLineString","coordinates":[[[1.0,1.0],[2.0,2.0],[3.0,3.0]],[[10.0,10.0],[11.0,11.0],[12.0,12.0]]]}
-hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_Point(1.2, 2.4)))) from onerow;
 POINT (1.2 2.4)
-hive> select ST_AsText(ST_GeomFromGeoJson(ST_AsGeoJson(ST_LineString(1,2, 3,4)))) from onerow;
 LINESTRING (1 2, 3 4)
-hive> select ST_AsText(ST_Boundary(ST_LineString(0,1, 1,0))) from onerow;
 MULTIPOINT ((0 1), (1 0))
-hive> select ST_AsText(ST_Boundary(ST_Polygon(1,1, 4,1, 1,4))) from onerow;
 LINESTRING (1 1, 4 1, 1 4, 1 1)
-hive> select ST_AsText(ST_Boundary(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'))) from onerow;
 MULTILINESTRING ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 0)) from onerow;
 {"x":10,"y":40}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 1)) from onerow;
 {"x":10,"y":40}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 2)) from onerow;
 {"x":40,"y":30}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('multipoint ((10 40), (40 30), (20 20), (30 10))', 0), 4)) from onerow;
 {"x":30,"y":10}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 0)) from onerow;
 {"x":10.02,"y":20.01}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 1)) from onerow;
 {"x":10.02,"y":20.01}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 2)) from onerow;
 {"x":10.32,"y":23.98}
-hive> select ST_AsJson(ST_PointN(ST_GeomFromText('linestring (10.02 20.01, 10.32 23.98, 11.92 25.64)'), 3)) from onerow;
 {"x":11.92,"y":25.64}
-hive> select ST_AsText(ST_ExteriorRing(ST_Polygon(1,1, 1,4, 4,1))) from onerow;
 LINESTRING (1 1, 4 1, 1 4, 1 1)
-hive> select ST_AsText(ST_ExteriorRing(ST_Polygon('polygon ((1 1, 4 1, 1 4))'))) from onerow;
 LINESTRING (1 1, 4 1, 1 4, 1 1)
-hive> select ST_AsText(ST_ExteriorRing(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'))) from onerow;
 LINESTRING (0 0, 8 0, 0 8, 0 0)
-hive> select ST_AsText(ST_GeometryN(ST_GeomFromText('multipoint (10 40, 40 30, 20 20, 30 10)'), 3)) from onerow;
 POINT (20 20)
-hive> select ST_AsText(ST_GeometryN(ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))'), 2)) from onerow;
 LINESTRING (20 20, 7 8)
-hive> select ST_AsJson(ST_GeometryN(ST_GeomFromText('multilinestring ((2 4, 10 10), (20 20, 7 8))'), 2)) from onerow;
 {"paths":[[[20,20],[7,8]]]}
-hive> select ST_AsText(ST_GeometryN(ST_GeomFromText('multipolygon (((3 3, 4 6, 5 3, 3 3)),((8 24, 1 28, 9 25, 8 24)), ((13 33, 7 36, 1 40, 10 43, 13 33)))'), 1)) from onerow;
 POLYGON ((3 3, 5 3, 4 6, 3 3))
-hive> select ST_AsText(ST_InteriorRingN(ST_Polygon('polygon ((0 0, 8 0, 0 8, 0 0), (1 1, 1 5, 5 1, 1 1))'), 1)) from onerow;
 LINESTRING (1 1, 1 5, 5 1, 1 1)
-hive> 
