@@ -41,4 +41,7 @@ true	false
 hive> select ST_Within(ST_Point(2, 3), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)),
     > ST_Within(ST_Point(8, 8), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)) from onerow;
 true	false
+false
+hive> 
+false
 hive> 

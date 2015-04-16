@@ -27,3 +27,7 @@ select ST_Touches(ST_Point(1, 3), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)),
 ST_Touches(ST_Point(8, 8), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)) from onerow;
 select ST_Within(ST_Point(2, 3), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)),
 ST_Within(ST_Point(8, 8), ST_Polygon(1, 1, 1, 4, 4, 4, 4, 1)) from onerow;
+SELECT ST_Intersects(ST_GeomFromGeoJson('{"type": "LineString", "coordinates": [[2.5,2.5], [8.0,0.0]]}'),
+                     ST_GeomFromGeoJson('{"type": "LineString", "coordinates": [[1.5,1.5], [0.0,7.0]]}'))  from onerow;
+SELECT ST_Intersects(ST_GeomFromJson('{"paths":[[[2.5,2.5],[8,0]]],"spatialReference":{"wkid":4326}}'),
+                     ST_GeomFromJson('{"paths":[[[1.5,1.5],[0,7]]],"spatialReference":{"wkid":4326}}')) from onerow;
