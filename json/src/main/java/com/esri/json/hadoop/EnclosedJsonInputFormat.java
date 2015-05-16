@@ -21,8 +21,8 @@ public class EnclosedJsonInputFormat extends FileInputFormat<LongWritable, Text>
 		return new EnclosedJsonRecordReader(arg0, arg1);
 	}
 	
-	@Override
-	public boolean isSplitable(FileSystem fs, Path filename) {
-		return false;
-	}
+	// @Override
+	// public boolean isSplitable(FileSystem fs, Path filename) {
+	// 	return false;
+	// }
 }
