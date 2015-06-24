@@ -6,6 +6,8 @@ select ST_AsText(ST_Polygon(1,1, 1,4, 4,1)) from onerow;
 select ST_AsText(ST_Polygon(1,1, 4,1, 1,4)) from onerow;
 select ST_AsText(ST_Polygon(1,1, 1,4, 4,1, 1,1)) from onerow;
 select ST_AsText(ST_Polygon(1,1, 4,1, 1,4, 1,1)) from onerow;
+select ST_AsText(ST_LineString(array(0,0), array(2,2))) from onerow;
+select ST_AsText(ST_LineString(array(ST_Point(0,0), ST_Point(2,2)))) from onerow;
 select st_AsText(ST_Envelope(ST_LineString(0,0, 2,2))) from onerow;
 select st_AsText(ST_Envelope(ST_Polygon(1,1, 4,1, 4,4, 1,4))) from onerow;
 select st_AsText(ST_Envelope(st_polygon(2,0, 2,3, 3,0))) from onerow;
