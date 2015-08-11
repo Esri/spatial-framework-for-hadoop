@@ -77,7 +77,7 @@ public class EnclosedJsonRecordReader implements RecordReader<LongWritable, Text
 			
 			token = parser.nextToken();
 			
-			while (token != null && !(token == JsonToken.START_ARRAY && parser.getCurrentName() == "features")){
+			while (token != null && !(token == JsonToken.START_ARRAY && parser.getCurrentName().equals("features"))) {
 				token = parser.nextToken();
 			}
 			
