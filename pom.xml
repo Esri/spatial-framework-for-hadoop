@@ -51,6 +51,18 @@
         <hadoop.version>2.2.0</hadoop.version>
       </properties>
     </profile>
+    <profile>  <!-- compile error on com.google.common.cache in hive module -->
+      <id>hive-.10</id>
+      <properties>
+        <hive.version>0.10.0</hive.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hive-.11</id>
+      <properties>
+        <hive.version>0.11.0</hive.version>
+      </properties>
+    </profile>
   </profiles>
 
   <properties>
