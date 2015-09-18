@@ -55,13 +55,19 @@ public class TestUnenclosedJsonRecordMrv2 {
 	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader, boolean flag) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
-		LongWritable key = reader.createKey();
-		Text value = reader.createValue();
+		LongWritable key = null;
+		Text value = null;
 		
-		while (reader.next(key, value)) {
-			int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
-			linesList.add(line);
-			//System.out.println(key.get() + " - " + value.toString());
+		try {
+			while (reader.nextKeyValue()) {
+				key = reader.getCurrentKey();
+				value = reader.getCurrentValue();
+				int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
+				linesList.add(line);
+				//System.out.println(key.get() + " - " + value.toString());
+			}
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
 		}
 		
 		int [] lines = new int[linesList.size()];
@@ -77,8 +83,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 		//int totalSize = 415;
 		
 		//int [] recordBreaks = new int[] { 0, 40, 80, 120, 160, 200, 240, 280, 320, 372 };
-	
-		
+
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 40)));
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 41)));
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 42)));

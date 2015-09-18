@@ -111,20 +111,6 @@ public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text>
 		return (float)(readerPosition-start)/(end-start);
 	}
 
-	private boolean hasNext() throws IOException {
-
-		// The case of split point exactly at whitespace between records,
-		// is handled by forcing the record following to the split following,
-		// in the interest of better balancing the splits, by consuming the
-		// whitespace before checking the end of the split.
-		if (!firstBraceConsumed) {  // That should only ever be true on the very first read in the split
-			int chr = getNonWhite();
-			firstBraceConsumed = (chr == '{');
-		}
-
-		return ( readerPosition + (firstBraceConsumed ? 0 : 1)  <=  end );
-	}
-
 	@Override
 	public void initialize(InputSplit split, TaskAttemptContext taskContext)
 				throws IOException, InterruptedException {
@@ -283,7 +269,12 @@ public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text>
 		// is handled by forcing the record following to the split following,
 		// in the interest of better balancing the splits, by consuming the
 		// whitespace before checking the end of the split.
-        if (!hasNext()) {
+		if (!firstBraceConsumed) {  // That should only ever be true on the very first read in the split
+			chr = getNonWhite();
+			firstBraceConsumed = (chr == '{');
+		}
+
+		if ( readerPosition + (firstBraceConsumed ? 0 : 1)  >  end )  {
 			return false;
 		}
 		
@@ -377,11 +368,7 @@ public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text>
 
 	@Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
-		boolean rv = hasNext();
-		if (rv) {
-			next(mkey, mval);
-		}
-		return rv;
+		return next(mkey, mval);
 	}
 
 }
