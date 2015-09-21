@@ -30,11 +30,40 @@
 		<url>git@github.com:Esri/spatial-framework-for-hadoop.git</url>
 	</scm>
 
-
   <modules>
     <module>hive</module>
     <module>json</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>hadoop-1.1</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <hadoop.version>1.1.1</hadoop.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hadoop-2.2</id>
+      <properties>
+        <hadoop.version>2.2.0</hadoop.version>
+      </properties>
+    </profile>
+    <profile>  <!-- compile error on com.google.common.cache in hive module -->
+      <id>hive-.10</id>
+      <properties>
+        <hive.version>0.10.0</hive.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hive-.11</id>
+      <properties>
+        <hive.version>0.11.0</hive.version>
+      </properties>
+    </profile>
+  </profiles>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

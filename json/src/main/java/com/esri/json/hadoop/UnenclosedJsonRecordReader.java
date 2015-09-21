@@ -11,29 +11,36 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileSplit;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 /**
  * 
  * Enumerates records from an Esri Unenclosed JSON file
  * 
  */
-public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Text>{
+public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text> implements
+    org.apache.hadoop.mapred.RecordReader<LongWritable, Text> {
 	static final Log LOG = LogFactory.getLog(UnenclosedJsonRecordReader.class.getName());
 	
 	private BufferedReader inputReader;
-	private FileSplit fileSplit;
-	
+	private LongWritable mkey = null;
+	private Text mval = null;
 	
 	long readerPosition;
 	long start, end;
 	private boolean firstBraceConsumed = false;
-	
-	public UnenclosedJsonRecordReader(InputSplit split, Configuration conf) throws IOException
-	{
-		fileSplit = (FileSplit)split;
+
+	public UnenclosedJsonRecordReader() throws IOException 	{
+		mkey = createKey();
+		mval = createValue();
+	}
+
+	public UnenclosedJsonRecordReader(org.apache.hadoop.mapred.InputSplit split,
+									  Configuration conf) throws IOException {
+		org.apache.hadoop.mapred.FileSplit fileSplit = (org.apache.hadoop.mapred.FileSplit)split;
 		
 		Path filePath = fileSplit.getPath();
 		
@@ -75,6 +82,17 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		return ch;
 	}
 
+	@Override
+	public LongWritable getCurrentKey() throws IOException,
+			InterruptedException {
+		return mkey;
+	}
+
+	@Override
+	public Text getCurrentValue() throws IOException, InterruptedException {
+		return mval;
+	}
+
 	private int getNonWhite() throws IOException {
 		int ch;
 		do {
@@ -91,6 +109,29 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 	@Override
 	public float getProgress() throws IOException {
 		return (float)(readerPosition-start)/(end-start);
+	}
+
+	@Override
+	public void initialize(InputSplit split, TaskAttemptContext taskContext)
+				throws IOException, InterruptedException {
+		FileSplit fileSplit = (FileSplit)split;
+		
+		Path filePath = fileSplit.getPath();
+		
+		start = fileSplit.getStart();
+		end = fileSplit.getLength() + start;
+		
+		readerPosition = start;
+
+		FileSystem fs = filePath.getFileSystem(taskContext.getConfiguration());
+		
+		inputReader = new BufferedReader(new InputStreamReader(fs.open(filePath)));
+		
+		if (start != 0) {
+			// split starts inside the json
+			inputReader.skip(start);
+			moveToRecordStart();
+		}
 	}
 
 	/**
@@ -323,6 +364,11 @@ public class UnenclosedJsonRecordReader implements RecordReader<LongWritable, Te
 		
 		value.set(sb.toString());
 		return true;
+	}
+
+	@Override
+	public boolean nextKeyValue() throws IOException, InterruptedException {
+		return next(mkey, mval);
 	}
 
 }

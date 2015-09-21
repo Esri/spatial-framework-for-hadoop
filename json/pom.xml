@@ -31,10 +31,18 @@
       <groupId>com.esri.geometry</groupId>
       <artifactId>esri-geometry-api</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency> 
+
+    <dependency>
+      <groupId>org.apache.hive</groupId>
+      <artifactId>hive-exec</artifactId>
+      <version>${hive.version}</version>
+      <scope>test</scope>
     </dependency> 
   </dependencies>
 
