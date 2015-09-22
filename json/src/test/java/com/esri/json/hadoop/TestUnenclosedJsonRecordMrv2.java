@@ -148,6 +148,23 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
+	public void TestAttrNamedAttributes() throws Exception {
+		//int [] recordBreaks = new int[] { 0, 57, 111, ,  };
+		int[] rslt = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 225), true);
+		Assert.assertEquals(5, rslt.length);
+		int[] before = null, after = null;
+		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 59), true);
+		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 59, 225), true);
+		Assert.assertEquals(5, before.length + after.length);
+		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 88), true);
+		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 88, 222), true);
+		Assert.assertEquals(5, before.length + after.length);
+		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 102), true);
+		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 102, 222), true);
+		Assert.assertEquals(5, before.length + after.length);
+	}
+
+	@Test
 	public void TestEscape() throws Exception {  // Issue #68
 		//int [] recordBreaks = new int[] { 0, 44, 88, 137, 181, 229, 270, 311, 354 };  //length 395
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 44)));
