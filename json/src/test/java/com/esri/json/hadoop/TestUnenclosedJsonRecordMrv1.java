@@ -4,48 +4,24 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapred.JobConf;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestUnenclosedJsonRecordMrv2 {
-
-	private TaskAttemptContext createTaskAttemptContext(Configuration conf, TaskAttemptID taid)
-		throws Exception  {       //shim
-		try {                     // Hadoop-1
-			return (TaskAttemptContext)TaskAttemptContext.class.
-				getConstructor(Configuration.class, TaskAttemptID.class).
-				newInstance(conf, taid);
-		} catch (Exception e) {   // Hadoop-2
-			Class<?> clazz =
-				Class.forName("org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl");
-			return (TaskAttemptContext)clazz.getConstructor(Configuration.class, TaskAttemptID.class).
-				newInstance(conf, taid);
-		}
-	}
-
-	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws Exception {
+public class TestUnenclosedJsonRecordMrv1 {
+	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
-
+		
+		JobConf conf = new JobConf();
+		
 		FileSplit split = new FileSplit(path, start, end - start, new String[0]);
-
-		UnenclosedJsonRecordReader rr = new UnenclosedJsonRecordReader();
-        try {
-			TaskAttemptContext tac =
-                createTaskAttemptContext(new Configuration(), new TaskAttemptID());
-			rr.initialize(split, tac);
-		} catch (InterruptedException ie) {
-			Thread.currentThread().interrupt();
-		}
-
-		return rr;
+		
+		return new UnenclosedJsonRecordReader(split, conf);
 	}
 
 	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader) throws IOException {
@@ -55,19 +31,13 @@ public class TestUnenclosedJsonRecordMrv2 {
 	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader, boolean flag) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
-		LongWritable key = null;
-		Text value = null;
+		LongWritable key = reader.createKey();
+		Text value = reader.createValue();
 		
-		try {
-			while (reader.nextKeyValue()) {
-				key = reader.getCurrentKey();
-				value = reader.getCurrentValue();
-				int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
-				linesList.add(line);
-				//System.out.println(key.get() + " - " + value.toString());
-			}
-		} catch (InterruptedException ie) {
-			Thread.currentThread().interrupt();
+		while (reader.next(key, value)) {
+			int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
+			linesList.add(line);
+			System.out.println(key.get() + " - " + value.toString());
 		}
 		
 		int [] lines = new int[linesList.size()];
@@ -78,12 +48,13 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 	
 	@Test
-	public void TestArbitrarySplitLocations() throws Exception {
+	public void TestArbitrarySplitLocations() throws IOException {
 		
 		//int totalSize = 415;
 		
 		//int [] recordBreaks = new int[] { 0, 40, 80, 120, 160, 200, 240, 280, 320, 372 };
-
+	
+		
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 40)));
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 41)));
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 42)));
@@ -99,7 +70,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEachOnce() throws Exception {
+	public void TestEachOnce() throws IOException {
 		//Each record exactly once - see commit b8f6d6dfaf11cce7d8cba54e6011e8684ade0e85, issue #68
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 0, 63)));
 		Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-simple.json", 63, 121)));
@@ -114,7 +85,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestWhitespace() throws Exception {
+	public void TestWhitespace() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 57, 111, ,  };
 		int[] rslt = getRecordIndexesInReader(getReaderFor("unenclosed-json-return.json", 0, 222), true);
 		Assert.assertEquals(4, rslt.length);
@@ -131,7 +102,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Ignore  // May not be guaranteed behavior
-	public void TestComma() throws Exception {
+	public void TestComma() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 57, 111, ,  };
 		int[] rslt = getRecordIndexesInReader(getReaderFor("unenclosed-json-comma.json", 0, 222), true);
 		Assert.assertEquals(4, rslt.length);
@@ -148,24 +119,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestAttrNamedAttributes() throws Exception {
-		//int [] recordBreaks = new int[] { 0, 57, 111, ,  };
-		int[] rslt = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 225), true);
-		Assert.assertEquals(5, rslt.length);
-		int[] before = null, after = null;
-		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 59), true);
-		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 59, 225), true);
-		Assert.assertEquals(5, before.length + after.length);
-		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 88), true);
-		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 88, 222), true);
-		Assert.assertEquals(5, before.length + after.length);
-		before = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 0, 102), true);
-		after = getRecordIndexesInReader(getReaderFor("unenclosed-json-attrs.json", 102, 222), true);
-		Assert.assertEquals(5, before.length + after.length);
-	}
-
-	@Test
-	public void TestEscape() throws Exception {  // Issue #68
+	public void TestEscape() throws IOException {  // Issue #68
 		//int [] recordBreaks = new int[] { 0, 44, 88, 137, 181, 229, 270, 311, 354 };  //length 395
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-escape.json", 0, 45)));
@@ -186,7 +140,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscQuoteLast() throws Exception {
+	public void TestEscQuoteLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc1.json", 0, 45)));
@@ -197,7 +151,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscAposLast() throws Exception {
+	public void TestEscAposLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc2.json", 0, 45)));
@@ -208,7 +162,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscSlashLast() throws Exception {
+	public void TestEscSlashLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc3.json", 0, 45)));
@@ -219,7 +173,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscCloseLast() throws Exception {
+	public void TestEscCloseLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc4.json", 0, 45)));
@@ -230,7 +184,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscOpenLast() throws Exception {
+	public void TestEscOpenLast() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 0, 44)));
 		Assert.assertArrayEquals(new int[] {0, 1}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc5.json", 0, 45)));
@@ -242,7 +196,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestEscPoints() throws Exception {
+	public void TestEscPoints() throws IOException {
 		//int [] recordBreaks = new int[] { 0, 75, 146, 218, 290, 362, , ,  };
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc-points.json", 0, 74), true));
 		Assert.assertArrayEquals(new int[] {0, 75}, getRecordIndexesInReader(getReaderFor("unenclosed-json-esc-points.json", 0, 76), true));
@@ -252,8 +206,8 @@ public class TestUnenclosedJsonRecordMrv2 {
 	// This tests some multi-byte characters in UTF-8.
 	// If implementing a byte-based approach instead of character-based,
 	// the test itself would probably have to be updated to byte-based offsets
-	@Ignore
-	public void TestCharacters() throws Exception {
+	@Test
+	public void TestCharacters() throws IOException {
 		//int[] recordBreaks = new int[] { 0, 42, 84, 126, 168, 210, ...};  // character-based offsets
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 0, 42), true));
 		Assert.assertArrayEquals(new int[] {0,42}, getRecordIndexesInReader(getReaderFor("unenclosed-json-chars.json", 0, 43), true));
@@ -264,7 +218,7 @@ public class TestUnenclosedJsonRecordMrv2 {
 	}
 
 	@Test
-	public void TestGeomFirst() throws Exception {
+	public void TestGeomFirst() throws IOException {
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 32, 54)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 48, 54)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 49, 54)));

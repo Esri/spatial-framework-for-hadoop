@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestUnenclosedGeoJsonRecordReader {  // for MRv1, name Mrv1
+public class TestUnenclosedGeoJsonRecordReader {  // MRv2; for MRv1, name Mrv1
 
 	private TaskAttemptContext createTaskAttemptContext(Configuration conf, TaskAttemptID taid)
 		throws Exception  {       //shim
