@@ -1,138 +1,42 @@
 package com.esri.json.hadoop;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.RecordReader;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+
 
 /**
  * 
  * Enumerates records from an Esri Unenclosed JSON file
  * 
  */
-public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text> implements
-    org.apache.hadoop.mapred.RecordReader<LongWritable, Text> {
+/*
+ * The JSON will look like this (white-space ignored)
+ * 
+ * { // start record 1
+ * 	"attributes" : {}
+ *  "geometry" : {}
+ * } // end record 1
+ * { // start record 2
+ * 	"attributes" : {}
+ *  "geometry" : {}
+ * } // end record 2
+ */
+public class UnenclosedJsonRecordReader extends UnenclosedBaseJsonRecordReader {
 	static final Log LOG = LogFactory.getLog(UnenclosedJsonRecordReader.class.getName());
-	
-	private BufferedReader inputReader;
-	private LongWritable mkey = null;
-	private Text mval = null;
-	
-	long readerPosition;
-	long start, end;
-	private boolean firstBraceConsumed = false;
 
-	public UnenclosedJsonRecordReader() throws IOException 	{
-		mkey = createKey();
-		mval = createValue();
+	public UnenclosedJsonRecordReader() throws IOException {  // explicit just to declare exception
+        super();
 	}
 
 	public UnenclosedJsonRecordReader(org.apache.hadoop.mapred.InputSplit split,
 									  Configuration conf) throws IOException {
-		org.apache.hadoop.mapred.FileSplit fileSplit = (org.apache.hadoop.mapred.FileSplit)split;
-		
-		Path filePath = fileSplit.getPath();
-		
-		start = fileSplit.getStart();
-		end = fileSplit.getLength() + start;
-		
-		readerPosition = start;
-
-		FileSystem fs = filePath.getFileSystem(conf);
-		
-		inputReader = new BufferedReader(new InputStreamReader(fs.open(filePath)));
-		
-		if (start != 0) {
-			// split starts inside the json
-			inputReader.skip(start);
-			moveToRecordStart();
-		}
-	}
-	
-	@Override
-	public void close() throws IOException {
-		if (inputReader != null)
-			inputReader.close();
+		//attrLabel = "attributes";
+        super(split, conf);
 	}
 
-	@Override
-	public LongWritable createKey() {
-		return new LongWritable();
-	}
-
-	@Override
-	public Text createValue() {
-		return new Text();
-	}
-
-	private int getChar() throws IOException {
-		int ch = inputReader.read();
-		readerPosition++;
-		return ch;
-	}
-
-	@Override
-	public LongWritable getCurrentKey() throws IOException,
-			InterruptedException {
-		return mkey;
-	}
-
-	@Override
-	public Text getCurrentValue() throws IOException, InterruptedException {
-		return mval;
-	}
-
-	private int getNonWhite() throws IOException {
-		int ch;
-		do {
-			ch = getChar();
-		} while (Character.isWhitespace((char)ch));
-		return ch;
-	}
-
-	@Override
-	public long getPos() throws IOException {
-		return readerPosition;
-	}
-
-	@Override
-	public float getProgress() throws IOException {
-		return (float)(readerPosition-start)/(end-start);
-	}
-
-	@Override
-	public void initialize(InputSplit split, TaskAttemptContext taskContext)
-				throws IOException, InterruptedException {
-		FileSplit fileSplit = (FileSplit)split;
-		
-		Path filePath = fileSplit.getPath();
-		
-		start = fileSplit.getStart();
-		end = fileSplit.getLength() + start;
-		
-		readerPosition = start;
-
-		FileSystem fs = filePath.getFileSystem(taskContext.getConfiguration());
-		
-		inputReader = new BufferedReader(new InputStreamReader(fs.open(filePath)));
-		
-		if (start != 0) {
-			// split starts inside the json
-			inputReader.skip(start);
-			moveToRecordStart();
-		}
-	}
 
 	/**
 	 * Given an arbitrary byte offset into a unenclosed JSON document, 
@@ -144,7 +48,7 @@ public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text>
 	 * 
 	 * @throws IOException
 	 */
-	private boolean moveToRecordStart() throws IOException {
+	protected boolean moveToRecordStart() throws IOException {
 		int next = 0;
 		long resetPosition = readerPosition;
 
@@ -238,137 +142,6 @@ public class UnenclosedJsonRecordReader extends RecordReader<LongWritable, Text>
 		firstBraceConsumed = true;
 		
 		return true;
-	}
-
-	@Override
-	public boolean next(LongWritable key, Text value) throws IOException {
-		/*
-		 * NOTE : we are not using a JSONParser, so this will not validate JSON structure aside from correct counts of '{' and '}'
-		 * The fact that it may handle some invalid JSON, does not imply that we support invalid JSON.
-		 * 
-		 * The JSON will look like this (white-space ignored)
-		 * 
-		 * { // start record 1
-		 * 	"attributes" : {}
-		 *  "geometry" : {}
-		 * } // end record 1
-		 * { // start record 2
-		 * 	"attributes" : {}
-		 *  "geometry" : {}
-		 * } // end record 2
-		 * 
-		 * We will count '{' and '}' to find the beginning and end of each record, while ignoring braces in string literals
-		 */
-		
-		int chr = 0;
-		int brace_depth = 0;
-		char lit_char = 0;
-		boolean first_brace_found = false;
-
-		// The case of split point exactly at whitespace between records,
-		// is handled by forcing the record following to the split following,
-		// in the interest of better balancing the splits, by consuming the
-		// whitespace before checking the end of the split.
-		if (!firstBraceConsumed) {  // That should only ever be true on the very first read in the split
-			chr = getNonWhite();
-			firstBraceConsumed = (chr == '{');
-		}
-
-		if ( readerPosition + (firstBraceConsumed ? 0 : 1)  >  end )  {
-			return false;
-		}
-		
-		StringBuilder sb = new StringBuilder(2000);
-		
-		if (firstBraceConsumed) {
-			// first open brace was consumed already;
-			// update initial state accordingly
-			brace_depth = 1;
-			sb.append("{");
-			first_brace_found = true;
-			firstBraceConsumed = false;
-			key.set(readerPosition - 1);
-		}
-		
-		boolean inEscape = false;
-		while (brace_depth > 0 || !first_brace_found)
-		{
-			chr = getChar();
-			
-			if (chr < 0) {
-				if (first_brace_found){
-					// last record was invalid
-					LOG.error("Parsing error : EOF occured before record ended");
-				}
-				return false;
-			}
-			
-			switch (chr)
-			{
-			case '\\':
-				inEscape = (lit_char != 0 && !inEscape);
-				break;
-			case '"':
-			case '\'':
-				if (lit_char == 0) {
-					lit_char = (char) chr;  // mark start literal (double/single quote)
-				}
-				else if (inEscape) {
-					inEscape = false;
-				}
-				else if (lit_char == chr) {
-					lit_char = 0;   // mark end literal (double/single-quote)
-				}
- 				// ignored because we found a ' inside a " " block quote (or vice versa)
-				break;
-			case '{':
-				if (inEscape) {
-					inEscape = false;
-				}
-				else if (lit_char == 0) {  // not in string literal,
-					brace_depth++;         // so increase brace depth
-					if (!first_brace_found) {
-						first_brace_found = true;
-						key.set(readerPosition - 1); // set record key to the char offset of the first '{'
-					}
-				}
-				break;
-			case '}':
-				if (inEscape) {
-					inEscape = false;
-				}
-				else if (lit_char == 0) { // not in string literal,
-					brace_depth--;  //  so decrease brace depth
-				}
-				break;
-			default:
-				inEscape = false;
-				break;
-			}
-			
-			if (brace_depth < 0){
-				// found more '}'s than we did '{'s
-				LOG.error("Parsing error : no '{' - unmatched '}' in record");
-				return false;
-			}
-			
-			if (first_brace_found){
-				sb.append((char)chr);
-			}
-		}
-		
-		// no '{' found before EOF.  Not an error as this could mean that there is extra white-space at the end
-		if (!first_brace_found){
-			return false;
-		}
-		
-		value.set(sb.toString());
-		return true;
-	}
-
-	@Override
-	public boolean nextKeyValue() throws IOException, InterruptedException {
-		return next(mkey, mval);
 	}
 
 }
