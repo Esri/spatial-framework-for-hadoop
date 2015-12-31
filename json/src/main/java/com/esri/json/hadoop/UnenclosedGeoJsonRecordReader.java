@@ -4,10 +4,11 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 
 /**
  * 
- * Enumerates records from an Esri Unenclosed JSON file
+ * Enumerates records from an Unenclosed GeoJSON file
  * 
  */
 /*
@@ -31,13 +32,12 @@ public class UnenclosedGeoJsonRecordReader extends UnenclosedBaseJsonRecordReade
         super();
 	}
 
-	/*	// no implicit, so inherits ok
 	public UnenclosedGeoJsonRecordReader(org.apache.hadoop.mapred.InputSplit split,
 										 Configuration conf) throws IOException {
-		attrLabel = "properties";
+		//attrLabel = "properties";
         super(split, conf);
 	}
-	*/
+
 
 
 	// Record boundary defined as : \{\s*"(properties|geometry)"\s*:\s*\{ 
