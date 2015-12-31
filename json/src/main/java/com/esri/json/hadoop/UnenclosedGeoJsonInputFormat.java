@@ -28,7 +28,7 @@ public class UnenclosedGeoJsonInputFormat extends FileInputFormat<LongWritable, 
 			org.apache.hadoop.mapred.InputSplit arg0,
 			org.apache.hadoop.mapred.JobConf arg1,
 			org.apache.hadoop.mapred.Reporter arg2) throws IOException {
-		return new UnenclosedJsonRecordReader(arg0, arg1);
+		return new UnenclosedGeoJsonRecordReader(arg0, arg1);
 	}
 
 	@Override
