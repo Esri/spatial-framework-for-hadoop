@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestUnenclosedJsonRecordReader {  // MRv2
+public class TestUnenclosedEsriJsonRecordReader {  // MRv2
 
 	private TaskAttemptContext createTaskAttemptContext(Configuration conf, TaskAttemptID taid)
 		throws Exception  {       //shim

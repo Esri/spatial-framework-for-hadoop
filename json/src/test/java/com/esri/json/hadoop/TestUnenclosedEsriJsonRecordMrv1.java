@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestUnenclosedJsonRecordMrv1 {
+public class TestUnenclosedEsriJsonRecordMrv1 {
 	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
 		
