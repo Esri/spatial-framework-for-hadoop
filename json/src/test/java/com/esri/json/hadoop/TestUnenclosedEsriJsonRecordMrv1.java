@@ -14,21 +14,21 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestUnenclosedEsriJsonRecordMrv1 {
-	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
+	private UnenclosedEsriJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
 		
 		JobConf conf = new JobConf();
 		
 		FileSplit split = new FileSplit(path, start, end - start, new String[0]);
 		
-		return new UnenclosedJsonRecordReader(split, conf);
+		return new UnenclosedEsriJsonRecordReader(split, conf);
 	}
 
-	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader) throws IOException {
+	int [] getRecordIndexesInReader(UnenclosedEsriJsonRecordReader reader) throws IOException {
 		return getRecordIndexesInReader(reader, false);
 	}
 
-	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader, boolean flag) throws IOException {
+	int [] getRecordIndexesInReader(UnenclosedEsriJsonRecordReader reader, boolean flag) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
 		LongWritable key = reader.createKey();

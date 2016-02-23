@@ -31,12 +31,12 @@ public class TestUnenclosedEsriJsonRecordReader {  // MRv2
 		}
 	}
 
-	private UnenclosedJsonRecordReader getReaderFor(String resource, int start, int end) throws Exception {
+	private UnenclosedEsriJsonRecordReader getReaderFor(String resource, int start, int end) throws Exception {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
 
 		FileSplit split = new FileSplit(path, start, end - start, new String[0]);
 
-		UnenclosedJsonRecordReader rr = new UnenclosedJsonRecordReader();
+		UnenclosedEsriJsonRecordReader rr = new UnenclosedEsriJsonRecordReader();
         try {
 			TaskAttemptContext tac =
                 createTaskAttemptContext(new Configuration(), new TaskAttemptID());
@@ -48,11 +48,11 @@ public class TestUnenclosedEsriJsonRecordReader {  // MRv2
 		return rr;
 	}
 
-	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader) throws IOException {
+	int [] getRecordIndexesInReader(UnenclosedEsriJsonRecordReader reader) throws IOException {
 		return getRecordIndexesInReader(reader, false);
 	}
 
-	int [] getRecordIndexesInReader(UnenclosedJsonRecordReader reader, boolean flag) throws IOException {
+	int [] getRecordIndexesInReader(UnenclosedEsriJsonRecordReader reader, boolean flag) throws IOException {
 		List<Integer> linesList = new LinkedList<Integer>();
 		
 		LongWritable key = null;
@@ -252,6 +252,7 @@ public class TestUnenclosedEsriJsonRecordReader {  // MRv2
 	// This tests some multi-byte characters in UTF-8.
 	// If implementing a byte-based approach instead of character-based,
 	// the test itself would probably have to be updated to byte-based offsets
+    // See issue #75
 	@Ignore
 	public void TestCharacters() throws Exception {
 		//int[] recordBreaks = new int[] { 0, 42, 84, 126, 168, 210, ...};  // character-based offsets
