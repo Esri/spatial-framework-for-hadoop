@@ -276,4 +276,23 @@ public class TestUnenclosedEsriJsonRecordReader {  // MRv2
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInFile("unenclosed-json-geom-first.json", 0, 52, true));
 	}
 
+
+	/**
+	 * @deprecated superseded by UnenclosedEsriJsonRecordReader
+	 */
+	@Deprecated
+	@Test
+	public void TestLegacyName() throws Exception {
+		UnenclosedEsriJsonRecordReader uejrr =  new UnenclosedJsonRecordReader();
+		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 0, 63));
+		Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 63, 121));
+		Assert.assertArrayEquals(new int[] { 4 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 121, 187));
+		Assert.assertArrayEquals(new int[] { 5, 6 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 187, 264));
+		Assert.assertArrayEquals(new int[] { 7, 8 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 264, 352));
+		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 352, 412));
+
+		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 0, 23));
+		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInFile(uejrr, "unenclosed-json-simple.json", 23, 41));
+	}
+
 }
