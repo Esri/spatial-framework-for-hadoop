@@ -37,7 +37,7 @@ public class TestUnenclosedEsriJsonRecordMrv1 {
 		while (reader.next(key, value)) {
 			int line = flag ? (int)(key.get()) : value.toString().charAt(23) - '0';
 			linesList.add(line);
-			System.out.println(key.get() + " - " + value.toString());
+			//System.out.println(key.get() + " - " + value.toString());
 		}
 		
 		int [] lines = new int[linesList.size()];
