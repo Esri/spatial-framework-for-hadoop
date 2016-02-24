@@ -13,9 +13,9 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 
 /**
- * FileInputFormat for reading features from a feature exported as JSON in Esri standard format.
+ * FileInputFormat for reading features in GeoJSON FeatureCollection.
  */
-public class EnclosedEsriJsonInputFormat extends FileInputFormat<LongWritable, Text>
+public class EnclosedGeoJsonInputFormat extends FileInputFormat<LongWritable, Text>
     implements org.apache.hadoop.mapred.InputFormat<LongWritable,Text> {
 
 	// Mrv1 implementation member will be used only for getSplits(), and
@@ -25,7 +25,7 @@ public class EnclosedEsriJsonInputFormat extends FileInputFormat<LongWritable, T
 	@Override
 	public RecordReader<LongWritable, Text> createRecordReader(InputSplit arg0, TaskAttemptContext arg1)
 			throws IOException, InterruptedException {  // MRv2
-		return new EnclosedEsriJsonRecordReader();
+		return new EnclosedGeoJsonRecordReader();
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class EnclosedEsriJsonInputFormat extends FileInputFormat<LongWritable, T
 			org.apache.hadoop.mapred.InputSplit arg0,
 			org.apache.hadoop.mapred.JobConf arg1,
 			org.apache.hadoop.mapred.Reporter arg2) throws IOException {
-		return new EnclosedEsriJsonRecordReader(arg0, arg1);
+		return new EnclosedGeoJsonRecordReader(arg0, arg1);
 	}
 
 	@Override

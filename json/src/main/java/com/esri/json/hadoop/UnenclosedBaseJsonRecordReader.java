@@ -23,7 +23,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
  */
 public abstract class UnenclosedBaseJsonRecordReader extends RecordReader<LongWritable, Text> implements
     org.apache.hadoop.mapred.RecordReader<LongWritable, Text> {
-	static final Log LOG = LogFactory.getLog(UnenclosedGeoJsonRecordReader.class.getName());
+	static final Log LOG = LogFactory.getLog(UnenclosedBaseJsonRecordReader.class.getName());
 	
 	protected BufferedReader inputReader;
 	protected LongWritable mkey = null;
@@ -80,6 +80,16 @@ public abstract class UnenclosedBaseJsonRecordReader extends RecordReader<LongWr
 	@Override
 	public float getProgress() throws IOException {
 		return (float)(readerPosition-start)/(end-start);
+	}
+
+	@Override
+	public void initialize(InputSplit split, TaskAttemptContext taskContext)
+				throws IOException, InterruptedException {
+		FileSplit fileSplit = (FileSplit)split;
+		start = fileSplit.getStart();
+		end = fileSplit.getLength() + start;
+		Path filePath = fileSplit.getPath();
+        commonInit(filePath, taskContext.getConfiguration());
 	}
 
 	@Override
@@ -196,16 +206,6 @@ public abstract class UnenclosedBaseJsonRecordReader extends RecordReader<LongWr
 
 		value.set(sb.toString());
 		return true;
-	}
-
-	@Override
-	public void initialize(InputSplit split, TaskAttemptContext taskContext)
-				throws IOException, InterruptedException {
-		FileSplit fileSplit = (FileSplit)split;
-		start = fileSplit.getStart();
-		end = fileSplit.getLength() + start;
-		Path filePath = fileSplit.getPath();
-        commonInit(filePath, taskContext.getConfiguration());
 	}
 
 	@Override
