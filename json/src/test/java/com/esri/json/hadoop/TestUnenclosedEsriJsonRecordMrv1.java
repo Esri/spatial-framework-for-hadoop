@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestUnenclosedEsriJsonRecordMrv1 {
+
 	private UnenclosedEsriJsonRecordReader getReaderFor(String resource, int start, int end) throws IOException {
 		Path path = new Path(this.getClass().getResource(resource).getFile());
 		
@@ -223,6 +224,32 @@ public class TestUnenclosedEsriJsonRecordMrv1 {
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 48, 54)));
 		Assert.assertArrayEquals(new int[] { 1 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 49, 54)));
 		Assert.assertArrayEquals(new int[] { 0 }, getRecordIndexesInReader(getReaderFor("unenclosed-json-geom-first.json", 0, 52), true));
+	}
+
+
+	/**
+	 * @deprecated superseded by UnenclosedEsriJsonRecordReader
+	 */
+	@Deprecated
+	@Test
+	public void TestLegacyName() throws Exception {
+		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 0, 63)));
+		Assert.assertArrayEquals(new int[] { 2, 3 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 63, 121)));
+		Assert.assertArrayEquals(new int[] { 4 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 121, 187)));
+		Assert.assertArrayEquals(new int[] { 5, 6 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 187, 264)));
+		Assert.assertArrayEquals(new int[] { 7, 8 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 264, 352)));
+		Assert.assertArrayEquals(new int[] { 9 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 352, 412)));
+	}
+
+	@Deprecated
+	private UnenclosedEsriJsonRecordReader getLegacyReader(String resource, int start, int end) throws IOException {
+		Path path = new Path(this.getClass().getResource(resource).getFile());
+		
+		JobConf conf = new JobConf();
+		
+		FileSplit split = new FileSplit(path, start, end - start, new String[0]);
+		
+		return new UnenclosedJsonRecordReader(split, conf);
 	}
 
 }

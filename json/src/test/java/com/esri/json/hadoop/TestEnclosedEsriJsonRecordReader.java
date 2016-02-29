@@ -84,9 +84,24 @@ public class TestEnclosedEsriJsonRecordReader {
 		EnclosedEsriJsonRecordReader reader = new EnclosedEsriJsonRecordReader(split, conf);
 		LongWritable key = reader.createKey();
 		Text value = reader.createValue();
-		while (reader.next(key, value)) {
-			// System.out.println(key.get() + " - " + value.toString());
-		}
+		assertTrue (reader.next(key, value));
+		//System.out.println(key.get() + " - " + value.toString());
+		assertFalse (reader.next(key, value));
+		reader.close();
+	}
+
+	@Test
+	public void TestLegacy() throws Exception {
+		Path path = new Path(this.getClass().getResource("sample-study-area.json").getFile());
+		org.apache.hadoop.mapred.JobConf conf = new org.apache.hadoop.mapred.JobConf();
+		org.apache.hadoop.mapred.FileSplit split =
+			new org.apache.hadoop.mapred.FileSplit(path, 0, 208, new String[0]);
+		EnclosedEsriJsonRecordReader reader = new EnclosedJsonRecordReader(split, conf);
+		LongWritable key = reader.createKey();
+		Text value = reader.createValue();
+		assertTrue (reader.next(key, value));
+		//System.out.println(key.get() + " - " + value.toString());
+		assertFalse (reader.next(key, value));
 		reader.close();
 	}
 
