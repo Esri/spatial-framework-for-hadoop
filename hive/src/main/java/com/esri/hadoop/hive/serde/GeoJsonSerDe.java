@@ -1,15 +1,9 @@
 package com.esri.hadoop.hive.serde;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.serde2.SerDe;
-import org.apache.hadoop.hive.serde2.SerDeException;
-import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
@@ -32,10 +26,8 @@ public class GeoJsonSerDe extends BaseJsonSerDe {
 	}
 
 	@Override
-	public Writable serialize(Object obj, ObjectInspector oi)
-			throws SerDeException {
-		StringWriter writer = new StringWriter();
-		return new Text(writer.toString());
+	protected String outGeom(OGCGeometry geom) {
+		return geom.asGeoJson();
 	}
 
 	@Override
