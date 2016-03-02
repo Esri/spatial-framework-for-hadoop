@@ -240,13 +240,10 @@ public class TestGeoJsonSerDe {
 	}
 
 	private void addWritable(ArrayList<Object> stuff, Geometry geom) {
-		//stuff.add(GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(geom, null)));
 		addWritable(stuff, geom, null);
 	}
 
 	private void addWritable(ArrayList<Object> stuff, MapGeometry geom) {
-		//stuff.add(GeometryUtils.geometryToEsriShapeBytesWritable(
-        //          OGCGeometry.createFromEsriGeometry(geom.getGeometry(), geom.getSpatialReference())));
 		addWritable(stuff, geom.getGeometry(), geom.getSpatialReference());
 	}
 
