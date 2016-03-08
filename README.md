@@ -9,8 +9,8 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## What's New
 
+* GeoJSON support: Hadoop InputFormat and Hive SerDe for GeoJSON as well as for Esri GeoServices REST JSON (now on git master - to be included in upcoming v1.2 release).
 * [Resource](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions) on Hive compatibility with ST_Geometry
-* The InputFormat for [Unenclosed JSON](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Formats#-unenclosed-json) now supports both versions of the MapReduce API (v1 and v2).
 
 ## Features
 
