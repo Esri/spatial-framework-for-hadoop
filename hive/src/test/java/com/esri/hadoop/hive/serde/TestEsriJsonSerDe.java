@@ -7,19 +7,28 @@ import java.util.ArrayList;
 import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.io.ByteWritable;
+import org.apache.hadoop.hive.serde2.io.ShortWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
+import org.apache.hadoop.hive.serde2.lazy.ByteArrayRef;
+import org.apache.hadoop.hive.serde2.lazy.LazyString;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyPrimitiveObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyStringObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.BooleanWritable;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.MapGeometry;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.hadoop.hive.GeometryUtils;
 import com.esri.hadoop.shims.HiveShims;
 
 // Ideally tests to cover:
@@ -28,7 +37,7 @@ import com.esri.hadoop.shims.HiveShims;
 //  - null geometry
 //  - spatial reference preserved
 
-public class TestEsriJsonSerDe {
+public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestIntWrite() throws Exception {
@@ -231,6 +240,52 @@ public class TestEsriJsonSerDe {
 		Assert.assertNull(fieldData);
 	}
 
+	@Test
+	public void TestColumnTypes() throws Exception {
+        ArrayList<Object> stuff = new ArrayList<Object>();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "flag,num1,num2,text");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "boolean,tinyint,smallint,string");
+		SerDe jserde = mkSerDe(proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+		// {"attributes":{"flag":false,"num":"5","text":"Point(15.0 5.0)"}}
+        addWritable(stuff, false);
+        addWritable(stuff, (byte)2);
+        addWritable(stuff, (short)5);
+        addWritable(stuff, "Point(15.0 5.0)");
+		Object row = runSerDe(stuff, jserde, rowOI);
+		Object fieldData = getField("flag", row, rowOI);
+		Assert.assertEquals(false, ((BooleanWritable)fieldData).get());
+		fieldData = getField("num1", row, rowOI);
+		Assert.assertEquals((byte)2, ((ByteWritable)fieldData).get());
+		fieldData = getField("num2", row, rowOI);
+		Assert.assertEquals((short)5, ((ShortWritable)fieldData).get());
+		fieldData = getField("text", row, rowOI);
+		Assert.assertEquals("Point(15.0 5.0)", ((Text)fieldData).toString());
+
+		stuff.set(0, new BooleanWritable(true));
+		stuff.set(1, new ByteWritable((byte)4));
+		stuff.set(2, new ShortWritable((short)4));
+		//stuff.set(3, new Text("other"));
+		LazyStringObjectInspector loi = LazyPrimitiveObjectInspectorFactory.
+			getLazyStringObjectInspector(false, (byte)'\0');
+		LazyString lstr = new LazyString(loi);
+		ByteArrayRef bar = new ByteArrayRef();
+		bar.setData("other".getBytes());
+		lstr.init(bar, 0, 5);
+		stuff.set(3, lstr);
+		row = runSerDe(stuff, jserde, rowOI);
+		fieldData = getField("flag", row, rowOI);
+		Assert.assertEquals(true, ((BooleanWritable)fieldData).get());
+		fieldData = getField("num1", row, rowOI);
+		Assert.assertEquals((byte)4, ((ByteWritable)fieldData).get());
+		fieldData = getField("num2", row, rowOI);
+		Assert.assertEquals((short)4, ((ShortWritable)fieldData).get());
+		fieldData = getField("text", row, rowOI);
+		Assert.assertEquals("other", ((Text)fieldData).toString());
+	}
+
 	@Deprecated
 	@Test
 	public void LegacyName() throws Exception {
@@ -262,47 +317,11 @@ public class TestEsriJsonSerDe {
 	}
 
 
-	private void addWritable(ArrayList<Object> stuff, int item) {
-		stuff.add(new IntWritable(item));
-	}
-
-	private void addWritable(ArrayList<Object> stuff, long item) {
-		stuff.add(new LongWritable(item));
-	}
-
-	private void addWritable(ArrayList<Object> stuff, Geometry geom) {
-		addWritable(stuff, geom, null);
-	}
-
-	private void addWritable(ArrayList<Object> stuff, MapGeometry geom) {
-		addWritable(stuff, geom.getGeometry(), geom.getSpatialReference());
-	}
-
-	private void addWritable(ArrayList<Object> stuff, Geometry geom, SpatialReference sref) {
-		stuff.add(GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(geom, sref)));
-	}
-
-    private void ckPoint(Point refPt, BytesWritable fieldData) {
-		Assert.assertEquals(refPt,
-							GeometryUtils.geometryFromEsriShape(fieldData).getEsriGeometry());
-	}
-
-	private Object getField(String col, Object row, StructObjectInspector rowOI) {
-		StructField f0 = rowOI.getStructFieldRef(col);
-		return rowOI.getStructFieldData(row, f0);
-	}
-
 	private SerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
-		//SerDe jserde = new JsonSerde();
 		SerDe jserde = new EsriJsonSerDe();
 		jserde.initialize(config, proptab);
 		return jserde;
 	}
 
-	private Object runSerDe(Object stuff, SerDe jserde, StructObjectInspector rowOI) throws Exception {
-		Writable jsw = jserde.serialize(stuff, rowOI);
-		//System.err.println(jsw);
-		return jserde.deserialize(jsw);
-	}
 }
