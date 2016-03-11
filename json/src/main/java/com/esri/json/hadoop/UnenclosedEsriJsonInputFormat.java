@@ -9,9 +9,12 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 
+// MRv2 by inheritance; MRv1 by composition/hybrid
 public class UnenclosedEsriJsonInputFormat extends FileInputFormat<LongWritable, Text>
     implements org.apache.hadoop.mapred.InputFormat<LongWritable,Text> {
 
+	// Mrv1 implementation member will be used only for getSplits().
+    // Will be instantiated only when Mrv1 in use.
 	private org.apache.hadoop.mapred.FileInputFormat<LongWritable,Text> baseIfmt = null;
 
 	@Override
