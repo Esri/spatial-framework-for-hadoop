@@ -10,7 +10,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 ## What's New
 
 * GeoJSON support: Hadoop InputFormat and Hive SerDe for GeoJSON as well as for Esri GeoServices REST JSON (now on git master - to be included in upcoming v1.2 release).
-* [Resource](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions) on Hive compatibility with ST_Geometry
+* ST_Geometry works under SparkSQL as well as under Hive itself (the new part is the JSON SerDe classes working under SparkSQL - pretty much everything else had already worked).
 
 ## Features
 
@@ -20,7 +20,7 @@ for interacting with JSON exported from ArcGIS
 * **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** - User-Defined 
 Functions and SerDes for spatial analysis in Hive
  * [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
- * [JSON Serde](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
+ * [JSON SerDe](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
 
 ## Getting Started
 
