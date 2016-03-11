@@ -9,17 +9,19 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.MapGeometry;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.hadoop.hive.GeometryUtils;
 import com.esri.hadoop.shims.HiveShims;
 
 // Ideally tests to cover:
@@ -28,7 +30,7 @@ import com.esri.hadoop.shims.HiveShims;
 //  - null geometry
 //  - spatial reference preserved
 
-public class TestGeoJsonSerDe {
+public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestIntWrite() throws Exception {  // Is this valid for GeoJSON?
@@ -231,36 +233,6 @@ public class TestGeoJsonSerDe {
 	}
 
 
-	private void addWritable(ArrayList<Object> stuff, int item) {
-		stuff.add(new IntWritable(item));
-	}
-
-	private void addWritable(ArrayList<Object> stuff, long item) {
-		stuff.add(new LongWritable(item));
-	}
-
-	private void addWritable(ArrayList<Object> stuff, Geometry geom) {
-		addWritable(stuff, geom, null);
-	}
-
-	private void addWritable(ArrayList<Object> stuff, MapGeometry geom) {
-		addWritable(stuff, geom.getGeometry(), geom.getSpatialReference());
-	}
-
-	private void addWritable(ArrayList<Object> stuff, Geometry geom, SpatialReference sref) {
-		stuff.add(GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(geom, sref)));
-	}
-
-    private void ckPoint(Point refPt, BytesWritable fieldData) {
-		Assert.assertEquals(refPt,
-							GeometryUtils.geometryFromEsriShape(fieldData).getEsriGeometry());
-	}
-
-	private Object getField(String col, Object row, StructObjectInspector rowOI) {
-		StructField f0 = rowOI.getStructFieldRef(col);
-		return rowOI.getStructFieldData(row, f0);
-	}
-
 	private SerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
 		SerDe jserde = new GeoJsonSerDe();
@@ -268,9 +240,4 @@ public class TestGeoJsonSerDe {
 		return jserde;
 	}
 
-	private Object runSerDe(Object stuff, SerDe jserde, StructObjectInspector rowOI) throws Exception {
-		Writable jsw = jserde.serialize(stuff, rowOI);
-		//System.err.println(jsw);
-		return jserde.deserialize(jsw);
-	}
 }

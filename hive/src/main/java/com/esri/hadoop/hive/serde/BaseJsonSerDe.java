@@ -13,6 +13,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
+import org.apache.hadoop.hive.serde2.io.ByteWritable;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.hive.serde2.io.ShortWritable;
 import org.apache.hadoop.hive.serde2.lazy.LazyPrimitive;
@@ -39,7 +40,6 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonToken;
 
-import com.esri.core.geometry.MapGeometry;
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.hadoop.hive.GeometryUtils;
 import com.esri.hadoop.shims.HiveShims;
@@ -241,16 +241,8 @@ abstract public class BaseJsonSerDe implements SerDe {
 				if (i == geometryColumn)
 					continue; // skip geometry, it comes later
 
-				Writable writable;
-				Object tmpObj = fieldWritables.get(i);
-				if (tmpObj instanceof LazyPrimitive<?,?>) {  // usually Text, but have seen LazyString
-					writable = ((LazyPrimitive<?,?>)(tmpObj)).getWritableObject();
-				} else {
-					writable = (Writable)tmpObj;
-				}
-
 				try {
-					generateJsonFromValue(writable, i, jsonGen);
+					generateJsonFromValue(fieldWritables.get(i), i, jsonGen);
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -262,13 +254,18 @@ abstract public class BaseJsonSerDe implements SerDe {
 
 			// if geometry column exists, write it
 			if (geometryColumn > -1) {
-				BytesWritable bytesWritable = (BytesWritable)fieldWritables.get(geometryColumn);
-				if (bytesWritable == null) {
+				Object got = fieldWritables.get(geometryColumn);
+				if (got == null) {
 					jsonGen.writeObjectField("geometry", null);
 				} else {
+					BytesWritable bytesWritable = null;
+					if (got instanceof BytesWritable)
+						bytesWritable = (BytesWritable)got;
+					else  // SparkSQL, #97
+						bytesWritable = new BytesWritable((byte[])got);  // idea: avoid extra object
 					OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(bytesWritable);
 					jsonGen.writeRaw(",\"geometry\":" + outGeom(ogcGeometry));
-				}				
+				}
 			}
 
 			jsonGen.writeEndObject();
@@ -288,47 +285,38 @@ abstract public class BaseJsonSerDe implements SerDe {
 
 
 	/**
-	 * Send to the generator, the value of the Writable, using column type
+	 * Send to the generator, the value of the cell, using column type
 	 * 
-	 * @param value The attribute value as a Writable
+	 * @param value The attribute value as the object given by Hive
 	 * @param fieldIndex column index of field in row
 	 * @param jsonGen JsonGenerator
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	private void generateJsonFromValue(Writable value, int fieldIndex, JsonGenerator jsonGen)
+	private void generateJsonFromValue(Object value, int fieldIndex, JsonGenerator jsonGen)
 		throws JsonProcessingException, IOException {
-
-		if (value == null) {
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), null);
-			return;
-		}
-		
+		String label = columnNames.get(fieldIndex);
 		PrimitiveObjectInspector poi = (PrimitiveObjectInspector)this.columnOIs.get(fieldIndex);
-
-		switch (poi.getPrimitiveCategory()) {
-		case SHORT:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((ShortWritable)value).get());
-			break;
-		case INT:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((IntWritable)value).get());
-			break;
-		case LONG:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((LongWritable)value).get());
-			break;
-		case DOUBLE:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((DoubleWritable)value).get());
-			break;
-		case FLOAT:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((FloatWritable)value).get());
-			break;
-		case BOOLEAN:
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), ((BooleanWritable)value).get());
-			break;
-		default:	/* especially:	case STRING: */
-			jsonGen.writeObjectField(columnNames.get(fieldIndex), value.toString());
-			break;	
+		if (value == null) {
+			jsonGen.writeObjectField(label, null);
+		} else if (value instanceof LazyPrimitive<?,?>) {  // have seen LazyString, #25
+			generateJsonFromLazy((LazyPrimitive<?,?>)value, fieldIndex, label, poi, jsonGen);
+		} else if (value instanceof Writable) {
+			generateJsonFromWritable((Writable)value, fieldIndex, label, poi, jsonGen);
+		} else {  // SparkSQL, #97
+			jsonGen.writeObjectField(label, value);
 		}
+	}
+	private void generateJsonFromLazy(LazyPrimitive<?,?> value, int fieldIndex, String label,
+									  PrimitiveObjectInspector poi, JsonGenerator jsonGen)
+		throws JsonProcessingException, IOException {
+		generateJsonFromWritable(value.getWritableObject(), fieldIndex, label, poi, jsonGen);
+	}
+
+	private void generateJsonFromWritable(Writable value, int fieldIndex, String label,
+										  PrimitiveObjectInspector poi, JsonGenerator jsonGen)
+		throws JsonProcessingException, IOException {
+		jsonGen.writeObjectField(label, poi.getPrimitiveJavaObject(value));
 	}
 
     // Write OGCGeometry to JSON
@@ -356,6 +344,9 @@ abstract public class BaseJsonSerDe implements SerDe {
 		row.set(fieldIndex, rowBase.get(fieldIndex));
 
 		switch (poi.getPrimitiveCategory()){
+		case BYTE:
+			((ByteWritable)row.get(fieldIndex)).set(parser.getByteValue());
+			break;
 		case SHORT:
 			((ShortWritable)row.get(fieldIndex)).set(parser.getShortValue());
 			break;
