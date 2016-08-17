@@ -2,6 +2,7 @@ package com.esri.hadoop.hive;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
@@ -9,42 +10,119 @@ import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.junit.Test;
 
+import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.Point;
+import com.esri.core.geometry.Polyline;
+import com.esri.core.geometry.SpatialReference;
+import com.esri.core.geometry.ogc.OGCGeometry;
 
 public class TestStGeomFromShape {
-	
+
 	private final static double Epsilon = 0.0001;
 
 	@Test
-	public void testGeomFromPointShape() throws UDFArgumentException {
-		final double longitude = 12.224;
-		final double latitude = 51.829;
-		Point point = new Point(longitude, latitude);
+	public void testGeomFromPointShapeWithoutSpatialReference() throws UDFArgumentException {
+		Point point = createFirstLocation();
+
 		byte[] esriShape = GeometryEngine.geometryToEsriShape(point);
 		assertNotNull("The point writable must not be null!", esriShape);
-		
+
 		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
 		assertNotNull("The shape writable must not be null!", shapeAsWritable);
-		
+
 		ST_GeomFromShape fromShape = new ST_GeomFromShape();
 		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable);
+		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
+
+		final int wkid = 0;
+		validatePoint(point, wkid, geometryAsWritable);
+	}
+
+	@Test
+	public void testGeomFromPointShape() throws UDFArgumentException {
+		Point point = createFirstLocation();
+		byte[] esriShape = GeometryEngine.geometryToEsriShape(point);
+		assertNotNull("The point writable must not be null!", esriShape);
+
+		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
+		assertNotNull("The shape writable must not be null!", shapeAsWritable);
+
+		final int wkid = 4326;
+		ST_GeomFromShape fromShape = new ST_GeomFromShape();
+		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable, wkid);
+		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
+
+		validatePoint(point, wkid, geometryAsWritable);
+	}
+
+	@Test
+	public void testGeomFromLineShape() throws UDFArgumentException {
+		Polyline line = createFirstLine();
+		byte[] esriShape = GeometryEngine.geometryToEsriShape(line);
+		assertNotNull("The line writable must not be null!", esriShape);
+
+		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
+		assertNotNull("The shape writable must not be null!", shapeAsWritable);
+
+		final int wkid = 4326;
+		ST_GeomFromShape fromShape = new ST_GeomFromShape();
+		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable, wkid);
+		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
 		
+		OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geometryAsWritable);
+		assertNotNull("The OGC geometry must not be null!", ogcGeometry);
+		
+		Geometry ogcGeometryAsLine = ogcGeometry.getEsriGeometry();
+		assertNotNull("The Esri geometry must not be null!", ogcGeometryAsLine);
+		assertTrue("The geometries are different!", GeometryEngine.equals(line, ogcGeometryAsLine, SpatialReference.create(wkid)));
+	}
+
+	private static Point createFirstLocation() {
+		final double longitude = 12.224;
+		final double latitude = 51.829;
+		return new Point(longitude, latitude);
+	}
+
+	private static Point createSecondLocation() {
+		final double longitude = 51.34933;
+		final double latitude = 12.39807;
+		return new Point(longitude, latitude);
+	}
+
+	private static Polyline createFirstLine() {
+		Polyline line = new Polyline();
+		line.startPath(createFirstLocation());
+		line.lineTo(createSecondLocation());
+		return line;
+	}
+
+	/**
+	 * Validates the geometry writable.
+	 * 
+	 * @param point
+	 *            the represented point location.
+	 * @param wkid
+	 *            the represented spatial reference ID.
+	 * @param geometryAsWritable
+	 *            the geometry represented as {@link BytesWritable}.
+	 */
+	private static void validatePoint(Point point, int wkid, BytesWritable geometryAsWritable) {
 		ST_X getX = new ST_X();
 		DoubleWritable xAsWritable = getX.evaluate(geometryAsWritable);
 		assertNotNull("The x writable must not be null!", xAsWritable);
-		
+
 		ST_Y getY = new ST_Y();
 		DoubleWritable yAsWritable = getY.evaluate(geometryAsWritable);
 		assertNotNull("The y writable must not be null!", yAsWritable);
-		
-		assertEquals("Longitude is different!", longitude, xAsWritable.get(), Epsilon);
-		assertEquals("Latitude is different!", latitude, yAsWritable.get(), Epsilon);
-		
+
+		assertEquals("Longitude is different!", point.getX(), xAsWritable.get(), Epsilon);
+		assertEquals("Latitude is different!", point.getY(), yAsWritable.get(), Epsilon);
+
 		ST_SRID getWkid = new ST_SRID();
 		IntWritable wkidAsWritable = getWkid.evaluate(geometryAsWritable);
 		assertNotNull("The wkid writable must not be null!", wkidAsWritable);
-		
-		assertEquals("The wkid is different!", 0, wkidAsWritable.get());
+
+		assertEquals("The wkid is different!", wkid, wkidAsWritable.get());
 	}
 }
