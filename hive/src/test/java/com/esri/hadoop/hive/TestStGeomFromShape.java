@@ -13,6 +13,7 @@ import org.junit.Test;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.Point;
+import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.Polyline;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.geometry.ogc.OGCGeometry;
@@ -26,7 +27,7 @@ public class TestStGeomFromShape {
 		Point point = createFirstLocation();
 
 		byte[] esriShape = GeometryEngine.geometryToEsriShape(point);
-		assertNotNull("The point writable must not be null!", esriShape);
+		assertNotNull("The shape must not be null!", esriShape);
 
 		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
 		assertNotNull("The shape writable must not be null!", shapeAsWritable);
@@ -43,7 +44,7 @@ public class TestStGeomFromShape {
 	public void testGeomFromPointShape() throws UDFArgumentException {
 		Point point = createFirstLocation();
 		byte[] esriShape = GeometryEngine.geometryToEsriShape(point);
-		assertNotNull("The point writable must not be null!", esriShape);
+		assertNotNull("The shape must not be null!", esriShape);
 
 		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
 		assertNotNull("The shape writable must not be null!", shapeAsWritable);
@@ -58,9 +59,9 @@ public class TestStGeomFromShape {
 
 	@Test
 	public void testGeomFromLineShape() throws UDFArgumentException {
-		Polyline line = createFirstLine();
+		Polyline line = createLine();
 		byte[] esriShape = GeometryEngine.geometryToEsriShape(line);
-		assertNotNull("The line writable must not be null!", esriShape);
+		assertNotNull("The shape must not be null!", esriShape);
 
 		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
 		assertNotNull("The shape writable must not be null!", shapeAsWritable);
@@ -69,13 +70,60 @@ public class TestStGeomFromShape {
 		ST_GeomFromShape fromShape = new ST_GeomFromShape();
 		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable, wkid);
 		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
-		
+
 		OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geometryAsWritable);
 		assertNotNull("The OGC geometry must not be null!", ogcGeometry);
-		
-		Geometry ogcGeometryAsLine = ogcGeometry.getEsriGeometry();
-		assertNotNull("The Esri geometry must not be null!", ogcGeometryAsLine);
-		assertTrue("The geometries are different!", GeometryEngine.equals(line, ogcGeometryAsLine, SpatialReference.create(wkid)));
+
+		Geometry esriGeometry = ogcGeometry.getEsriGeometry();
+		assertNotNull("The Esri geometry must not be null!", esriGeometry);
+		assertTrue("The geometries are different!",
+				GeometryEngine.equals(line, esriGeometry, SpatialReference.create(wkid)));
+	}
+
+	@Test
+	public void testGeomFromPolylineShape() throws UDFArgumentException {
+		Polyline line = createPolyline();
+		byte[] esriShape = GeometryEngine.geometryToEsriShape(line);
+		assertNotNull("The shape must not be null!", esriShape);
+
+		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
+		assertNotNull("The shape writable must not be null!", shapeAsWritable);
+
+		final int wkid = 4326;
+		ST_GeomFromShape fromShape = new ST_GeomFromShape();
+		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable, wkid);
+		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
+
+		OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geometryAsWritable);
+		assertNotNull("The OGC geometry must not be null!", ogcGeometry);
+
+		Geometry esriGeometry = ogcGeometry.getEsriGeometry();
+		assertNotNull("The Esri geometry must not be null!", esriGeometry);
+		assertTrue("The geometries are different!",
+				GeometryEngine.equals(line, esriGeometry, SpatialReference.create(wkid)));
+	}
+
+	@Test
+	public void testGeomFromPolygonShape() throws UDFArgumentException {
+		Polygon polygon = createPolygon();
+		byte[] esriShape = GeometryEngine.geometryToEsriShape(polygon);
+		assertNotNull("The shape must not be null!", esriShape);
+
+		BytesWritable shapeAsWritable = new BytesWritable(esriShape);
+		assertNotNull("The shape writable must not be null!", shapeAsWritable);
+
+		final int wkid = 4326;
+		ST_GeomFromShape fromShape = new ST_GeomFromShape();
+		BytesWritable geometryAsWritable = fromShape.evaluate(shapeAsWritable, wkid);
+		assertNotNull("The geometry writable must not be null!", geometryAsWritable);
+
+		OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geometryAsWritable);
+		assertNotNull("The OGC geometry must not be null!", ogcGeometry);
+
+		Geometry esriGeometry = ogcGeometry.getEsriGeometry();
+		assertNotNull("The Esri geometry must not be null!", esriGeometry);
+		assertTrue("The geometries are different!",
+				GeometryEngine.equals(polygon, esriGeometry, SpatialReference.create(wkid)));
 	}
 
 	private static Point createFirstLocation() {
@@ -90,11 +138,42 @@ public class TestStGeomFromShape {
 		return new Point(longitude, latitude);
 	}
 
-	private static Polyline createFirstLine() {
+	private static Point createThirdLocation() {
+		final double longitude = 6.9823;
+		final double latitude = 50.7657;
+		return new Point(longitude, latitude);
+	}
+
+	private static Point createFourthLocation() {
+		final double longitude = 7.102594;
+		final double latitude = 50.73733;
+		return new Point(longitude, latitude);
+	}
+
+	private static Polyline createLine() {
 		Polyline line = new Polyline();
 		line.startPath(createFirstLocation());
 		line.lineTo(createSecondLocation());
 		return line;
+	}
+
+	private static Polyline createPolyline() {
+		Polyline line = new Polyline();
+		line.startPath(createFirstLocation());
+		line.lineTo(createSecondLocation());
+		line.lineTo(createThirdLocation());
+		line.lineTo(createFourthLocation());
+		return line;
+	}
+
+	private static Polygon createPolygon() {
+		Polygon polygon = new Polygon();
+		polygon.startPath(createFirstLocation());
+		polygon.lineTo(createSecondLocation());
+		polygon.lineTo(createThirdLocation());
+		polygon.lineTo(createFourthLocation());
+		polygon.closeAllPaths();
+		return polygon;
 	}
 
 	/**
