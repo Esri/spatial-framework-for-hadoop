@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.junit.Test;
 
 import com.esri.core.geometry.GeometryEngine;
@@ -39,5 +40,11 @@ public class TestStGeomFromShape {
 		
 		assertEquals("Longitude is different!", longitude, xAsWritable.get(), Epsilon);
 		assertEquals("Latitude is different!", latitude, yAsWritable.get(), Epsilon);
+		
+		ST_SRID getWkid = new ST_SRID();
+		IntWritable wkidAsWritable = getWkid.evaluate(geometryAsWritable);
+		assertNotNull("The wkid writable must not be null!", wkidAsWritable);
+		
+		assertEquals("The wkid is different!", 0, wkidAsWritable.get());
 	}
 }

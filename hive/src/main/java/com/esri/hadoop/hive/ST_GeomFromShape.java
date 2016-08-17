@@ -19,21 +19,7 @@ public class ST_GeomFromShape extends ST_Geometry {
 	}
 
 	public BytesWritable evaluate(BytesWritable shape, int wkid) throws UDFArgumentException  {
-
-		// String wkt = shape.toString();
-		LOG.error("geom-from-shape"); /// debug/todo
 		try {
-			SpatialReference spatialReference = null;
-			if (wkid != GeometryUtils.WKID_UNKNOWN) {
-				spatialReference = SpatialReference.create(wkid);
-			}
-			// byte [] byteArr = shape.getBytes();
-			// ByteBuffer byteBuf = ByteBuffer.allocate(byteArr.length);
-			// byteBuf.put(byteArr);
-			// TODO: little-endian order: .order(ByteOrder.LITTLE_ENDIAN)
-			//OGCGeometry ogcObj = OGCGeometry.fromEsriShape(ByteBuffer.wrap(shape.getBytes()));
-			//ogcObj.setSpatialReference(spatialReference);
-			
 			Geometry geometry = GeometryEngine.geometryFromEsriShape(shape.getBytes(), Geometry.Type.Unknown);
 			switch (geometry.getType())
 			{
@@ -59,7 +45,7 @@ public class ST_GeomFromShape extends ST_Geometry {
 				return GeometryUtils.geometryToEsriShapeBytesWritable(geometry, wkid, OGCType.UNKNOWN);
 			}
 		} catch (Exception e) {
-			LogUtils.Log_ExceptionThrown(LOG, "geom-from-shape", e); // todo
+			LogUtils.Log_ExceptionThrown(LOG, "geom-from-shape", e);
 			return null;
 		}
 	}
