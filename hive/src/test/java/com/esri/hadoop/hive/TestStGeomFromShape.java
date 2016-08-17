@@ -85,8 +85,8 @@ public class TestStGeomFromShape {
 	}
 
 	private static Point createSecondLocation() {
-		final double longitude = 51.34933;
-		final double latitude = 12.39807;
+		final double longitude = 12.39807;
+		final double latitude = 51.34933;
 		return new Point(longitude, latitude);
 	}
 
