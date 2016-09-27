@@ -38,7 +38,7 @@ public class ST_MultiPolygon extends ST_Geometry {
 	
 	static final Log LOG = LogFactory.getLog(ST_MultiPolygon.class.getName());
 	
-	// Number-pairs constructor - may require clockwise orientation
+	// Number-pairs constructor
 	public BytesWritable evaluate(List<DoubleWritable> ... multipaths) throws UDFArgumentLengthException{
 
 		if (multipaths == null || multipaths.length == 0) {
@@ -47,28 +47,36 @@ public class ST_MultiPolygon extends ST_Geometry {
 		}
 
 		try {
-			Polygon mPolygon = new Polygon();
-
+			String wkt = "multipolygon(";
 			int arg_idx=0;
-			for (List<DoubleWritable> multipath : multipaths)
-				{
-					if (multipath.size() %2 != 0){
-						LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
-						return null;
-					}
+			String comma = "";  // comma except first time
 
-					mPolygon.startPath(multipath.get(0).get(), multipath.get(0).get());
-
-					for (int i=2;i<multipath.size();i+=2){
-						mPolygon.lineTo(multipath.get(i).get(), multipath.get(i+1).get());
-					}
-
-					mPolygon.closeAllPaths();
-
-					arg_idx++;
+			for (List<DoubleWritable> multipath : multipaths) {
+				int len = multipath.size();
+				if (len < 6 || len %2 != 0) {
+					LogUtils.Log_VariableArgumentLengthXY(LOG, arg_idx);
+					return null;
 				}
 
-			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(mPolygon, null, true));
+				double xStart = multipath.get(0).get(), yStart = multipath.get(1).get();
+				wkt += comma + "((" + xStart + " " + yStart;
+
+				int ix;  // index persists after loop
+				for (ix = 2; ix < len; ix += 2) {
+					wkt += ", " + multipath.get(ix) + " " + multipath.get(ix+1);
+				}
+				double xEnd = multipath.get(ix-2).get(), yEnd = multipath.get(ix-1).get();
+				// This counts on the same string getting parsed to double exactly equally
+				if (xEnd != xStart || yEnd != yStart)
+					wkt += ", " + xStart + " " + yStart;  // close the ring
+
+				wkt += "))";
+				comma = ",";
+				arg_idx++;
+			}
+			wkt += ")";
+
+			return evaluate(new Text(wkt));
 		} catch (Exception e) {
 		    LogUtils.Log_InternalError(LOG, "ST_MultiPolygon: " + e);
 		    return null;
