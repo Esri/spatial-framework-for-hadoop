@@ -32,18 +32,7 @@ public class ST_SetSRID extends ST_Geometry {
 
 		int wkid = wkwrap.get();
 		if (GeometryUtils.getWKID(geomref) != wkid) {
-			//GeometryUtils.setWKID(geomref, wkid);
-			OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geomref);
-			if (ogcGeometry == null){
-				LogUtils.Log_ArgumentsNull(LOG);
-				return null;
-			}
-			SpatialReference spatialReference = null;
-			if (wkid != GeometryUtils.WKID_UNKNOWN) {
-				spatialReference = SpatialReference.create(wkid);
-			}
-			ogcGeometry.setSpatialReference(spatialReference);
-			geomref = GeometryUtils.geometryToEsriShapeBytesWritable(ogcGeometry);
+			GeometryUtils.setWKID(geomref, wkid);
 		}
 
 		return geomref;
