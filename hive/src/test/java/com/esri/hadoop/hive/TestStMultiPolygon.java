@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 
@@ -22,6 +23,7 @@ public class TestStMultiPolygon {
 	ST_ExteriorRing stExteriorRing = new ST_ExteriorRing();
 	// ST_GeometryN stGeomN = new ST_GeometryN();
 	ST_GeometryType typer = new ST_GeometryType();
+	ST_SetSRID stSrid = new ST_SetSRID();
 	String expty = "ST_MULTIPOLYGON";
 
 	@Test
@@ -66,6 +68,21 @@ public class TestStMultiPolygon {
 		assertEquals(expty, gty.toString());
 		//assertTrue(stArea.evaluate(rslt) > 0);
 		assertEquals(0.5, stArea.evaluate(rslt).get(), 0);
+	}
+
+	@Test
+	public void TestSrid() throws Exception {  // #109
+		ST_MultiPolygon stMultiPolygon = new ST_MultiPolygon();
+		List<DoubleWritable> args = new ArrayList<DoubleWritable>(7);
+		args.add(dw0); args.add(dw0);
+		args.add(dw1); args.add(dw0);
+		args.add(dw0); args.add(dw1);
+		BytesWritable made = stMultiPolygon.evaluate(args);
+		Text gty = typer.evaluate(made);
+		assertEquals(expty, gty.toString());
+		BytesWritable rslt = stSrid.evaluate(made, new IntWritable(4326));
+		gty = typer.evaluate(rslt);
+		assertEquals(expty, gty.toString());
 	}
 
 }
