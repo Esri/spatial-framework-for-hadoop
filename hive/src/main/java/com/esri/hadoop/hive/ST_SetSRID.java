@@ -15,7 +15,7 @@ extended = "Example:\n"
 + "  > SELECT _FUNC_(ST_SetSRID(ST_Point(1.5, 2.5), 4326)) FROM src LIMIT 1;\n"
 + "  -- create a point and then set its SRID to 4326"
 )
-// tested in ST_SRID
+
 public class ST_SetSRID extends ST_Geometry {
 	static final Log LOG = LogFactory.getLog(ST_SetSRID.class.getName());
 	
@@ -32,19 +32,7 @@ public class ST_SetSRID extends ST_Geometry {
 
 		int wkid = wkwrap.get();
 		if (GeometryUtils.getWKID(geomref) != wkid) {
-			//GeometryUtils.setWKID(geomref, wkid);
-			OGCGeometry ogcGeometry = GeometryUtils.geometryFromEsriShape(geomref);
-			if (ogcGeometry == null){
-				LogUtils.Log_ArgumentsNull(LOG);
-				return null;
-			}
-			SpatialReference spatialReference = null;
-			if (wkid != GeometryUtils.WKID_UNKNOWN) {
-				spatialReference = SpatialReference.create(wkid);
-			}
-			OGCGeometry ogcChanged = OGCGeometry.createFromEsriGeometry(ogcGeometry.getEsriGeometry(),
-																		spatialReference);
-			geomref = GeometryUtils.geometryToEsriShapeBytesWritable(ogcChanged);
+			GeometryUtils.setWKID(geomref, wkid);
 		}
 
 		return geomref;
