@@ -34,7 +34,7 @@ Ant build files are also available
 
 At the root level of this repository, you can build a single jar with everything in the framework 
 using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each 
-framework component (i.e., `hive\build.xml`).
+framework component (i.e., `hive/build.xml`).
 
 The build files use [Maven Ant Tasks](http://maven.apache.org/ant-tasks/download.html) for dependency 
 management. You will need the jar in a place Ant can find it (i.e., `~/.ant/lib/maven-ant-tasks-2.1.3.jar`).
@@ -47,7 +47,7 @@ processing.
 
 ## Requirements
 
-* Hive 0.9.0 and above (see Hive Campatibility issues [here](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
+* Hive 0.9.0 and above (see [Hive Compatibility issues](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
 (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the 
