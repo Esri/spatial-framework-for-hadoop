@@ -41,7 +41,20 @@
       <groupId>org.apache.hive</groupId>
       <artifactId>hive-serde</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.esri.hadoop</groupId>
+      <artifactId>spatial-sdk-json</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
