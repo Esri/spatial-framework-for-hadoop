@@ -9,7 +9,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## What's New
 
-* GeoJSON support: Hadoop InputFormat and Hive SerDe for GeoJSON as well as for Esri GeoServices REST JSON (now on git master - to be included in upcoming v1.2 release).
+* GeoJSON support: Hadoop InputFormat and Hive SerDe for GeoJSON as well as for Esri GeoServices REST JSON (in v1.2.0 release).
 * ST_Geometry works under SparkSQL as well as under Hive itself (the new part is the JSON SerDe classes working under SparkSQL - pretty much everything else had already worked).
 
 ## Features
@@ -70,7 +70,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing)
 
 ## Licensing
-Copyright 2013-2016 Esri
+Copyright 2013-2017 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -86,7 +86,4 @@ limitations under the License.
 
 A copy of the license is available in the 
 repository's [license.txt](https://raw.github.com/Esri/spatial-framework-for-hadoop/master/license.txt) file.
-
-[](Esri Tags: ArcGIS, GIS, Big Data, Hadoop, Hive, Geoprocessing, Oozie, Workflow, JSON, Python)
-[](Esri Language: Java)
 
