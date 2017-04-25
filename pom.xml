@@ -65,6 +65,15 @@
         <java.target.version>1.9</java.target.version>
       </properties>
     </profile>
+    <profile>
+      <id>java-disable-doclint</id>
+      <activation>
+	<jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+	<javadoc.doclint.param>-Xdoclint:none</javadoc.doclint.param>
+      </properties>
+    </profile>
 
     <profile>
       <id>hadoop-1.1</id>
@@ -317,6 +326,9 @@
               <goals>
                 <goal>jar</goal>
               </goals>
+	      <configuration>
+		<additionalparam>${javadoc.doclint.param}</additionalparam>
+	      </configuration>
             </execution>
           </executions>
         </plugin>
