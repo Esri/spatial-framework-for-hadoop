@@ -1,10 +1,11 @@
-
 create temporary function ST_AsBinary as 'com.esri.hadoop.hive.ST_AsBinary';
 create temporary function ST_AsGeoJSON as 'com.esri.hadoop.hive.ST_AsGeoJson';
 create temporary function ST_AsJSON as 'com.esri.hadoop.hive.ST_AsJson';
+create temporary function ST_AsShape as 'com.esri.hadoop.hive.ST_AsShape';
 create temporary function ST_AsText as 'com.esri.hadoop.hive.ST_AsText';
 create temporary function ST_GeomFromJSON as 'com.esri.hadoop.hive.ST_GeomFromJson';
 create temporary function ST_GeomFromGeoJSON as 'com.esri.hadoop.hive.ST_GeomFromGeoJson';
+create temporary function ST_GeomFromShape as 'com.esri.hadoop.hive.ST_GeomFromShape';
 create temporary function ST_GeomFromText as 'com.esri.hadoop.hive.ST_GeomFromText';
 create temporary function ST_GeomFromWKB as 'com.esri.hadoop.hive.ST_GeomFromWKB';
 create temporary function ST_PointFromWKB as 'com.esri.hadoop.hive.ST_PointFromWKB';
