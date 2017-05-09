@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,8 +15,10 @@ import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
+import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.hive.serde2.io.ShortWritable;
+import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.hive.serde2.lazy.LazyPrimitive;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector.Category;
@@ -49,6 +52,7 @@ abstract public class BaseJsonSerDe implements SerDe {
 	static final Log LOG = LogFactory.getLog(BaseJsonSerDe.class.getName());
 
 	static protected JsonFactory jsonFactory = new JsonFactory();
+	static protected TimeZone tz = TimeZone.getDefault();
 
 	protected int numColumns;
 	protected int geometryColumn = -1;
@@ -316,7 +320,14 @@ abstract public class BaseJsonSerDe implements SerDe {
 	private void generateJsonFromWritable(Writable value, int fieldIndex, String label,
 										  PrimitiveObjectInspector poi, JsonGenerator jsonGen)
 		throws JsonProcessingException, IOException {
-		jsonGen.writeObjectField(label, poi.getPrimitiveJavaObject(value));
+		Object prim = poi.getPrimitiveJavaObject(value);
+		if (prim instanceof java.util.Date) {
+			long epoch = ((java.util.Date)prim).getTime();
+			long offset = prim instanceof java.sql.Timestamp ? 0 : tz.getOffset(epoch);
+			jsonGen.writeObjectField(label, epoch - offset);  // UTC
+		} else {
+			jsonGen.writeObjectField(label, prim);
+		}
 	}
 
     // Write OGCGeometry to JSON
@@ -324,6 +335,59 @@ abstract public class BaseJsonSerDe implements SerDe {
 
     // Parse OGCGeometry from JSON
 	abstract protected OGCGeometry parseGeom(JsonParser parser);
+
+	private java.sql.Date parseDate(JsonParser parser) throws JsonParseException, IOException {
+		java.sql.Date jsd = null;
+		if (JsonToken.VALUE_NUMBER_INT.equals(parser.getCurrentToken())) {
+			long epoch = parser.getLongValue();
+			jsd = new java.sql.Date(epoch);
+		} else try {
+			long epoch = parseTime(parser.getText(), "yyyy-MM-dd");
+			jsd = new java.sql.Date(epoch);
+		} catch (java.text.ParseException e) {
+			// null
+		}
+		return jsd;
+	}
+
+	private java.sql.Timestamp parseTime(JsonParser parser) throws JsonParseException, IOException {
+		java.sql.Timestamp jst = null;
+		if (JsonToken.VALUE_NUMBER_INT.equals(parser.getCurrentToken())) {
+			long epoch = parser.getLongValue();
+			jst = new java.sql.Timestamp(epoch);
+		} else {
+			String value = parser.getText();
+			int point = value.indexOf('.');
+			if (point >= 0) {
+				jst = parseTime(value.substring(0,point+4));  // "yyyy-MM-dd HH:mm:ss.SSS" - truncate
+				// idea: jst.setNanos; alt: Java-8, JodaTime, javax.xml.bind.DatatypeConverter
+			} else {
+				jst = parseTime(value);    // "yyyy-MM-dd HH:mm:ss.SSS"
+				String[] formats = {"yyyy-MM-dd HH:mm:ss",	"yyyy-MM-dd HH:mm", "yyyy-MM-dd"};
+				for (String format: formats) {
+					if (jst != null) break;
+					try {
+						jst = new java.sql.Timestamp(parseTime(value, format));
+					} catch (java.text.ParseException e) {
+						// remain null
+					}
+				}
+			}
+		}
+		return jst;
+	}
+
+	private java.sql.Timestamp parseTime(String value) {
+		try {
+			return java.sql.Timestamp.valueOf(value);
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
+	}
+
+	private long parseTime(String value, String format) throws java.text.ParseException {  // epoch
+		return new java.text.SimpleDateFormat(format).parse(value).getTime();
+	}
 
 	/**
 	 * Copies the Writable at fieldIndex from rowBase to row, then sets the value of the Writable
@@ -365,7 +429,13 @@ abstract public class BaseJsonSerDe implements SerDe {
 		case BOOLEAN:
 			((BooleanWritable)row.get(fieldIndex)).set(parser.getBooleanValue());
 			break;
-		default:  // STRING/unrecognized
+		case DATE:    // DateWritable stores days not milliseconds.
+			((DateWritable)row.get(fieldIndex)).set(parseDate(parser));
+			break;
+		case TIMESTAMP:
+			((TimestampWritable)row.get(fieldIndex)).set(parseTime(parser));
+			break;
+		default:    // STRING/unrecognized
 			((Text)row.get(fieldIndex)).set(parser.getText());
 			break;	
 		}

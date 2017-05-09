@@ -8,7 +8,9 @@ import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
+import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.ShortWritable;
+import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.lazy.ByteArrayRef;
 import org.apache.hadoop.hive.serde2.lazy.LazyString;
@@ -58,6 +60,49 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 	}
 
 	@Test
+	public void TestEpochWrite() throws Exception {
+        ArrayList<Object> stuff = new ArrayList<Object>();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		SerDe jserde = mkSerDe(proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        // {"attributes":{"when":147147147147}}
+        long epoch = 147147147147L;
+		java.sql.Date expected = new java.sql.Date(epoch);
+		//System.err.println(expected.getTime());
+        addWritable(stuff, expected);
+		Writable jsw = jserde.serialize(stuff, rowOI);
+		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
+		jn = jn.findValue("attributes");
+		jn = jn.findValue("when");
+		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
+		Assert.assertEquals(expected.toString(), actual.toString());  // workaround DateWritable,j.s.Date
+	}
+
+	@Test
+	public void TestTimeWrite() throws Exception {
+        ArrayList<Object> stuff = new ArrayList<Object>();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "timestamp");
+		SerDe jserde = mkSerDe(proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        // {"attributes":{"when":147147147147}}
+        long epoch = 147147147147L;
+		java.sql.Timestamp expected = new java.sql.Timestamp(epoch);
+        addWritable(stuff, expected);
+		Writable jsw = jserde.serialize(stuff, rowOI);
+		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
+		jn = jn.findValue("attributes");
+		jn = jn.findValue("when");
+		java.sql.Timestamp actual = new java.sql.Timestamp(jn.getLongValue());
+		Assert.assertEquals(expected, actual);
+	}
+
+	@Test
 	public void TestPointWrite() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
 		Properties proptab = new Properties();
@@ -99,6 +144,97 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		f0 = rowOI.getStructFieldRef("num");
 		fieldData = rowOI.getStructFieldData(row, f0);
 		Assert.assertEquals(9, ((IntWritable)fieldData).get());
+	}
+
+	@Test
+	public void TestDateParse() throws Exception {
+		Configuration config = new Configuration();
+		Text value = new Text();
+
+		SerDe jserde = new EsriJsonSerDe();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		jserde.initialize(config, proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        value.set("{\"attributes\":{\"when\":\"2020-02-20\"}}");
+		Object row = jserde.deserialize(value);
+		StructField f0 = rowOI.getStructFieldRef("when");
+		Object fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals("2020-02-20",
+							((DateWritable)fieldData).get().toString());
+        value.set("{\"attributes\":{\"when\":\"2017-05-05\"}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals("2017-05-05",
+							((DateWritable)fieldData).get().toString());
+	}
+
+	@Test
+	public void TestEpochParse() throws Exception {
+		Configuration config = new Configuration();
+		Text value = new Text();
+
+		SerDe jserde = new EsriJsonSerDe();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		jserde.initialize(config, proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        value.set("{\"attributes\":{\"when\":147147147147}}");
+		Object row = jserde.deserialize(value);
+		StructField f0 = rowOI.getStructFieldRef("when");
+		Object fieldData = rowOI.getStructFieldData(row, f0);
+		//Assert.assertEquals(147147147147L, ((DateWritable)fieldData).get().getTime());
+		Assert.assertEquals(new java.sql.Date(147147147147L).toString(),
+							((DateWritable)fieldData).get().toString());
+        value.set("{\"attributes\":{\"when\":142857142857}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		//Assert.assertEquals(142857142857L, ((DateWritable)fieldData).get());
+		Assert.assertEquals(new java.sql.Date(142857142857L).toString(),
+							((DateWritable)fieldData).get().toString());
+	}
+
+	@Test
+	public void TestTimeParse() throws Exception {
+		Configuration config = new Configuration();
+		Text value = new Text();
+
+		SerDe jserde = new EsriJsonSerDe();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "timestamp");
+		jserde.initialize(config, proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        value.set("{\"attributes\":{\"when\":\"2020-02-20\"}}");
+		Object row = jserde.deserialize(value);
+		StructField f0 = rowOI.getStructFieldRef("when");
+		Object fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals(
+			new java.text.SimpleDateFormat("yyyy-MM-dd").parse("2020-02-20").getTime(),
+			((TimestampWritable)fieldData).getTimestamp().getTime());
+        value.set("{\"attributes\":{\"when\":\"2017-05-05 05:05\"}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals(
+			new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2017-05-05 05:05").getTime(),
+			((TimestampWritable)fieldData).getTimestamp().getTime());
+        value.set("{\"attributes\":{\"when\":\"2017-08-09 10:11:12\"}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals(
+		  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-08-09 10:11:12").getTime(),
+		  ((TimestampWritable)fieldData).getTimestamp().getTime());
+        value.set("{\"attributes\":{\"when\":\"2017-06-05 04:03:02.123456789\"}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals(
+		  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2017-06-05 04:03:02.123").getTime(),
+		  ((TimestampWritable)fieldData).getTimestamp().getTime());  // ns parsed but not checked
 	}
 
 	@Test
