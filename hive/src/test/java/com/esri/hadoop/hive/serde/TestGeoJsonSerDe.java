@@ -5,8 +5,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.TimeZone;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.io.BytesWritable;
@@ -33,7 +35,7 @@ import com.esri.hadoop.shims.HiveShims;
 public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
-	public void TestIntWrite() throws Exception {  // Is this valid for GeoJSON?
+	public void TestIntWrite() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
@@ -48,6 +50,28 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		jn = jn.findValue("properties");
 		jn = jn.findValue("num");
 		Assert.assertEquals(7, jn.getIntValue());
+	}
+
+	@Test
+	public void TestEpochWrite() throws Exception {
+        ArrayList<Object> stuff = new ArrayList<Object>();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		SerDe jserde = mkSerDe(proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        // {"properties":{"when":147147147147}}
+		long epoch = 0L;  // 147147147147L;
+		java.sql.Date expected = new java.sql.Date(epoch - TimeZone.getDefault().getOffset(epoch));
+        addWritable(stuff, expected);
+		Writable jsw = jserde.serialize(stuff, rowOI);
+		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
+		jn = jn.findValue("properties");
+		jn = jn.findValue("when");
+		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
+		long day = 24*3600*1000;  // DateWritable stores days not milliseconds.
+		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
 	}
 
 	@Test
@@ -70,7 +94,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 	}
 
 	@Test
-	public void TestIntParse() throws Exception {  // Is this valid for GeoJSON?
+	public void TestIntParse() throws Exception {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
@@ -91,6 +115,58 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		f0 = rowOI.getStructFieldRef("num");
 		fieldData = rowOI.getStructFieldData(row, f0);
 		Assert.assertEquals(9, ((IntWritable)fieldData).get());
+	}
+
+	@Test
+	public void TestDateParse() throws Exception {
+		Configuration config = new Configuration();
+		Text value = new Text();
+
+		SerDe jserde = new GeoJsonSerDe();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		jserde.initialize(config, proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        value.set("{\"properties\":{\"when\":\"2020-02-20\"}}");
+		Object row = jserde.deserialize(value);
+		StructField f0 = rowOI.getStructFieldRef("when");
+		Object fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals("2020-02-20",
+							((DateWritable)fieldData).get().toString());
+        value.set("{\"properties\":{\"when\":\"2017-05-05\"}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		Assert.assertEquals("2017-05-05",
+							((DateWritable)fieldData).get().toString());
+	}
+
+	@Test
+	public void TestEpochParse() throws Exception {
+		Configuration config = new Configuration();
+		Text value = new Text();
+
+		SerDe jserde = new GeoJsonSerDe();
+		Properties proptab = new Properties();
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
+		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
+		jserde.initialize(config, proptab);
+        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+
+        value.set("{\"properties\":{\"when\":147147147147}}");
+		Object row = jserde.deserialize(value);
+		StructField f0 = rowOI.getStructFieldRef("when");
+		Object fieldData = rowOI.getStructFieldData(row, f0);
+		//Assert.assertEquals(147147147147L, ((DateWritable)fieldData).get().getTime());
+		Assert.assertEquals(new java.sql.Date(147147147147L).toString(),
+							((DateWritable)fieldData).get().toString());
+        value.set("{\"properties\":{\"when\":142857142857}}");
+        row = jserde.deserialize(value);
+		fieldData = rowOI.getStructFieldData(row, f0);
+		//Assert.assertEquals(142857142857L, ((DateWritable)fieldData).get());
+		Assert.assertEquals(new java.sql.Date(142857142857L).toString(),
+							((DateWritable)fieldData).get().toString());
 	}
 
 	@Test

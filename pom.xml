@@ -108,13 +108,25 @@
     <profile>
       <id>hadoop-2.6</id>
       <properties>
-        <hadoop.version>2.6.0</hadoop.version>
+        <hadoop.version>2.6.5</hadoop.version>
       </properties>
     </profile>
     <profile>
       <id>hadoop-2.7</id>
       <properties>
-        <hadoop.version>2.7.2</hadoop.version>
+        <hadoop.version>2.7.3</hadoop.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hadoop-2.8</id>
+      <properties>
+        <hadoop.version>2.8.0</hadoop.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hadoop-3.0</id>
+      <properties>
+        <hadoop.version>3.0.0-alpha2</hadoop.version>
       </properties>
     </profile>
 
@@ -186,7 +198,7 @@
     <profile>
       <id>hive-1.2</id>
       <properties>
-        <hive.version>1.2.1</hive.version>
+        <hive.version>1.2.2</hive.version>
       </properties>
     </profile>
     <profile>
@@ -198,7 +210,7 @@
     <profile>
       <id>hive-2.1</id>
       <properties>
-        <hive.version>2.1.0</hive.version>
+        <hive.version>2.1.1</hive.version>
       </properties>
     </profile>
 

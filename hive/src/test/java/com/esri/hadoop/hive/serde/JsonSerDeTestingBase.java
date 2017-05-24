@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
+import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.ShortWritable;
+import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.io.BooleanWritable;
@@ -48,6 +50,14 @@ public abstract class JsonSerDeTestingBase {
 
 	protected void addWritable(ArrayList<Object> stuff, String item) {
 		stuff.add(new Text(item));
+	}
+
+	protected void addWritable(ArrayList<Object> stuff, java.sql.Date item) {
+		stuff.add(new DateWritable(item));
+	}
+
+	protected void addWritable(ArrayList<Object> stuff, java.sql.Timestamp item) {
+		stuff.add(new TimestampWritable(item));
 	}
 
 	protected void addWritable(ArrayList<Object> stuff, Geometry geom) {
