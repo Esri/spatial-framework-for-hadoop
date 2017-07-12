@@ -1,7 +1,3 @@
-package com.esri.json.hadoop;
-
-/**
- * @deprecated superseded by EnclosedEsriJsonInputFormat
- */
-@Deprecated
-public class EnclosedJsonInputFormat extends EnclosedEsriJsonInputFormat {}
+// package com.esri.json.hadoop;
+// Obsolete - @Deprecated in v1.2 - superseded by EnclosedEsriJsonInputFormat
+// public class EnclosedJsonInputFormat extends EnclosedEsriJsonInputFormat {}
