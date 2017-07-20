@@ -1,9 +1,12 @@
-/* *
 package com.esri.json.hadoop;
+
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
- * Obsolete renamed to and superseded by UnenclosedEsriJsonRecordReader
-@Deprecated in v1.2
+
+/**
+ * @deprecated renamed to and superseded by UnenclosedEsriJsonRecordReader
+ */
+@Deprecated
 public class UnenclosedJsonRecordReader extends UnenclosedEsriJsonRecordReader {
 	public UnenclosedJsonRecordReader() throws IOException {  // explicit just to declare exception
         super();
@@ -13,4 +16,3 @@ public class UnenclosedJsonRecordReader extends UnenclosedEsriJsonRecordReader {
 		super(split, conf);
 	}
 }
- * */
