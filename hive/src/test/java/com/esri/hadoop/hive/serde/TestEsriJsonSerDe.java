@@ -421,8 +421,8 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		fieldData = getField("text", row, rowOI);
 		Assert.assertEquals("other", ((Text)fieldData).toString());
 	}
-
-	@Deprecated
+    /* *
+	@Deprecated -> Obsolete
 	@Test
 	public void LegacyName() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
@@ -451,7 +451,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		fieldData = getField("shape", row, rowOI);
 		ckPoint(new Point(7.0, 2.0), (BytesWritable)fieldData);
 	}
-
+    * */
 
 	private SerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
