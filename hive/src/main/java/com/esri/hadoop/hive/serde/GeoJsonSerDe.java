@@ -4,11 +4,10 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.esri.core.geometry.ogc.OGCGeometry;
 
@@ -33,14 +32,12 @@ public class GeoJsonSerDe extends BaseJsonSerDe {
 	@Override
 	protected OGCGeometry parseGeom(JsonParser parser) {
 		try {
-			JsonNode node = mapper.readTree(parser);
+			ObjectNode node = mapper.readTree(parser);
 			return OGCGeometry.fromGeoJson(node.toString());
 		} catch (JsonProcessingException e1) {
 			e1.printStackTrace();			// TODO Auto-generated catch block
 		} catch (IOException e1) {
 			e1.printStackTrace();			// TODO Auto-generated catch block
-		} catch (JSONException e) {
-			e.printStackTrace();			// TODO Auto-generated catch block
 		}
 		return null;  // ?
 	}

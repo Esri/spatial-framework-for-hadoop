@@ -89,7 +89,7 @@ public class TestEnclosedEsriJsonRecordReader {
 		assertFalse (reader.next(key, value));
 		reader.close();
 	}
-
+    /* *  Obsolete
 	@Test
 	public void TestLegacy() throws Exception {
 		Path path = new Path(this.getClass().getResource("sample-study-area.json").getFile());
@@ -104,5 +104,5 @@ public class TestEnclosedEsriJsonRecordReader {
 		assertFalse (reader.next(key, value));
 		reader.close();
 	}
-
+    * */
 }

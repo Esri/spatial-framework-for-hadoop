@@ -15,11 +15,11 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Enumerates records from an Enclosed JSON file - use either Esri JSON or GeoJSON subclass
@@ -126,7 +126,7 @@ public abstract class EnclosedBaseJsonRecordReader extends RecordReader<LongWrit
 		if (token == null || !(token == JsonToken.START_OBJECT && parser.getCurrentName() == null))
 			return false;
 
-		JsonNode node = parser.readValueAsTree();
+		ObjectNode node = parser.readValueAsTree();
 
 		value.set(node.toString());
 

@@ -2,7 +2,7 @@ package com.esri.hadoop.hive.serde;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonParser;
+import com.fasterxml.jackson.core.JsonParser;
 
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MapGeometry;

@@ -227,10 +227,9 @@ public class TestUnenclosedEsriJsonRecordMrv1 {
 	}
 
 
-	/**
+	/* *
 	 * @deprecated superseded by UnenclosedEsriJsonRecordReader
-	 */
-	@Deprecated
+	@Deprecated in v1.2 -> Obsolete
 	@Test
 	public void TestLegacyName() throws Exception {
 		Assert.assertArrayEquals(new int[] { 0, 1 }, getRecordIndexesInReader(getLegacyReader("unenclosed-json-simple.json", 0, 63)));
@@ -251,5 +250,5 @@ public class TestUnenclosedEsriJsonRecordMrv1 {
 		
 		return new UnenclosedJsonRecordReader(split, conf);
 	}
-
+    * */
 }
