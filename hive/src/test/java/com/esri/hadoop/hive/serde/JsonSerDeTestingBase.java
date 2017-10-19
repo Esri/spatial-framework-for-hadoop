@@ -3,7 +3,7 @@ package com.esri.hadoop.hive.serde;
 import org.junit.Assert;
 import java.util.ArrayList;
 
-import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
 import org.apache.hadoop.hive.serde2.io.DateWritable;
@@ -82,7 +82,7 @@ public abstract class JsonSerDeTestingBase {
 		return rowOI.getStructFieldData(row, f0);
 	}
 
-	protected Object runSerDe(Object stuff, SerDe jserde, StructObjectInspector rowOI) throws Exception {
+	protected Object runSerDe(Object stuff, AbstractSerDe jserde, StructObjectInspector rowOI) throws Exception {
 		Writable jsw = jserde.serialize(stuff, rowOI);
 		//System.err.println(jsw);
 		return jserde.deserialize(jsw);

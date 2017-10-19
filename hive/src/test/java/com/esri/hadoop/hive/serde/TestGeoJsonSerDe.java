@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
 import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
@@ -40,7 +40,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"properties":{"num":7}}
@@ -58,7 +58,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"properties":{"when":147147147147}}
@@ -80,7 +80,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"properties":{},"geometry":{"type":"Point","coordinates":[15.0,5.0]}}
@@ -98,7 +98,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new GeoJsonSerDe();
+		AbstractSerDe jserde = new GeoJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
@@ -122,7 +122,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new GeoJsonSerDe();
+		AbstractSerDe jserde = new GeoJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
@@ -147,7 +147,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new GeoJsonSerDe();
+		AbstractSerDe jserde = new GeoJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
@@ -174,7 +174,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new GeoJsonSerDe();
+		AbstractSerDe jserde = new GeoJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
@@ -200,7 +200,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"properties\":{\"num\":7}}");
@@ -221,7 +221,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[15.0,5.0]}}");
@@ -244,7 +244,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num,shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "bigint,binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // value.set("{\"properties\":{\"num\":7},\"geometry\":{\"type\":\"Point\",\"coordinates\":[15.0,5.0]}}");
@@ -271,7 +271,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"properties\":{\"num\":7}}");
@@ -292,7 +292,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[15.0,5.0]}}");
@@ -309,9 +309,9 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 	}
 
 
-	private SerDe mkSerDe(Properties proptab) throws Exception {
+	private AbstractSerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
-		SerDe jserde = new GeoJsonSerDe();
+		AbstractSerDe jserde = new GeoJsonSerDe();
 		jserde.initialize(config, proptab);
 		return jserde;
 	}

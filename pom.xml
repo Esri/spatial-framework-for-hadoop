@@ -18,6 +18,27 @@
 		</license>
   </licenses>
 
+  <developers>
+    <developer>
+      <id>climbage</id>
+      <name>Michael Park</name>
+      <organization>Esri</organization>
+      <organizationUrl>http://www.esri.com</organizationUrl>
+      <roles>
+	<role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>randallwhitman</id>
+      <name>Randall Whitman</name>
+      <organization>Esri</organization>
+      <organizationUrl>http://www.esri.com</organizationUrl>
+      <roles>
+	<role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
 	<parent>
   	<groupId>org.sonatype.oss</groupId>
   	<artifactId>oss-parent</artifactId>
@@ -114,7 +135,7 @@
     <profile>
       <id>hadoop-2.7</id>
       <properties>
-        <hadoop.version>2.7.3</hadoop.version>
+        <hadoop.version>2.7.4</hadoop.version>
       </properties>
     </profile>
     <profile>
@@ -126,7 +147,7 @@
     <profile>
       <id>hadoop-3.0</id>
       <properties>
-        <hadoop.version>3.0.0-alpha4</hadoop.version>
+        <hadoop.version>3.0.0-beta1</hadoop.version>
       </properties>
     </profile>
 
@@ -212,6 +233,45 @@
       <properties>
         <hive.version>2.1.1</hive.version>
       </properties>
+    </profile>
+    <profile>
+      <id>hive-2.2</id>
+      <properties>
+        <hive.version>2.2.0</hive.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hive-2.3</id>
+      <properties>
+        <hive.version>2.3.0</hive.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+	<plugins>
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-gpg-plugin</artifactId>
+	    <executions>
+	      <execution>
+		<id>sign-artifacts</id>
+		<phase>verify</phase>
+		<goals>
+		  <goal>sign</goal>
+		</goals>
+	      </execution>
+	    </executions>
+	  </plugin>
+	</plugins>
+      </build>
     </profile>
 
   </profiles>
@@ -344,6 +404,18 @@
             </execution>
           </executions>
         </plugin>
+	<plugin>
+	  <groupId>org.sonatype.plugins</groupId>
+	  <artifactId>nexus-staging-maven-plugin</artifactId>
+	  <version>1.6.7</version>
+	  <extensions>true</extensions>
+	  <configuration>
+	    <serverId>ossrh</serverId>
+	    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+	    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+	  </configuration>
+	</plugin>
+
       </plugins>
     </pluginManagement>
   </build>
