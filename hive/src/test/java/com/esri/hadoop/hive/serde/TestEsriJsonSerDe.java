@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
 import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.ShortWritable;
@@ -47,7 +47,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"attributes":{"num":7}}
@@ -65,7 +65,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"attributes":{"when":147147147147}}
@@ -87,7 +87,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "timestamp");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"attributes":{"when":147147147147}}
@@ -108,7 +108,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"attributes":{},"geometry":{"x":15.0,"y":5.0}}
@@ -126,7 +126,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
@@ -151,7 +151,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
@@ -176,7 +176,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
@@ -203,7 +203,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "timestamp");
@@ -242,7 +242,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Configuration config = new Configuration();
 		Text value = new Text();
 
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
@@ -268,7 +268,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         addWritable(stuff, 7);
@@ -289,7 +289,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"attributes\":{},\"geometry\":{\"x\":15.0,\"y\":5.0}}");
@@ -312,7 +312,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num,shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "bigint,binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"attributes\":{\"num\":7},\"geometry\":{\"x\":15.0,\"y\":5.0}}");
@@ -339,7 +339,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"attributes\":{\"num\":7}}");
@@ -360,7 +360,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"attributes\":{},\"geometry\":{\"x\":15.0,\"y\":5.0}}");
@@ -382,7 +382,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "flag,num1,num2,text");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "boolean,tinyint,smallint,string");
-		SerDe jserde = mkSerDe(proptab);
+		AbstractSerDe jserde = mkSerDe(proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
 		// {"attributes":{"flag":false,"num":"5","text":"Point(15.0 5.0)"}}
@@ -430,7 +430,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num,shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "bigint,binary");
 		Configuration config = new Configuration();
-		SerDe jserde = new JsonSerde();
+		AbstractSerDe jserde = new JsonSerde();
 		jserde.initialize(config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
@@ -453,9 +453,9 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 	}
     * */
 
-	private SerDe mkSerDe(Properties proptab) throws Exception {
+	private AbstractSerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
-		SerDe jserde = new EsriJsonSerDe();
+		AbstractSerDe jserde = new EsriJsonSerDe();
 		jserde.initialize(config, proptab);
 		return jserde;
 	}

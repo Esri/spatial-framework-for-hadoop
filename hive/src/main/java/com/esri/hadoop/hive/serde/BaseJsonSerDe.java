@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.serde2.SerDe;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.SerDeStats;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
@@ -48,7 +48,7 @@ import com.esri.hadoop.hive.GeometryUtils;
 import com.esri.hadoop.shims.HiveShims;
 
 
-abstract public class BaseJsonSerDe implements SerDe {
+abstract public class BaseJsonSerDe extends AbstractSerDe {
 	static final Log LOG = LogFactory.getLog(BaseJsonSerDe.class.getName());
 
 	static protected JsonFactory jsonFactory = new JsonFactory();
