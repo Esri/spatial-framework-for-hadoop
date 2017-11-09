@@ -48,11 +48,9 @@ public class ST_GeomFromJson extends GenericUDF{
 		try {
 			OGCGeometry ogcGeom = OGCGeometry.fromJson(json);
 			return GeometryUtils.geometryToEsriShapeBytesWritable(ogcGeom);
-		} catch (JsonParseException e) {
-			
-		} catch (IOException e) {
+		} catch (Exception e) {
 
-		} 
+		}
 		
 		return null;
 	}
