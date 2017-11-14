@@ -10,7 +10,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 ## What's New
 
 * Hive Date type column is now supported in the JSON SerDe classes (as of v2.0.0 release).
-* [Spatial Framework for Hadoop v2.0](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2.0](https://github.com/Esri/geometry-api-java/releases), Hive v2.3, and Jackson v2.
+* [Spatial Framework for Hadoop v2.0](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2.0](https://github.com/Esri/geometry-api-java/releases), Hive v2.3, and Jackson v2.  Note: up-to-date releases may be available [on Github](https://github.com/Esri/spatial-framework-for-hadoop/releases) but [not on Maven Central](https://github.com/Esri/spatial-framework-for-hadoop/issues/123).
 * Support for Hive-0.10 is dropped in v2.0, while adding support for Hive-2.3; Hive-0.11 should work at runtime but Hive-0.12+ is required for building from source.
 
 ## Features
