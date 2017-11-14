@@ -301,7 +301,8 @@
     <!-- Versions for plugins -->
     <compiler.plugin.version>2.3.2</compiler.plugin.version>
     <surefire.plugin.version>2.12</surefire.plugin.version>
-    <javadoc.plugin.version>2.8</javadoc.plugin.version>
+    <source.plugin.version>2.2.1</source.plugin.version>
+    <javadoc.plugin.version>2.9.1</javadoc.plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -382,6 +383,19 @@
             <argLine>-Xmx1024m</argLine>
           </configuration>
         </plugin>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-source-plugin</artifactId>
+	  <version>${source.plugin.version}</version>
+	  <executions>
+	    <execution>
+	      <id>attach-sources</id>
+	      <goals>
+		<goal>jar-no-fork</goal>
+	      </goals>
+	    </execution>
+	  </executions>
+	</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
