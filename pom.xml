@@ -39,17 +39,28 @@
     </developer>
   </developers>
 
-	<parent>
-  	<groupId>org.sonatype.oss</groupId>
-  	<artifactId>oss-parent</artifactId>
-  	<version>7</version>
-	</parent>
+  <!-- parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent -->
 
-	<scm>
-		<connection>scm:git:git@github.com:Esri/spatial-framework-for-hadoop.git</connection>
-		<developerConnection>scm:git:git@github.com:Esri/spatial-framework-for-hadoop.git</developerConnection>
-		<url>https://github.com/Esri/spatial-framework-for-hadoop</url>
-	</scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:git@github.com:Esri/spatial-framework-for-hadoop.git</connection>
+    <developerConnection>scm:git:git@github.com:Esri/spatial-framework-for-hadoop.git</developerConnection>
+    <url>https://github.com/Esri/spatial-framework-for-hadoop</url>
+  </scm>
 
   <modules>
     <module>hive</module>
