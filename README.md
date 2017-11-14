@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Esri/spatial-framework-for-hadoop.png?branch=master)](https://travis-ci.org/Esri/spatial-framework-for-hadoop)
+<!-- [![Build Status](https://travis-ci.org/Esri/spatial-framework-for-hadoop.png?branch=master)](https://travis-ci.org/Esri/spatial-framework-for-hadoop) -->
 # spatial-framework-for-hadoop
 
 The __Spatial Framework for Hadoop__ allows developers and data scientists to use the Hadoop data processing system 
@@ -9,8 +9,9 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## What's New
 
-* GeoJSON support: Hadoop InputFormat and Hive SerDe for GeoJSON as well as for Esri GeoServices REST JSON (in v1.2.0 release).
-* ST_Geometry works under SparkSQL as well as under Hive itself (the new part is the JSON SerDe classes working under SparkSQL - pretty much everything else had already worked).
+* Hive Date type column is now supported in the JSON SerDe classes (as of v2.0.0 release).
+* [Spatial Framework for Hadoop v2.0](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2.0](https://github.com/Esri/geometry-api-java/releases), Hive v2.3, and Jackson v2.
+* Support for Hive-0.10 is dropped in v2.0, while adding support for Hive-2.3; Hive-0.11 should work at runtime but Hive-0.12+ is required for building from source.
 
 ## Features
 
@@ -47,7 +48,8 @@ processing.
 
 ## Requirements
 
-* Hive 0.9.0 and above (see [Hive Compatibility issues](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
+* Geometry 2.0
+* Hive 0.11 and above (see [Hive Compatibility issues](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))  (For building from source, Hive-0.12+ is required.)
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
 (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the 
@@ -63,7 +65,7 @@ ArcGIS user submitting the workflow file.
 
 ## Issues
 
-Find a bug or want to request a new feature?  Please let us know by submitting an issue.
+Find a bug or want to request a new feature?  Please let us know by submitting an [issue](issues).
 
 ## Contributing
 
