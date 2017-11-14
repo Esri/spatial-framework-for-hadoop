@@ -1,8 +1,13 @@
+addons:
+  apt:
+    packages:
+      - oracle-java9-installer
 language: java
 jdk:
-    - openjdk6
     - openjdk7
-    - oraclejdk7
+    - openjdk8
+    - oraclejdk8
+    - oraclejdk9
 notifications:
     email: false
 sudo: false
