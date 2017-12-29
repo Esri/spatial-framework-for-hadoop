@@ -1,22 +1,5 @@
 package com.esri.hadoop.hive.serde;
 
-import com.esri.core.geometry.Point;
-import com.esri.hadoop.shims.HiveShims;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.serde2.AbstractSerDe;
-import org.apache.hadoop.hive.serde2.io.ByteWritable;
-import org.apache.hadoop.hive.serde2.io.DateWritable;
-import org.apache.hadoop.hive.serde2.io.ShortWritable;
-import org.apache.hadoop.hive.serde2.io.TimestampWritable;
-import org.apache.hadoop.hive.serde2.lazy.ByteArrayRef;
-import org.apache.hadoop.hive.serde2.lazy.LazyString;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyPrimitiveObjectInspectorFactory;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyStringObjectInspector;
-import org.apache.hadoop.hive.serde2.objectinspector.StructField;
-import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
-import org.apache.hadoop.io.*;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,6 +7,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
+import org.apache.hadoop.hive.serde2.io.ByteWritable;
+import org.apache.hadoop.hive.serde2.io.DateWritable;
+import org.apache.hadoop.hive.serde2.io.ShortWritable;
+import org.apache.hadoop.hive.serde2.io.TimestampWritable;
+import org.apache.hadoop.hive.serde2.objectinspector.StructField;
+import org.apache.hadoop.hive.serde2.lazy.ByteArrayRef;
+import org.apache.hadoop.hive.serde2.lazy.LazyString;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyPrimitiveObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyStringObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
+import org.apache.hadoop.io.BooleanWritable;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.Point;
+import com.esri.core.geometry.SpatialReference;
+import com.esri.core.geometry.ogc.OGCGeometry;
+import com.esri.hadoop.shims.HiveShims;
 
 // Ideally tests to cover:
 //  - attributes and/or geometry
@@ -53,21 +64,21 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestEpochWrite() throws Exception {
-        ArrayList<Object> stuff = new ArrayList<Object>();
+		ArrayList<Object> stuff = new ArrayList<Object>();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
 		AbstractSerDe jserde = mkSerDe(proptab);
-        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+		StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
-        // {"attributes":{"when":147147147147}}
-        long epoch = 147147147147L;
+		// {"attributes":{"when":147147147147}}
+		long epoch = 147147147147L;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
 		sdf.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		java.sql.Date expected = new java.sql.Date(epoch);
 		String expString = sdf.format(expected);
 		//System.err.println(expected.getTime());
-        addWritable(stuff, expected);
+		addWritable(stuff, expected);
 		Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
@@ -76,7 +87,6 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		String actualDateString = sdf.format(actual);
 		Assert.assertEquals(expString, actualDateString);  // workaround DateWritable,j.s.Date
 	}
-
 	@Test
 	public void TestTimeWrite() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
