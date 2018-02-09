@@ -3,8 +3,11 @@ package com.esri.hadoop.hive.serde;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.TimeZone;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.AbstractSerDe;
 import org.apache.hadoop.hive.serde2.io.ByteWritable;
@@ -61,26 +64,29 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestEpochWrite() throws Exception {
-        ArrayList<Object> stuff = new ArrayList<Object>();
+		ArrayList<Object> stuff = new ArrayList<Object>();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
 		AbstractSerDe jserde = mkSerDe(proptab);
-        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+		StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
-        // {"attributes":{"when":147147147147}}
-        long epoch = 147147147147L;
+		// {"attributes":{"when":147147147147}}
+		long epoch = 147147147147L;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+		sdf.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		java.sql.Date expected = new java.sql.Date(epoch);
+		String expString = sdf.format(expected);
 		//System.err.println(expected.getTime());
-        addWritable(stuff, expected);
+		addWritable(stuff, expected);
 		Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
 		jn = jn.findValue("when");
 		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
-		Assert.assertEquals(expected.toString(), actual.toString());  // workaround DateWritable,j.s.Date
+		String actualDateString = sdf.format(actual);
+		Assert.assertEquals(expString, actualDateString);  // workaround DateWritable,j.s.Date
 	}
-
 	@Test
 	public void TestTimeWrite() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
