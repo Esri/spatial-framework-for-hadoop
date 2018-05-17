@@ -12,10 +12,14 @@ import com.esri.core.geometry.ogc.OGCGeometry;
 
 @Description(
 	name = "ST_Centroid",
-	value = "_FUNC_(polygon) - returns the point that is the center of the polygon's envelope",
+	value = "_FUNC_(geometry) - returns the centroid of the geometry",
 	extended = "Example:\n"
-	+ "  > SELECT _FUNC_(ST_GeomFromText('polygon ((0 0, 3 6, 6 0, 0 0))')) FROM src LIMIT 1;  -- POINT(3 3)\n"
-	+ "  > SELECT _FUNC_(ST_GeomFromText('polygon ((0 0, 0 8, 8 0, 0 0))')) FROM src LIMIT 1;  -- POINT(4 4)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('point (2 3)'));  -- POINT(2 3)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('multipoint ((0 0), (1 1), (1 -1), (6 0))'));  -- POINT(2 0)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('linestring ((0 0, 6 0))'));  -- POINT(3 0)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('linestring ((0 0, 2 4, 6 8))'));  -- POINT(3 4)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('polygon ((0 0, 0 8, 8 8, 8 0, 0 0))'));  -- POINT(4 4)\n"
+	+ "  > SELECT _FUNC_(ST_GeomFromText('polygon ((1 1, 5 1, 3 4))'));  -- POINT(3 2)\n"
 	)
 
 public class ST_Centroid extends ST_GeometryAccessor {
@@ -33,25 +37,7 @@ public class ST_Centroid extends ST_GeometryAccessor {
 			return null;
 		}
 
-		GeometryUtils.OGCType ogcType = GeometryUtils.getType(geomref);
-		switch(ogcType) {
-		case ST_MULTIPOLYGON:
-		case ST_POLYGON:
-			int wkid = GeometryUtils.getWKID(geomref);
-			SpatialReference spatialReference = null;
-			if (wkid != GeometryUtils.WKID_UNKNOWN) {
-				spatialReference = SpatialReference.create(wkid);
-			}
-			Envelope envBound = new Envelope();
-			ogcGeometry.getEsriGeometry().queryEnvelope(envBound);
-			Point centroid = new Point((envBound.getXMin() + envBound.getXMax()) / 2.,
-									   (envBound.getYMin() + envBound.getYMax()) / 2.);
-			return GeometryUtils.geometryToEsriShapeBytesWritable(OGCGeometry.createFromEsriGeometry(centroid,
-																  spatialReference));
-		default:
-			LogUtils.Log_InvalidType(LOG, GeometryUtils.OGCType.ST_POLYGON, ogcType);
-			return null;
-		}
+		return GeometryUtils.geometryToEsriShapeBytesWritable(ogcGeometry.centroid());
 	}
 
 }

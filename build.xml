@@ -6,7 +6,7 @@
 		<dependency groupId="org.apache.hadoop" artifactId="hadoop-client" version="2.2.0"/>
 		<dependency groupId="org.apache.hive" artifactId="hive-exec" version="0.12.0"/>
 		<dependency groupId="org.apache.hive" artifactId="hive-serde" version="0.12.0"/>
-		<dependency groupId="com.esri.geometry" artifactId="esri-geometry-api" version="2.0.0"/>
+		<dependency groupId="com.esri.geometry" artifactId="esri-geometry-api" version="2.1.99"/>  <!-- 2.2.0-SNAPSHOT -->
 		<dependency groupId="com.fasterxml.jackson.core" artifactId="jackson-core" version="2.6.5"/>
 		<dependency groupId="com.fasterxml.jackson.core" artifactId="jackson-databind" version="2.6.5"/>
 	</artifact:dependencies>
