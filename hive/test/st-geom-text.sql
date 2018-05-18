@@ -32,8 +32,8 @@ select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 1 0, 0 1, 0 0))'), ST
 select ST_AsText(ST_Intersection(ST_Polygon('polygon((0 0, 3 0, 0 3, 0 0))'), ST_Polygon('polygon((2 2, 2 0, 3 0, 3 3, 0 3, 0 2, 2 2))')));
 select ST_AsText(ST_Centroid(ST_Point(2, 3)));
 select ST_AsText(ST_Centroid(ST_GeomFromText('multipoint ((0 0), (1 1), (1 -1), (6 0))')));
-select ST_AsText(ST_Centroid(ST_GeomFromText('linestring ((0 0, 6 0))')));
-select ST_AsText(ST_Centroid(ST_GeomFromText('linestring ((0 0, 2 4, 6 8))')));
+select ST_AsText(ST_Centroid(ST_GeomFromText('linestring (0 0, 6 0)')));
+select ST_AsText(ST_Centroid(ST_GeomFromText('linestring (0 0, 2 4, 6 8)')));
 select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((0 0, 0 8, 8 8, 8 0, 0 0))')));
 select ST_AsText(ST_Centroid(ST_GeomFromText('polygon ((1 1, 5 1, 3 4))')));
 select ST_Area(ST_Buffer(ST_GeomFromText('point (0 0)'), 1));
