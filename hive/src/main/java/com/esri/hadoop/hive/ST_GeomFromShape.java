@@ -2,6 +2,7 @@ package com.esri.hadoop.hive;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.io.BytesWritable;
 
@@ -10,6 +11,12 @@ import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.hadoop.hive.GeometryUtils.OGCType;
 
+@Description(
+		name = "ST_GeomFromShape",
+		value = "_FUNC_(shape) - construct ST_Geometry from Esri shape representation of geometry\n",
+		extended = "Example:\n" +
+		"  SELECT _FUNC_(ST_AsShape(ST_Point(1, 2))); -- constructs ST_Point\n"
+		)
 public class ST_GeomFromShape extends ST_Geometry {
 
 	static final Log LOG = LogFactory.getLog(ST_GeomFromShape.class.getName());
