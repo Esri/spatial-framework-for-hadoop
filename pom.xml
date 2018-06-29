@@ -184,7 +184,7 @@
     <profile>
       <id>hadoop-3.0</id>
       <properties>
-        <hadoop.version>3.0.2</hadoop.version>  <!-- hadoop-project-dist-3.0.3 ? -->
+        <hadoop.version>3.0.2</hadoop.version>  <!-- 3.0.3 ? -->
       </properties>
     </profile>
     <profile>
