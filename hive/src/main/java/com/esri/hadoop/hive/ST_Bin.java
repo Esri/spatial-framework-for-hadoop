@@ -33,36 +33,36 @@ public class ST_Bin extends GenericUDF {
 		if (OIs.length != 2) {
 			throw new UDFArgumentException("Function takes exactly 2 arguments");
 		}
-		
+
 		if (OIs[0].getCategory() != Category.PRIMITIVE) {
-			throw new UDFArgumentException("Argument 0 must be a number");
+			throw new UDFArgumentException("Argument 0 must be a number - got: " + OIs[0].getCategory());
 		}
-		
+
 		oiBinSize = (PrimitiveObjectInspector)OIs[0];
-		if (!EnumSet.of(PrimitiveCategory.DOUBLE,PrimitiveCategory.INT,PrimitiveCategory.LONG,PrimitiveCategory.SHORT, PrimitiveCategory.FLOAT).contains(oiBinSize.getPrimitiveCategory())) {
-			throw new UDFArgumentException("Argument 0 must be a number");
+		if (!EnumSet.of(PrimitiveCategory.DECIMAL,PrimitiveCategory.DOUBLE,PrimitiveCategory.INT,PrimitiveCategory.LONG,PrimitiveCategory.SHORT, PrimitiveCategory.FLOAT).contains(oiBinSize.getPrimitiveCategory())) {
+			throw new UDFArgumentException("Argument 0 must be a number - got: " + oiBinSize.getPrimitiveCategory());
 		}
-		
+
 		geomHelper = HiveGeometryOIHelper.create(OIs[1], 1);
 		binSizeIsConstant = ObjectInspectorUtils.isConstantObjectInspector(OIs[0]);
 
 		return PrimitiveObjectInspectorFactory.javaLongObjectInspector;
 	}
-	
+
 	@Override
 	public Object evaluate(DeferredObject[] args) throws HiveException {
 		double binSize = PrimitiveObjectInspectorUtils.getDouble(args[0].get(), oiBinSize);
-		
+
 		if (!binSizeIsConstant || bins == null) {
 			bins = new BinUtils(binSize);
 		} 
-		
+
 		OGCPoint point = geomHelper.getPoint(args);
-		
+
 		if (point == null) {
 			return null;
 		}
-		
+
 		return bins.getId(point.X(), point.Y());
 	}
 
@@ -71,4 +71,5 @@ public class ST_Bin extends GenericUDF {
 		assert(args.length == 2);
 		return String.format("st_bin(%s,%s)", args[0], args[1]);
 	}
+
 }
