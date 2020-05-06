@@ -58,7 +58,8 @@ public class ST_BinEnvelope extends GenericUDF {
 			return false;
 		}
 		
-		return EnumSet.of(PrimitiveCategory.DOUBLE,PrimitiveCategory.INT,PrimitiveCategory.LONG,PrimitiveCategory.SHORT, PrimitiveCategory.FLOAT)
+		return EnumSet.of(PrimitiveCategory.DOUBLE,PrimitiveCategory.INT,PrimitiveCategory.LONG,
+						PrimitiveCategory.SHORT, PrimitiveCategory.FLOAT, PrimitiveCategory.DECIMAL)
 					  .contains(((PrimitiveObjectInspector)oi).getPrimitiveCategory());
 	}
 	
