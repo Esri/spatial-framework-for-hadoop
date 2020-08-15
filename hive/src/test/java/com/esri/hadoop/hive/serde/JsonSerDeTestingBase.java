@@ -1,6 +1,7 @@
 package com.esri.hadoop.hive.serde;
 
 import org.junit.Assert;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.apache.hadoop.hive.serde2.AbstractSerDe;
@@ -53,11 +54,35 @@ public abstract class JsonSerDeTestingBase {
 	}
 
 	protected void addWritable(ArrayList<Object> stuff, java.sql.Date item) {
-		stuff.add(new DateWritable(item));
-	}
+        try {
+            Class<?> dtClazz = Class.forName("org.apache.hadoop.hive.common.type.Date");
+            Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritableV2");
+            Method dtSetImpl = dtClazz.getMethod("setTimeInMillis", long.class);
+            Method dwSetImpl = dwClazz.getMethod("set", dtClazz);
+            Object dtObj = dtClazz.getConstructor().newInstance();
+            dtSetImpl.invoke(dtObj, item.getTime());
+            Object dwObj = dwClazz.getConstructor().newInstance();
+            dwSetImpl.invoke(dwObj, dtObj);
+            stuff.add(dwObj);
+        } catch (Exception exc) {
+            stuff.add(new DateWritable(item));
+        }
+    }
 
 	protected void addWritable(ArrayList<Object> stuff, java.sql.Timestamp item) {
-		stuff.add(new TimestampWritable(item));
+        try {
+            Class<?> ttClazz = Class.forName("org.apache.hadoop.hive.common.type.Timestamp");
+            Class<?> twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritableV2");
+            Method ttSetImpl = ttClazz.getMethod("setTimeInMillis", long.class);
+            Method twSetImpl = twClazz.getMethod("set", ttClazz);
+            Object ttObj = ttClazz.getConstructor().newInstance();
+            ttSetImpl.invoke(ttObj, item.getTime());
+            Object twObj = twClazz.getConstructor().newInstance();
+            twSetImpl.invoke(twObj, ttObj);
+            stuff.add(twObj);
+        } catch (Exception exc) {
+            stuff.add(new TimestampWritable(item));
+        }
 	}
 
 	protected void addWritable(ArrayList<Object> stuff, Geometry geom) {
@@ -77,6 +102,38 @@ public abstract class JsonSerDeTestingBase {
 							GeometryUtils.geometryFromEsriShape(fieldData).getEsriGeometry());
 	}
 
+    protected long epochFromWritable(Object dwHive) throws Exception {
+        // Hive 0.12 and above
+        Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritable");
+        Method dwGetImpl = dwClazz.getMethod("get");
+        Class<?> twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritable");
+        Method twGetImpl = twClazz.getMethod("getTimestamp");
+        if (dwHive.getClass() == dwClazz) {
+            // Counter the time-zone adjustment done by DateWritable#daysToMillis .
+            // What the product should do about that is another discussion.
+            long epoch = ((java.util.Date)(dwGetImpl.invoke(dwHive))).getTime();
+            return epoch + java.util.TimeZone.getDefault().getOffset(epoch);
+        } else if (dwHive.getClass() == twClazz) {
+            return ((java.sql.Timestamp)(twGetImpl.invoke(dwHive))).getTime();
+        } else {
+            // Hive 3.1 and above
+            dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritableV2");
+            twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritableV2");
+            if (dwHive.getClass() == dwClazz) {
+                Class<?> dtClazz = Class.forName("org.apache.hadoop.hive.common.type.Date");
+                Method dtGetImpl = dtClazz.getMethod("toEpochMilli");
+                dwGetImpl = dwClazz.getMethod("get");
+                // Object dtObj = dtClazz.getConstructor().newInstance();
+                return ((java.lang.Long)(dtGetImpl.invoke(dwGetImpl.invoke(dwHive)))).longValue();
+            } else {  // dwHive.getClass() == twClazz
+                Class<?> ttClazz = Class.forName("org.apache.hadoop.hive.common.type.Timestamp");
+                Method ttGetImpl = ttClazz.getMethod("toEpochMilli");
+                twGetImpl = twClazz.getMethod("getTimestamp");
+                return ((java.lang.Long)(ttGetImpl.invoke(twGetImpl.invoke(dwHive)))).longValue();
+            }
+        }
+    }  // epochFromWritable
+
 	protected Object getField(String col, Object row, StructObjectInspector rowOI) {
 		StructField f0 = rowOI.getStructFieldRef(col);
 		return rowOI.getStructFieldData(row, f0);
@@ -84,8 +141,42 @@ public abstract class JsonSerDeTestingBase {
 
 	protected Object runSerDe(Object stuff, AbstractSerDe jserde, StructObjectInspector rowOI) throws Exception {
 		Writable jsw = jserde.serialize(stuff, rowOI);
-		//System.err.println(jsw);
 		return jserde.deserialize(jsw);
 	}
+
+    protected String iso8601FromWritable(Object dtwHive) throws Exception {
+        // Hive 0.12 and above
+        Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritable");
+        Method dwGetImpl = dwClazz.getMethod("get");
+        Class<?> twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritable");
+        Method twGetImpl = twClazz.getMethod("getTimestamp");
+        if (dtwHive.getClass() == dwClazz) {
+            java.util.Date localDay = (java.util.Date)(dwGetImpl.invoke(dtwHive));
+            java.text.SimpleDateFormat dtFmt = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            dtFmt.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            return dtFmt.format(localDay);
+        } else if (dtwHive.getClass() == twClazz) {
+            java.text.SimpleDateFormat dtFmt = new java.text.SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS");
+            dtFmt.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            java.sql.Timestamp localDt = (java.sql.Timestamp)(twGetImpl.invoke(dtwHive));
+            // return localDt.toString();
+            return dtFmt.format(localDt);
+        } else {
+            // Hive 3.1 and above
+            dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritableV2");
+            twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritableV2");
+            if (dtwHive.getClass() == dwClazz) {
+                Class<?> dtClazz = Class.forName("org.apache.hadoop.hive.common.type.Date");
+                Method dtGetImpl = dtClazz.getMethod("toString");
+                dwGetImpl = dwClazz.getMethod("get");
+                // Object dtObj = dtClazz.getConstructor().newInstance();
+                return (String)(dtGetImpl.invoke(dwGetImpl.invoke(dtwHive)));
+            } else {  // dtwHive.getClass() == twClazz
+                Class<?> ttClazz = Class.forName("org.apache.hadoop.hive.common.type.Timestamp");
+                twGetImpl = twClazz.getMethod("toString");
+                return (String)(twGetImpl.invoke(dtwHive));
+            }
+        }
+    }  // epochFromWritable
 
 }
