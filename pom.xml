@@ -107,17 +107,60 @@
       </properties>
     </profile>
 
+    <!-- Jackson versions for building - generally deployment should use newer patch level. -->
     <profile>
       <id>jackson-2.6</id>
       <properties>
         <jackson.version>2.6.7.1</jackson.version>
       </properties>
     </profile>
-
     <profile>
       <id>jackson-2.8</id>
       <properties>
         <jackson.version>2.8.11.2</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.9</id>
+      <properties>
+        <jackson.version>2.9.9</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.10</id>
+      <properties>
+        <jackson.version>2.10.4</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.11</id>
+      <properties>
+        <jackson.version>2.11.0</jackson.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>geometry-2.2.0</id>
+      <properties>
+        <geometry.version>2.2.0</geometry.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>geometry-2.2.1</id>
+      <properties>
+        <geometry.version>2.2.1</geometry.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>geometry-2.2.2</id>
+      <properties>
+        <geometry.version>2.2.2</geometry.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>geometry-2.2.3</id>
+      <properties>
+        <geometry.version>2.2.3</geometry.version>
       </properties>
     </profile>
 
@@ -182,6 +225,12 @@
       </properties>
     </profile>
     <profile>
+      <id>hadoop-2.10</id>
+      <properties>
+        <hadoop.version>2.10.0</hadoop.version>
+      </properties>
+    </profile>
+    <profile>
       <id>hadoop-3.0</id>
       <properties>
         <hadoop.version>3.0.3</hadoop.version>
@@ -190,13 +239,19 @@
     <profile>
       <id>hadoop-3.1</id>
       <properties>
-        <hadoop.version>3.1.2</hadoop.version>
+        <hadoop.version>3.1.3</hadoop.version>
       </properties>
     </profile>
     <profile>
       <id>hadoop-3.2</id>
       <properties>
-        <hadoop.version>3.2.0</hadoop.version>
+        <hadoop.version>3.2.1</hadoop.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hadoop-3.3</id>
+      <properties>
+        <hadoop.version>3.3.0</hadoop.version>
       </properties>
     </profile>
 
@@ -301,7 +356,7 @@
     <profile>
       <id>hive-2.3</id>
       <properties>
-        <hive.version>2.3.5</hive.version>
+        <hive.version>2.3.7</hive.version>
       </properties>
     </profile>
     <profile>
@@ -313,7 +368,7 @@
     <profile>
       <id>hive-3.1</id>
       <properties>
-        <hive.version>3.1.1</hive.version>
+        <hive.version>3.1.2</hive.version>
       </properties>
     </profile>
 
@@ -353,11 +408,11 @@
     <java.target.version>1.6</java.target.version>
 
     <!-- Versions for dependencies -->
-    <hadoop.version>2.2.0</hadoop.version>
-    <hive.version>0.12.0</hive.version>
-    <jackson.version>2.9.6</jackson.version>
+    <hadoop.version>3.2.0</hadoop.version>
+    <hive.version>3.1.2</hive.version>
+    <jackson.version>2.9.9</jackson.version>
     <logging.version>1.1.3</logging.version>
-    <geometry.version>2.2.0</geometry.version>
+    <geometry.version>2.2.3</geometry.version>
     <junit.version>4.11</junit.version>
 
     <!-- Versions for plugins -->
