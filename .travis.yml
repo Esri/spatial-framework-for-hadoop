@@ -3,7 +3,6 @@ jdk:
     - openjdk8
     - openjdk11
     - oraclejdk11
-    - openjdk16
 notifications:
     email: false
 sudo: false
