@@ -147,7 +147,7 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 
 		// null out array because we reuse it and we don't want values persisting
 		// from the last record
-		for (int i=0;i<numColumns;i++)
+		for (int i=0; i<numColumns; i++)
 			row.set(i, null);
 		
 		try {
@@ -321,12 +321,11 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 										  PrimitiveObjectInspector poi, JsonGenerator jsonGen)
 		throws JsonProcessingException, IOException {
 		Object prim = poi.getPrimitiveJavaObject(value);
-		if (prim instanceof java.util.Date) {
-			long epoch = ((java.util.Date)prim).getTime();
-			long offset = prim instanceof java.sql.Timestamp ? 0 : tz.getOffset(epoch);
-			jsonGen.writeObjectField(label, epoch - offset);  // UTC
-		} else {
+		Long epoch = HiveShims.getPrimitiveEpoch(prim, tz);
+		if (epoch == null) {  // anything but a recognized DATE or TIMESTAMP
 			jsonGen.writeObjectField(label, prim);
+		} else {
+			jsonGen.writeObjectField(label, epoch);
 		}
 	}
 
@@ -339,11 +338,14 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 	private java.sql.Date parseDate(JsonParser parser) throws JsonParseException, IOException {
 		java.sql.Date jsd = null;
 		if (JsonToken.VALUE_NUMBER_INT.equals(parser.getCurrentToken())) {
+			// DateWritable#daysToMillis adjusts the numerical/epoch time
+			// to midnight in the local time zone.	See HIVE-12192.
+			// Attempt to compensate, when date provided as epoch, which is unambiguously UTC.
 			long epoch = parser.getLongValue();
-			jsd = new java.sql.Date(epoch);
+			jsd = new java.sql.Date(epoch - tz.getOffset(epoch));
 		} else try {
 			long epoch = parseTime(parser.getText(), "yyyy-MM-dd");
-			jsd = new java.sql.Date(epoch);
+			jsd = new java.sql.Date(epoch + 43200000);  // midday rather than midnight
 		} catch (java.text.ParseException e) {
 			// null
 		}
@@ -358,35 +360,24 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 		} else {
 			String value = parser.getText();
 			int point = value.indexOf('.');
-			if (point >= 0) {
-				jst = parseTime(value.substring(0,point+4));  // "yyyy-MM-dd HH:mm:ss.SSS" - truncate
-				// idea: jst.setNanos; alt: Java-8, JodaTime, javax.xml.bind.DatatypeConverter
-			} else {
-				jst = parseTime(value);    // "yyyy-MM-dd HH:mm:ss.SSS"
-				String[] formats = {"yyyy-MM-dd HH:mm:ss",	"yyyy-MM-dd HH:mm", "yyyy-MM-dd"};
-				for (String format: formats) {
-					if (jst != null) break;
-					try {
-						jst = new java.sql.Timestamp(parseTime(value, format));
-					} catch (java.text.ParseException e) {
-						// remain null
-					}
+			String dateStr = (point < 0) ? value : value.substring(0,point+4);
+			String[] formats = {"yyyy-MM-dd HH:mm:ss.SSS", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd"};
+			for (String format: formats) {
+				try {
+					jst = new java.sql.Timestamp(parseTime(dateStr, format));
+					break;
+				} catch (java.text.ParseException e) {
+					// remain null after this attempted format
 				}
 			}
-		}
+		}  // else String value
 		return jst;
 	}
 
-	private java.sql.Timestamp parseTime(String value) {
-		try {
-			return java.sql.Timestamp.valueOf(value);
-		} catch (IllegalArgumentException iae) {
-			return null;
-		}
-	}
-
 	private long parseTime(String value, String format) throws java.text.ParseException {  // epoch
-		return new java.text.SimpleDateFormat(format).parse(value).getTime();
+        java.text.SimpleDateFormat dtFmt = new java.text.SimpleDateFormat(format);
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return dtFmt.parse(value).getTime();
 	}
 
 	/**
@@ -430,10 +421,10 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 			((BooleanWritable)row.get(fieldIndex)).set(parser.getBooleanValue());
 			break;
 		case DATE:    // DateWritable stores days not milliseconds.
-			((DateWritable)row.get(fieldIndex)).set(parseDate(parser));
+			HiveShims.setDateWritable(row.get(fieldIndex), parseDate(parser));
 			break;
 		case TIMESTAMP:
-			((TimestampWritable)row.get(fieldIndex)).set(parseTime(parser));
+			HiveShims.setTimeWritable(row.get(fieldIndex), parseTime(parser));
 			break;
 		default:    // STRING/unrecognized
 			((Text)row.get(fieldIndex)).set(parser.getText());

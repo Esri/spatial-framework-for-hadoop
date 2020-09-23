@@ -62,15 +62,16 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         // {"properties":{"when":147147147147}}
-		long epoch = 0L;  // 147147147147L;
-		java.sql.Date expected = new java.sql.Date(epoch - TimeZone.getDefault().getOffset(epoch));
+		long epoch = 147147147147L;
+        long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
+        java.sql.Date expected = new java.sql.Date(zoned);
         addWritable(stuff, expected);
-		Writable jsw = jserde.serialize(stuff, rowOI);
+        Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("properties");
 		jn = jn.findValue("when");
 		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
-		long day = 24*3600*1000;  // DateWritable stores days not milliseconds.
+		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
 		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
 	}
 
@@ -119,6 +120,10 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestDateParse() throws Exception {
+        // DateWritable#daysToMillis adjusts the numerical/epoch time
+        // to midnight in the local time zone - but only prior to Hive-3.1 (HIVE-12192).
+        // Raises questions about what the product source code should do,
+        // but at least in the meantime the test expectations match that.
 		Configuration config = new Configuration();
 		Text value = new Text();
 
@@ -129,17 +134,17 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		jserde.initialize(config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
-        value.set("{\"properties\":{\"when\":\"2020-02-20\"}}");
+        String dateStr = "2020-02-20";
+        value.set("{\"properties\":{\"when\":\"" + dateStr + "\"}}");
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals("2020-02-20",
-							((DateWritable)fieldData).get().toString());
-        value.set("{\"properties\":{\"when\":\"2017-05-05\"}}");
+		Assert.assertEquals(dateStr, iso8601FromWritable(fieldData));
+        dateStr = "2017-05-05";
+        value.set("{\"properties\":{\"when\":\"" + dateStr + "\"}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals("2017-05-05",
-							((DateWritable)fieldData).get().toString());
+		Assert.assertEquals(dateStr, iso8601FromWritable(fieldData));
 	}
 
 	@Test
@@ -158,15 +163,14 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-		//Assert.assertEquals(147147147147L, ((DateWritable)fieldData).get().getTime());
-		Assert.assertEquals(new java.sql.Date(147147147147L).toString(),
-							((DateWritable)fieldData).get().toString());
+		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
+        long epochExpected = 147147147147L;
+        Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
         value.set("{\"properties\":{\"when\":142857142857}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		//Assert.assertEquals(142857142857L, ((DateWritable)fieldData).get());
-		Assert.assertEquals(new java.sql.Date(142857142857L).toString(),
-							((DateWritable)fieldData).get().toString());
+		epochExpected = 142857142857L;
+        Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
 	}
 
 	@Test

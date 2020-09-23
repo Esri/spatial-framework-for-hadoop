@@ -3,6 +3,7 @@ package com.esri.hadoop.hive.serde;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -73,19 +74,16 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 		// {"attributes":{"when":147147147147}}
 		long epoch = 147147147147L;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
-		sdf.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-		java.sql.Date expected = new java.sql.Date(epoch);
-		String expString = sdf.format(expected);
-		//System.err.println(expected.getTime());
-		addWritable(stuff, expected);
-		Writable jsw = jserde.serialize(stuff, rowOI);
+        long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
+        java.sql.Date expected = new java.sql.Date(zoned);
+        addWritable(stuff, expected);
+        Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
 		jn = jn.findValue("when");
 		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
-		String actualDateString = sdf.format(actual);
-		Assert.assertEquals(expString, actualDateString);  // workaround DateWritable,j.s.Date
+		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
+		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
 	}
 	@Test
 	public void TestTimeWrite() throws Exception {
@@ -100,12 +98,12 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
         long epoch = 147147147147L;
 		java.sql.Timestamp expected = new java.sql.Timestamp(epoch);
         addWritable(stuff, expected);
-		Writable jsw = jserde.serialize(stuff, rowOI);
+        Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
 		jn = jn.findValue("when");
 		java.sql.Timestamp actual = new java.sql.Timestamp(jn.getLongValue());
-		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(epoch, actual.getTime());
 	}
 
 	@Test
@@ -154,6 +152,10 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestDateParse() throws Exception {
+        // DateWritable#daysToMillis adjusts the numerical/epoch time
+        // to midnight in the local time zone - but only prior to Hive-3.1 (HIVE-12192).
+        // Raises questions about what the product source code should do,
+        // but at least in the meantime the test expectations match that.
 		Configuration config = new Configuration();
 		Text value = new Text();
 
@@ -164,17 +166,18 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		jserde.initialize(config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
-        value.set("{\"attributes\":{\"when\":\"2020-02-20\"}}");
+        String dateStr = "2020-02-20";
+        value.set("{\"attributes\":{\"when\":\"" + dateStr + "\"}}");
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals("2020-02-20",
-							((DateWritable)fieldData).get().toString());
-        value.set("{\"attributes\":{\"when\":\"2017-05-05\"}}");
+
+        Assert.assertEquals(dateStr, iso8601FromWritable(fieldData));
+        dateStr = "2017-05-05";
+        value.set("{\"attributes\":{\"when\":\"" + dateStr + "\"}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals("2017-05-05",
-							((DateWritable)fieldData).get().toString());
+		Assert.assertEquals(dateStr, iso8601FromWritable(fieldData));
 	}
 
 	@Test
@@ -193,15 +196,14 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-		//Assert.assertEquals(147147147147L, ((DateWritable)fieldData).get().getTime());
-		Assert.assertEquals(new java.sql.Date(147147147147L).toString(),
-							((DateWritable)fieldData).get().toString());
+		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
+        long epochExpected = 147147147147L;
+        Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
         value.set("{\"attributes\":{\"when\":142857142857}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		//Assert.assertEquals(142857142857L, ((DateWritable)fieldData).get());
-		Assert.assertEquals(new java.sql.Date(142857142857L).toString(),
-							((DateWritable)fieldData).get().toString());
+		epochExpected = 142857142857L;
+        Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
 	}
 
 	@Test
@@ -216,31 +218,53 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		jserde.initialize(config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
-        value.set("{\"attributes\":{\"when\":\"2020-02-20\"}}");
+        String timeStr = "2020-02-20";
+        value.set("{\"attributes\":{\"when\":\"" + timeStr + "\"}}");
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals(
-			new java.text.SimpleDateFormat("yyyy-MM-dd").parse("2020-02-20").getTime(),
-			((TimestampWritable)fieldData).getTimestamp().getTime());
-        value.set("{\"attributes\":{\"when\":\"2017-05-05 05:05\"}}");
+        SimpleDateFormat dtFmt = new SimpleDateFormat("yyyy-MM-dd");
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        long epoch = dtFmt.parse(timeStr).getTime();
+        long
+            withOffset = epoch - TimeZone.getDefault().getOffset(epoch);
+        long got = epochFromWritable(fieldData);
+		Assert.assertEquals(epoch, got);
+        timeStr = "2017-05-05 05:05";
+        value.set("{\"attributes\":{\"when\":\"" + timeStr + "\"}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals(
-			new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2017-05-05 05:05").getTime(),
-			((TimestampWritable)fieldData).getTimestamp().getTime());
-        value.set("{\"attributes\":{\"when\":\"2017-08-09 10:11:12\"}}");
+        dtFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        epoch = dtFmt.parse(timeStr).getTime();
+        got = epochFromWritable(fieldData);
+        Assert.assertEquals(timeStr, iso8601FromWritable(fieldData).substring(0,16));
+   		Assert.assertEquals(epoch, got);
+
+        timeStr = "2017-08-09 10:11:12";
+        value.set("{\"attributes\":{\"when\":\"" + timeStr + "\"}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals(
-		  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-08-09 10:11:12").getTime(),
-		  ((TimestampWritable)fieldData).getTimestamp().getTime());
-        value.set("{\"attributes\":{\"when\":\"2017-06-05 04:03:02.123456789\"}}");
+        dtFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        epoch = dtFmt.parse(timeStr+'Z').getTime();
+        withOffset = epoch - TimeZone.getDefault().getOffset(epoch);
+        got = epochFromWritable(fieldData);
+        Assert.assertEquals(timeStr, iso8601FromWritable(fieldData).substring(0,19));
+   		Assert.assertEquals(epoch, got);
+
+        timeStr = "2017-06-05 04:03:02.123456789";
+        value.set("{\"attributes\":{\"when\":\"" + timeStr + "\"}}");
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		Assert.assertEquals(
-		  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2017-06-05 04:03:02.123").getTime(),
-		  ((TimestampWritable)fieldData).getTimestamp().getTime());  // ns parsed but not checked
+        dtFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm.SSS");
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dtFmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        dtFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        epoch = dtFmt.parse(timeStr.substring(0,23)).getTime();
+        withOffset = epoch - TimeZone.getDefault().getOffset(epoch);
+        got = epochFromWritable(fieldData);
+   		Assert.assertEquals(epoch, got);  // ns consumed by parser but not checked
 	}
 
 	@Test
@@ -427,37 +451,6 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		fieldData = getField("text", row, rowOI);
 		Assert.assertEquals("other", ((Text)fieldData).toString());
 	}
-    /* *
-	@Deprecated -> Obsolete
-	@Test
-	public void LegacyName() throws Exception {
-        ArrayList<Object> stuff = new ArrayList<Object>();
-		Properties proptab = new Properties();
-		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num,shape");
-		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "bigint,binary");
-		Configuration config = new Configuration();
-		AbstractSerDe jserde = new JsonSerde();
-		jserde.initialize(config, proptab);
-        StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
-
-        //value.set("{\"attributes\":{\"num\":7},\"geometry\":{\"x\":15.0,\"y\":5.0}}");
-        addWritable(stuff, 7L);
-        addWritable(stuff, new Point(15.0, 5.0));
-		Object row = runSerDe(stuff, jserde, rowOI);
-		Object fieldData = getField("num", row, rowOI);
-		Assert.assertEquals(7, ((LongWritable)fieldData).get());
-
-        //value.set("{\"attributes\":{\"num\":4},\"geometry\":{\"x\":7.0,\"y\":2.0}}");
-		stuff.clear();
-        addWritable(stuff, 4L);
-        addWritable(stuff, new Point(7.0, 2.0));
-		row = runSerDe(stuff, jserde, rowOI);
-		fieldData = getField("num", row, rowOI);
-		Assert.assertEquals(4, ((LongWritable)fieldData).get());
-		fieldData = getField("shape", row, rowOI);
-		ckPoint(new Point(7.0, 2.0), (BytesWritable)fieldData);
-	}
-    * */
 
 	private AbstractSerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
