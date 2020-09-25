@@ -39,9 +39,11 @@ public class TestStCentroid {
 		BytesWritable bwGeom = stLn.evaluate(new Text("linestring (0 0, 6 0)"));
 		BytesWritable bwCentroid = stCtr.evaluate(bwGeom);
 		validatePoint(new Point(3,0), bwCentroid);
-		bwGeom = stLn.evaluate(new Text("linestring (0 0, 2 4, 6 8)"));
+		bwGeom = stLn.evaluate(new Text("linestring (0 0, 0 4, 12 4)"));
 		bwCentroid = stCtr.evaluate(bwGeom);
-		validatePoint(new Point(3,4), bwCentroid);
+		// L1 = 4, L2 = 12, W1 = 0.25, W2 = 0.75, X = W1 * 0 + W2 * 6, Y = W1 * 2 + W2 * 4
+		// Or like centroid of multipoint of 1 of (0 2) and 3 of (6 4)
+		validatePoint(new Point(4.5, 3.5), bwCentroid);
 	}
 
 	@Test
@@ -51,13 +53,16 @@ public class TestStCentroid {
 		BytesWritable bwGeom = stPoly.evaluate(new Text("polygon ((0 0, 0 8, 8 8, 8 0, 0 0))"));
 		BytesWritable bwCentroid = stCtr.evaluate(bwGeom);
 		validatePoint(new Point(4,4), bwCentroid);
-		bwGeom = stPoly.evaluate(new Text("polygon ((1 1, 5 1, 3 4))"));
+		bwGeom = stPoly.evaluate(new Text("polygon ((1 1, 5 1, 3 4, 1 1))"));
 		bwCentroid = stCtr.evaluate(bwGeom);
 		validatePoint(new Point(3,2), bwCentroid);
+		bwGeom = stPoly.evaluate(new Text("polygon ((14 0, -14 0, -2 24, 2 24, 14 0))"));
+		bwCentroid = stCtr.evaluate(bwGeom);        // Cross-checked with ...
+		validatePoint(new Point(0,9), bwCentroid);  // ... omnicalculator.com/math/centroid
 	}
 
 	/**
-	 * Validates the geometry writable.
+	 * Validates the centroid geometry writable.
 	 * 
 	 * @param point
 	 *            the represented point location.
@@ -66,13 +71,18 @@ public class TestStCentroid {
 	 */
 	private static void validatePoint(Point point, BytesWritable geometryAsWritable) {
 		ST_X getX = new ST_X();
-		DoubleWritable xAsWritable = getX.evaluate(geometryAsWritable);
-		assertNotNull("The x writable must not be null!", xAsWritable);
-
 		ST_Y getY = new ST_Y();
+		DoubleWritable xAsWritable = getX.evaluate(geometryAsWritable);
 		DoubleWritable yAsWritable = getY.evaluate(geometryAsWritable);
-		assertNotNull("The y writable must not be null!", yAsWritable);
 
+		if (null == xAsWritable || null == yAsWritable ||
+			Math.abs(point.getX() - xAsWritable.get()) > Epsilon ||
+			Math.abs(point.getY() - yAsWritable.get()) > Epsilon)
+			System.err.println("validateCentroid: " + (new ST_AsText()).evaluate(geometryAsWritable)
+							   + " ~ " + point);
+
+		assertNotNull("The x writable must not be null!", xAsWritable);
+		assertNotNull("The y writable must not be null!", yAsWritable);
 		assertEquals("Longitude is different!", point.getX(), xAsWritable.get(), Epsilon);
 		assertEquals("Latitude is different!", point.getY(), yAsWritable.get(), Epsilon);
 	}
