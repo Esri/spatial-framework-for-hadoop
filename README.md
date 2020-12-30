@@ -10,7 +10,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 ## What's New
 
 * ST_Centroid now returns the geometry centroid rather than the center of its envelope (as of v2.1).
-* [Spatial Framework for Hadoop v2](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2](https://github.com/Esri/geometry-api-java/releases), Hive v2.3 & v3, and Jackson v2.  Note: up-to-date releases may be available [on Github](https://github.com/Esri/spatial-framework-for-hadoop/releases) but [not on Maven Central](https://github.com/Esri/spatial-framework-for-hadoop/issues/123).
+* [Spatial Framework for Hadoop v2](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2](https://github.com/Esri/geometry-api-java/releases), Hive v2.3 & v3, and Jackson v2.  Note: up-to-date releases may be available [on Github](https://github.com/Esri/spatial-framework-for-hadoop/releases) but [may not be on Maven Central](https://github.com/Esri/spatial-framework-for-hadoop/issues/123).
 
 ## Features
 
@@ -30,7 +30,8 @@ Build as you would any other Mavenized repository.  All dependencies are pulled 
 
 ### Ant
 
-Ant build files are also available
+Ant build files are also available,
+but are considered legacy, and may likely be removed in a future release.
 
 At the root level of this repository, you can build a single jar with everything in the framework 
 using [Apache Ant](http://ant.apache.org/).  Alternatively, you can build a jar at the root level of each 
@@ -47,7 +48,7 @@ processing.
 
 ## Requirements
 
-* Geometry 2.0
+* Geometry 2.2
 * Hive 0.11 and above (see [Hive Compatibility issues](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))  (For building from source, Hive-0.12+ is required.)
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
