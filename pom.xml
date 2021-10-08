@@ -504,6 +504,9 @@
           <version>${surefire.plugin.version}</version>
           <configuration>
             <argLine>-Xmx1024m</argLine>
+          	<parallel>classes</parallel>
+          	<useUnlimitedThreads>true</useUnlimitedThreads>
+
           </configuration>
         </plugin>
 	<plugin>
