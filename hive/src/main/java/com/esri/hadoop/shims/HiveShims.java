@@ -3,7 +3,9 @@ package com.esri.hadoop.shims;
 import java.lang.reflect.Method;
 import java.util.TimeZone;
 
-
+/**
+ * These shims are internal to Spatial-Framework-for-Hadoop and subject to change without notice.
+ */
 public class HiveShims {
 
 	/**
@@ -48,7 +50,7 @@ public class HiveShims {
     /**
      * Classes o.a.h.h.common.type Date & Timestamp were introduced in Hive-3.1 version.
      */
-    public static Long getPrimitiveEpoch(Object prim, TimeZone tz) {
+    public static Long getPrimitiveEpoch(Object prim) {
         if (prim instanceof java.sql.Timestamp) {
 			return ((java.sql.Timestamp)prim).getTime();
         } else if (prim instanceof java.util.Date) {
@@ -78,9 +80,8 @@ public class HiveShims {
 	 * Type DATE was introduced in Hive-0.12 - class DateWritable in API.
      * Class DateWritableV2 is used instead as of Hive-3.1 version.
 	 */
-    public static void setDateWritable(Object dwHive, long epoch
-                                       , TimeZone tz
-                                       ) {
+	// See HIVE-12192.
+    public static void setDateWritable(Object dwHive, long epoch) {
         try {			    	                    // Hive 3.1 and above
             Class<?> dtClazz = Class.forName("org.apache.hadoop.hive.common.type.Date");
             Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritableV2");
@@ -97,32 +98,7 @@ public class HiveShims {
             } catch (Exception e2) {	            // Hive 0.11 and below
                 // column type DATE not supported
                 throw new UnsupportedOperationException("DATE type");
-                }
-        }
-    }  // setDateWritable
-
-	/**
-	 * Type DATE was introduced in Hive-0.12 - class DateWritable in API.
-     * Class DateWritableV2 is used instead as of Hive-3.1 version.
-	 */
-    public static void setDateWritable(Object dwHive, java.sql.Date jsd) {
-        try {			    	                    // Hive 3.1 and above
-            Class<?> dtClazz = Class.forName("org.apache.hadoop.hive.common.type.Date");
-            Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritableV2");
-            Method dtSetImpl = dtClazz.getMethod("setTimeInMillis", long.class);
-            Method dwSetImpl = dwClazz.getMethod("set", dtClazz);
-            Object dtObj = dtClazz.getConstructor().newInstance();
-            dtSetImpl.invoke(dtObj, jsd.getTime());
-            dwSetImpl.invoke(dwHive, dtObj);
-        } catch (Exception e1) {
-            try {				                    // Hive 0.12 and above
-                Class<?> dwClazz = Class.forName("org.apache.hadoop.hive.serde2.io.DateWritable");
-                Method dwSetImpl = dwClazz.getMethod("set", java.sql.Date.class);
-                dwSetImpl.invoke(dwHive, jsd);
-            } catch (Exception e2) {	            // Hive 0.11 and below
-                // column type DATE not supported
-                throw new UnsupportedOperationException("DATE type");
-                }
+            }
         }
     }  // setDateWritable
 
@@ -151,29 +127,4 @@ public class HiveShims {
         }
     }  // setTimeWritable
 
-	/**
-	 * Type TIMESTAMP was introduced in Hive-0.12 - class TimestampWritable in API.
-     * Class TimestampWritableV2 is used instead as of Hive-3.1 version.
-	 */
-    public static void setTimeWritable(Object twHive, java.sql.Timestamp jst) {
-        long epoch = jst.getTime();
-        try {			    	                    // Hive 3.1 and above
-            Class<?> ttClazz = Class.forName("org.apache.hadoop.hive.common.type.Timestamp");
-            Class<?> twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritableV2");
-            Method ttSetImpl = ttClazz.getMethod("setTimeInMillis", long.class);
-            Method twSetImpl = twClazz.getMethod("set", ttClazz);
-            Object ttObj = ttClazz.getConstructor().newInstance();
-            ttSetImpl.invoke(ttObj, epoch);
-            twSetImpl.invoke(twHive, ttObj);
-        } catch (Exception e1) {
-            try {				                    // Hive 0.12 and above
-                Class<?> twClazz = Class.forName("org.apache.hadoop.hive.serde2.io.TimestampWritable");
-                Method twSetImpl = twClazz.getMethod("set", java.sql.Timestamp.class);
-                twSetImpl.invoke(twHive, new java.sql.Timestamp(epoch));
-            } catch (Exception e2) {	            // Hive 0.11 and below
-                // column type TIMESTAMP not supported
-                throw new UnsupportedOperationException("TIMESTAMP type");
-            }
-        }
-    }  // setTimeWritable
 }

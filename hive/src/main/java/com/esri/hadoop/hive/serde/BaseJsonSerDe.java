@@ -202,6 +202,9 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+        } catch (java.text.ParseException jtpe) {
+            // probably should set field to null?
+            jtpe.printStackTrace();
 		}
 
 		return row;
@@ -321,7 +324,7 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 										  PrimitiveObjectInspector poi, JsonGenerator jsonGen)
 		throws JsonProcessingException, IOException {
 		Object prim = poi.getPrimitiveJavaObject(value);
-		Long epoch = HiveShims.getPrimitiveEpoch(prim, tz);
+		Long epoch = HiveShims.getPrimitiveEpoch(prim);
 		if (epoch == null) {  // anything but a recognized DATE or TIMESTAMP
 			jsonGen.writeObjectField(label, prim);
 		} else {
@@ -335,28 +338,25 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
     // Parse OGCGeometry from JSON
 	abstract protected OGCGeometry parseGeom(JsonParser parser);
 
-	private java.sql.Date parseDate(JsonParser parser) throws JsonParseException, IOException {
-		java.sql.Date jsd = null;
+	// See HIVE-12192.
+    // Complete handling of absent/invalid date as SQL NULL would be broader scope.
+	private long parseDate(JsonParser parser)
+      throws JsonParseException, IOException, java.text.ParseException {
 		if (JsonToken.VALUE_NUMBER_INT.equals(parser.getCurrentToken())) {
-			// DateWritable#daysToMillis adjusts the numerical/epoch time
-			// to midnight in the local time zone.	See HIVE-12192.
-			// Attempt to compensate, when date provided as epoch, which is unambiguously UTC.
 			long epoch = parser.getLongValue();
-			jsd = new java.sql.Date(epoch - tz.getOffset(epoch));
-		} else try {
+            return epoch;
+		} else {
 			long epoch = parseTime(parser.getText(), "yyyy-MM-dd");
-			jsd = new java.sql.Date(epoch + 43200000);  // midday rather than midnight
-		} catch (java.text.ParseException e) {
-			// null
-		}
-		return jsd;
+			return epoch + 43200000;  // midday rather than midnight
+        }
 	}
 
-	private java.sql.Timestamp parseTime(JsonParser parser) throws JsonParseException, IOException {
-		java.sql.Timestamp jst = null;
+    // Complete handling of absent/invalid date-time as SQL NULL would be broader scope.
+	private long parseTime(JsonParser parser) throws JsonParseException, IOException, java.text.ParseException {
+        long epoch = -9999L;
+        java.text.ParseException jtpe = null;
 		if (JsonToken.VALUE_NUMBER_INT.equals(parser.getCurrentToken())) {
-			long epoch = parser.getLongValue();
-			jst = new java.sql.Timestamp(epoch);
+			epoch = parser.getLongValue();
 		} else {
 			String value = parser.getText();
 			int point = value.indexOf('.');
@@ -364,14 +364,19 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 			String[] formats = {"yyyy-MM-dd HH:mm:ss.SSS", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd"};
 			for (String format: formats) {
 				try {
-					jst = new java.sql.Timestamp(parseTime(dateStr, format));
+					epoch = parseTime(dateStr, format);
+                    jtpe = null;
 					break;
-				} catch (java.text.ParseException e) {
-					// remain null after this attempted format
+				} catch (java.text.ParseException exc) {
+                    if (null == jtpe)
+                        jtpe = exc;
 				}
 			}
 		}  // else String value
-		return jst;
+        if (null == jtpe)
+            return epoch;
+        else
+            throw jtpe;
 	}
 
 	private long parseTime(String value, String format) throws java.text.ParseException {  // epoch
@@ -388,8 +393,10 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 	 * @param parser JsonParser pointing to the attribute
 	 * @throws JsonParseException
 	 * @throws IOException
+     * @throws ParseException
 	 */
-	private void setRowFieldFromParser(int fieldIndex, JsonParser parser) throws JsonParseException, IOException{
+	private void setRowFieldFromParser(int fieldIndex, JsonParser parser) throws
+      JsonParseException, IOException, java.text.ParseException {
 
 		PrimitiveObjectInspector poi = (PrimitiveObjectInspector)this.columnOIs.get(fieldIndex);
 		if (JsonToken.VALUE_NULL == parser.getCurrentToken())
@@ -420,7 +427,7 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 		case BOOLEAN:
 			((BooleanWritable)row.get(fieldIndex)).set(parser.getBooleanValue());
 			break;
-		case DATE:    // DateWritable stores days not milliseconds.
+		case DATE:    // DateWritable stores days not milliseconds. See also HIVE-12192.
 			HiveShims.setDateWritable(row.get(fieldIndex), parseDate(parser));
 			break;
 		case TIMESTAMP:
