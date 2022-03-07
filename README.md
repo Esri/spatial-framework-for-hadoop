@@ -9,20 +9,25 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 ## What's New
 
+* Hive v0 is deprecated.
 * ST_Centroid now returns the geometry centroid rather than the center of its envelope (as of v2.1).
-* [Spatial Framework for Hadoop v2](https://github.com/Esri/spatial-framework-for-hadoop/releases) is compatible with [Geometry v2](https://github.com/Esri/geometry-api-java/releases), Hive v2.3 & v3, and Jackson v2.  Note: up-to-date releases may be available [on Github](https://github.com/Esri/spatial-framework-for-hadoop/releases) but [may not be on Maven Central](https://github.com/Esri/spatial-framework-for-hadoop/issues/123).
 
 ## Features
 
-* **[JSON Utilities](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Utilities)** - Utilities 
-for interacting with JSON exported from ArcGIS
- * [Javadoc](http://esri.github.com/spatial-framework-for-hadoop/json/)
-* **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** - User-Defined 
-Functions and SerDes for spatial analysis in Hive
- * [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
- * [JSON SerDe](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
+* **[JSON Utilities](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Utilities)** -
+  Utilities for interacting with JSON exported from ArcGIS
+  - [Javadoc](http://esri.github.com/spatial-framework-for-hadoop/json/)
+* **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** -
+  User-Defined Functions and SerDes for spatial analysis in Hive and SparkSQL
+  - [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
+  - [JSON SerDe](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-JSON-SerDe)
 
 ## Getting Started
+
+### Pre-Built
+
+Up-to-date releases may be available [on Github](https://github.com/Esri/spatial-framework-for-hadoop/releases) but
+[may not be on Maven Central](https://github.com/Esri/spatial-framework-for-hadoop/issues/123).
 
 ### Maven
 
@@ -48,20 +53,26 @@ processing.
 
 ## Requirements
 
-* Geometry 2.2
-* Hive 0.11 and above (see [Hive Compatibility issues](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))  (For building from source, Hive-0.12+ is required.)
+* Geometry v2.2
+* Hive v1 and above or SparkSQL ([compatibility details](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
+* Hadoop v2 and above
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
-(referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system, prior to the 
-ArcGIS user submitting the workflow file. 
+  (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system,
+  prior to the ArcGIS user submitting the workflow file. 
+* System administrators should always deploy an appropriate version of dependencies into production,
+  that include important and especially security patches,
+  even if a JAR file has been built with a lower version.
+
 
 ## Resources
 
 * [GeoData Blog on the ArcGIS Blogs](http://blogs.esri.com/esri/arcgis/author/jonmurphy/)
 * [Big Data Place on GeoNet](https://geonet.esri.com/groups/big-data)
-* [ArcGIS Geodata Resource Center]( http://resources.arcgis.com/en/communities/geodata/)
+* [ArcGIS Geodata Resource Center](http://resources.arcgis.com/en/communities/geodata/)
 * [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
 * [twitter@esri](http://twitter.com/esri)
+
 
 ## Issues
 
@@ -69,7 +80,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 
 ## Contributing
 
-Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing)
+Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ## Licensing
 Copyright 2013-2022 Esri
@@ -88,4 +99,3 @@ limitations under the License.
 
 A copy of the license is available in the 
 repository's [license.txt](https://raw.github.com/Esri/spatial-framework-for-hadoop/master/license.txt) file.
-
