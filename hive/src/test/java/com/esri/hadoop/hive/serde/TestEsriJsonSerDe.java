@@ -3,7 +3,6 @@ package com.esri.hadoop.hive.serde;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -65,26 +64,37 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 
 	@Test
 	public void TestEpochWrite() throws Exception {
-		ArrayList<Object> stuff = new ArrayList<Object>();
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
 		AbstractSerDe jserde = mkSerDe(proptab);
 		StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
 
-		// {"attributes":{"when":147147147147}}
-		long epoch = 147147147147L;
-        long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
-        java.sql.Date expected = new java.sql.Date(zoned);
-        addWritable(stuff, expected);
+		long epoch = 1641535200000L;  // 2022-01-07 06:00 UTC
+        //long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
+        java.sql.Date jsd = new java.sql.Date(epoch);  // zoned?
+		ArrayList<Object> stuff = new ArrayList<Object>();
+        addWritable(stuff, jsd);
         Writable jsw = jserde.serialize(stuff, rowOI);
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
 		jn = jn.findValue("when");
-		java.sql.Date actual = new java.sql.Date(jn.getLongValue());
-		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
+		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
+
+		epoch = 1641578400000L;  // 2022-01-07 18:00 UTC
+        //long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
+        jsd = new java.sql.Date(epoch);  // zoned?
+		stuff = new ArrayList<Object>();
+        addWritable(stuff, jsd);
+        jsw = jserde.serialize(stuff, rowOI);
+		jn = new ObjectMapper().readTree(((Text)jsw).toString());
+		jn = jn.findValue("attributes");
+		jn = jn.findValue("when");
+        System.err.println(jn);
 		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
 	}
+
 	@Test
 	public void TestTimeWrite() throws Exception {
         ArrayList<Object> stuff = new ArrayList<Object>();
@@ -171,7 +181,6 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
-
         Assert.assertEquals(dateStr, iso8601FromWritable(fieldData));
         dateStr = "2017-05-05";
         value.set("{\"attributes\":{\"when\":\"" + dateStr + "\"}}");
@@ -191,18 +200,20 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
 		jserde.initialize(config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
+        // Half a day apart to test both a.m. & p.m. whether in East or West
 
-        value.set("{\"attributes\":{\"when\":147147147147}}");
+        value.set("{\"attributes\":{\"when\":1641535200000}}");  // 2022-01-07 06:00 UTC
 		Object row = jserde.deserialize(value);
 		StructField f0 = rowOI.getStructFieldRef("when");
 		Object fieldData = rowOI.getStructFieldData(row, f0);
 		long day = 24*3600*1000;  // DateWritable represents days not milliseconds.
-        long epochExpected = 147147147147L;
+        long epochExpected = 1641535200000L;  // or likely 00:00 UTC
         Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
-        value.set("{\"attributes\":{\"when\":142857142857}}");
+
+        value.set("{\"attributes\":{\"when\":1641578400000}}");  // 2022-01-07 18:00 UTC
         row = jserde.deserialize(value);
 		fieldData = rowOI.getStructFieldData(row, f0);
-		epochExpected = 142857142857L;
+		epochExpected = 1641578400000L;  // or likely 00:00 UTC
         Assert.assertEquals(epochExpected/day, epochFromWritable(fieldData)/day);
 	}
 
