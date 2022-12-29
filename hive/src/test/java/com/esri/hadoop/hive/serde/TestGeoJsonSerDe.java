@@ -112,7 +112,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         value.set("{\"properties\":{\"num\":7}}");
@@ -140,7 +140,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         String dateStr = "2020-02-20";
@@ -165,7 +165,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
         // Half a day apart to test both a.m. & p.m. whether in East or West
 
@@ -193,7 +193,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         value.set("{\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[15.0,5.0]}}");
@@ -327,7 +327,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 	private AbstractSerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
 		AbstractSerDe jserde = new GeoJsonSerDe();
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
 		return jserde;
 	}
 
