@@ -149,7 +149,7 @@
     <profile>
       <id>jackson-2.13</id>
       <properties>
-        <jackson.version>2.13.4</jackson.version>
+        <jackson.version>2.13.5</jackson.version>
       </properties>
     </profile>
 
