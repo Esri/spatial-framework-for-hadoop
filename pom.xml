@@ -143,13 +143,13 @@
     <profile>
       <id>jackson-2.12</id>
       <properties>
-        <jackson.version>2.12.6</jackson.version>
+        <jackson.version>2.12.7</jackson.version>
       </properties>
     </profile>
     <profile>
-      <id>jackson-2.13.1</id>
+      <id>jackson-2.13</id>
       <properties>
-        <jackson.version>2.13.1</jackson.version>
+        <jackson.version>2.13.5</jackson.version>
       </properties>
     </profile>
 
@@ -184,18 +184,6 @@
       </properties>
     </profile>
 
-    <profile>
-      <id>hadoop-1.1</id>
-      <properties>
-        <hadoop.version>1.1.1</hadoop.version>
-      </properties>
-    </profile>
-    <profile>
-      <id>hadoop-1.2</id>
-      <properties>
-        <hadoop.version>1.2.1</hadoop.version>
-      </properties>
-    </profile>
     <profile>
       <id>hadoop-2.2</id>
       <properties>
@@ -247,7 +235,7 @@
     <profile>
       <id>hadoop-2.10</id>
       <properties>
-        <hadoop.version>2.10.1</hadoop.version>
+        <hadoop.version>2.10.2</hadoop.version>
       </properties>
     </profile>
     <profile>
@@ -265,78 +253,16 @@
     <profile>
       <id>hadoop-3.2</id>
       <properties>
-        <hadoop.version>3.2.2</hadoop.version>
+        <hadoop.version>3.2.4</hadoop.version>
       </properties>
     </profile>
     <profile>
       <id>hadoop-3.3</id>
       <properties>
-        <hadoop.version>3.3.1</hadoop.version>
+        <hadoop.version>3.3.4</hadoop.version>
       </properties>
     </profile>
 
-    <profile>
-      <id>hive-.11</id>  <!-- Need to build with Hive-0.12 before testing with 0.11 -->
-      <properties>
-        <hive.version>0.11.0</hive.version>
-      </properties>
-      <!-- NEEDED with Hive-0.11  dependencies>
-        <dependency>
-          <groupId>javax.jdo</groupId>
-          <artifactId>jdo2-api</artifactId>
-          <version>2.3-ec</version>
-        </dependency>
-      </dependencies>
-      <repositories>
-        <repository>
-          <id>org.datanucleus</id>
-          <name>datanucleus</name>
-          <url>http://www.datanucleus.org/downloads/maven2/</url>
-        </repository>
-      </repositories -->
-    </profile>
-    <profile>
-      <id>hive-.12</id>
-      <properties>
-        <hive.version>0.12.0</hive.version>
-      </properties>
-    </profile>
-    <profile>
-      <id>hive-.13</id>
-      <properties>
-        <hive.version>0.13.0</hive.version>
-      </properties>
-    </profile>
-    <profile>
-      <id>hive-.14</id>
-      <properties>
-        <hive.version>0.14.0</hive.version>
-      </properties>
-      <!-- stackoverflow.com/questions/27710049/hive-0-14-udf-maven-project-missing-dependencies -->
-      <dependencies>
-       <dependency>
-         <groupId>org.apache.calcite</groupId>
-         <artifactId>calcite-core</artifactId>
-         <version>1.0.0-incubating</version>
-       </dependency>
-       <dependency>
-         <groupId>org.apache.calcite</groupId>
-         <artifactId>calcite-avatica</artifactId>
-         <version>1.0.0-incubating</version>
-       </dependency>
-       <dependency>
-         <groupId>org.apache.hive</groupId>
-         <artifactId>hive-exec</artifactId>
-         <version>0.14.0</version>
-         <exclusions>  <!--Could not resolve 0.9.2-incubating-SNAPSHOT -->
-            <exclusion>
-              <groupId>org.apache.calcite</groupId>
-              <artifactId>*</artifactId>
-            </exclusion>
-         </exclusions>
-       </dependency>
-      </dependencies>
-   </profile>
     <profile>
       <id>hive-1.0</id>
       <properties>
@@ -376,7 +302,7 @@
     <profile>
       <id>hive-2.3</id>
       <properties>
-        <hive.version>2.3.8</hive.version>
+        <hive.version>2.3.9</hive.version>
       </properties>
     </profile>
     <profile>
@@ -388,7 +314,13 @@
     <profile>
       <id>hive-3.1</id>
       <properties>
-        <hive.version>3.1.2</hive.version>
+        <hive.version>3.1.3</hive.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>hive-4.0</id>
+      <properties>
+        <hive.version>4.0.0</hive.version>  <!-- -alpha-2 -->
       </properties>
     </profile>
 

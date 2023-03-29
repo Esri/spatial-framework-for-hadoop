@@ -91,7 +91,6 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("attributes");
 		jn = jn.findValue("when");
-        System.err.println(jn);
 		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
 	}
 
@@ -144,7 +143,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "num");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "int");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         //value.set("{\"attributes\":{\"num\":7},\"geometry\":null}");
@@ -173,7 +172,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         String dateStr = "2020-02-20";
@@ -198,7 +197,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "date");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
         // Half a day apart to test both a.m. & p.m. whether in East or West
 
@@ -226,7 +225,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "when");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "timestamp");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         String timeStr = "2020-02-20";
@@ -287,7 +286,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 		Properties proptab = new Properties();
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMNS, "shape");
 		proptab.setProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES, "binary");
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
         StructObjectInspector rowOI = (StructObjectInspector)jserde.getObjectInspector();
 
         value.set("{\"attributes\":{},\"geometry\":{\"x\":15.0,\"y\":5.0}}");
@@ -466,7 +465,7 @@ public class TestEsriJsonSerDe extends JsonSerDeTestingBase {
 	private AbstractSerDe mkSerDe(Properties proptab) throws Exception {
 		Configuration config = new Configuration();
 		AbstractSerDe jserde = new EsriJsonSerDe();
-		jserde.initialize(config, proptab);
+		HiveShims.initSerDe(jserde, config, proptab);
 		return jserde;
 	}
 

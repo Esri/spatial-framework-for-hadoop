@@ -1,7 +1,12 @@
 package com.esri.hadoop.shims;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.TimeZone;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.serde2.AbstractSerDe;
+
 
 /**
  * These shims are internal to Spatial-Framework-for-Hadoop and subject to change without notice.
@@ -74,6 +79,21 @@ public class HiveShims {
                 return null;
             }
         }
+	}
+
+    /**
+     * // Hive v4 adds a second Properties parameter to AbstractSerDe#initialize.
+     */
+    public static void initSerDe(AbstractSerDe jserde, Configuration cfg, Properties tblProps)
+	throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		try {  // Hive-4
+			Method initImpl = jserde.getClass().getMethod("initialize", Configuration.class,
+														  Properties.class, Properties.class);
+            initImpl.invoke(jserde, cfg, tblProps, null);
+		} catch (Exception exc) {  // Hive-3
+			Method initImpl = jserde.getClass().getMethod("initialize", Configuration.class, Properties.class);
+            initImpl.invoke(jserde, cfg, tblProps);
+		}
     }
 
 	/**

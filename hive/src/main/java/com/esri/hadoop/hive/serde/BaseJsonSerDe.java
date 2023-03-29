@@ -71,14 +71,17 @@ abstract public class BaseJsonSerDe extends AbstractSerDe {
 	ArrayList<Writable> rowBase; 
 	ArrayList<Writable> row;
 	
-	@Override
-	public void initialize(Configuration cfg, Properties tbl) throws SerDeException {
-				
+	// Hive v4 adds a second Properties parameter
+	public void initialize(Configuration cfg, Properties tblProps, Properties partProps) throws SerDeException {
+		initialize(cfg, tblProps);
+	}
+	public void initialize(Configuration cfg, Properties tblProps) throws SerDeException {
+
 		geometryColumn = -1;
 
 	    // Read the configuration parameters
-		String columnNameProperty = tbl.getProperty(HiveShims.serdeConstants.LIST_COLUMNS);
-		String columnTypeProperty = tbl.getProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES);
+		String columnNameProperty = tblProps.getProperty(HiveShims.serdeConstants.LIST_COLUMNS);
+		String columnTypeProperty = tblProps.getProperty(HiveShims.serdeConstants.LIST_COLUMN_TYPES);
 
 		ArrayList<TypeInfo> typeInfos = TypeInfoUtils
 				.getTypeInfosFromTypeString(columnTypeProperty);
