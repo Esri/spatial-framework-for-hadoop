@@ -110,8 +110,8 @@ public class ST_Aggr_ConvexHull extends UDAF {
 		 * in the current buffer
 		 */
 		private void maybeAggregateBuffer(boolean force) throws HiveException {
-
-			if (force || geometries.size() > MAX_BUFFER_SIZE){
+			// Skip computing if there is none or single geometry buffered
+			if ((force && geometries.size() > 1) || geometries.size() > MAX_BUFFER_SIZE){
 				Geometry[] geomArray = new Geometry[geometries.size()];
 				geometries.toArray(geomArray);
 				geometries.clear();
