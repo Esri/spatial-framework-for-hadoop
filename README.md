@@ -15,7 +15,7 @@ to [GIS Tools for Hadoop](https://github.com/Esri/gis-tools-for-hadoop).
 
 * **[JSON Utilities](https://github.com/Esri/spatial-framework-for-hadoop/wiki/JSON-Utilities)** -
   Utilities for interacting with JSON exported from ArcGIS
-  - [Javadoc](http://esri.github.com/spatial-framework-for-hadoop/json/)
+  - [Javadoc](http://esri.github.io/spatial-framework-for-hadoop/json/)
 * **[Hive Spatial](https://github.com/Esri/spatial-framework-for-hadoop/wiki/Hive-Spatial)** -
   User-Defined Functions and SerDes for spatial analysis in Hive and SparkSQL
   - [UDF Documentation](https://github.com/Esri/spatial-framework-for-hadoop/wiki/UDF-Documentation)
@@ -82,7 +82,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ## Licensing
-Copyright 2013-2023 Esri
+Copyright 2013-2024 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
