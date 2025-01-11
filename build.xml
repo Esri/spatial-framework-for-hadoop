@@ -1,3 +1,4 @@
+<!-- Not maintained - see pom.xml -->
 <project name="esri-spatial-all" default="all" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
 	<property name="dir.build" value="build" />
