@@ -17,8 +17,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.Point;
@@ -49,7 +49,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("properties");
 		jn = jn.findValue("num");
-		Assert.assertEquals(7, jn.getIntValue());
+		Assert.assertEquals(7, jn.asInt());
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		JsonNode jn = new ObjectMapper().readTree(((Text)jsw).toString());
 		jn = jn.findValue("properties");
 		jn = jn.findValue("when");
-		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
+		Assert.assertEquals(epoch/day, jn.asLong()/day);
 
 		epoch = 1641578400000L;  // 2022-01-07 18:00 UTC
         //long zoned = epoch - TimeZone.getDefault().getOffset(epoch);
@@ -81,7 +81,7 @@ public class TestGeoJsonSerDe extends JsonSerDeTestingBase {
 		jn = jn.findValue("properties");
 		jn = jn.findValue("when");
         System.err.println(jn);
-		Assert.assertEquals(epoch/day, jn.getLongValue()/day);
+		Assert.assertEquals(epoch/day, jn.asLong()/day);
 	}
 
 	@Test
