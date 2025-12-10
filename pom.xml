@@ -71,14 +71,14 @@
 
     <!-- Different javac versions 8-/9+ have different parameters for version - not this easy -->
     <profile>
-      <id>java-6</id>
+      <id>java-6</id>  <!-- obsolete -->
       <properties>
         <java.source.version>1.6</java.source.version>
         <java.target.version>1.6</java.target.version>
       </properties>
     </profile>
     <profile>
-      <id>java-7</id>
+      <id>java-7</id>  <!-- obsolete -->
       <properties>
         <java.source.version>1.7</java.source.version>
         <java.target.version>1.7</java.target.version>
@@ -91,14 +91,30 @@
         <java.target.version>1.8</java.target.version>
       </properties>
     </profile>
-    <!-- profile>
-      <id>java-11|17</id>
+    <profile>
+      <id>java-11</id>
       <properties>
-        <java.release.version>?</java.release.version>
-        <java.source.version>?</java.source.version>
-        <java.target.version>?</java.target.version>
+        <java.release.version>11</java.release.version>
+        <java.source.version>11</java.source.version>
+        <java.target.version>11</java.target.version>
       </properties>
-    </profile -->
+    </profile>
+    <profile>
+      <id>java-17</id>
+      <properties>
+        <java.release.version>17</java.release.version>
+        <java.source.version>17</java.source.version>
+        <java.target.version>17</java.target.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>java-21</id>
+      <properties>
+        <java.release.version>21</java.release.version>
+        <java.source.version>21</java.source.version>
+        <java.target.version>21</java.target.version>
+      </properties>
+    </profile>
     <profile>
       <id>java-disable-doclint</id>
       <activation>
@@ -476,8 +492,10 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler.plugin.version}</version>
           <configuration>  <!-- differs for Java-11+ -->
+            <release>${java.release.version}</release>
             <source>${java.source.version}</source>
             <target>${java.target.version}</target>
+	    <jvmArguments>-XX:+IgnoreUnrecognizedVMOptions</jvmArguments>
           </configuration>
         </plugin>
         <plugin>
@@ -485,7 +503,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${surefire.plugin.version}</version>
           <configuration>
-            <argLine>-Xmx1024m</argLine>
+            <argLine>-Xmx1024m -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-exports=java.base/sun.net.dns=ALL-UNNAMED --add-exports=java.base/sun.net.util=ALL-UNNAMED</argLine>
           </configuration>
         </plugin>
         <plugin>
