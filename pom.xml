@@ -314,6 +314,12 @@
         <hadoop.version>3.4.3</hadoop.version>
       </properties>
     </profile>
+    <profile>
+      <id>hadoop-3.5</id>
+      <properties>
+        <hadoop.version>3.5.0</hadoop.version>
+      </properties>
+    </profile>
 
     <profile>
       <id>hive-1.0</id>
