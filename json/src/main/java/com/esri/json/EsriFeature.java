@@ -38,12 +38,13 @@ public class EsriFeature {
 	}
 	
 	/**
-	 * 
-	 * @param JsonParser parser that is pointed at the root of the JSON file created by ArcGIS
+	 * @deprecated
+	 * @param Jackson-2 JsonParser that is pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeature instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
+	@Deprecated
 	public static EsriFeature fromJson(JsonParser parser) throws JsonParseException, IOException
 	{	
 		return EsriJsonFactory.FeatureFromJson(parser);
