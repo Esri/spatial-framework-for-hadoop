@@ -68,8 +68,8 @@ public class EsriFeatureClass {
 	}
 
 	/**
-	 * @deprecated
-	 * @param Jackson-2 JsonParser that is pointed at the root of the JSON file created by ArcGIS
+	 * @deprecated InputStream
+	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeatureClass instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
