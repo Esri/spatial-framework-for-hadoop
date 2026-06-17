@@ -75,10 +75,10 @@ public class EsriJsonFactory {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated InputStream
 	 * Construct an {@link com.esri.json.EsriFeatureClass} from JSON
 	 * 
-	 * @param Jackson-2 JsonParser that is pointed at the root of the JSON file created by ArcGIS
+	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeatureClass instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
@@ -119,8 +119,8 @@ public class EsriJsonFactory {
 	
 	/**
 	 * Construct an {@link com.esri.json.EsriFeature} from JSON
-	 * @deprecated
-	 * @param Jackson-2 JsonParser that is pointed at the root of the JSON file created by ArcGIS
+	 * @deprecated InputStream
+	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeature instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
