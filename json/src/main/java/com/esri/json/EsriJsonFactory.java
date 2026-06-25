@@ -70,17 +70,20 @@ public class EsriJsonFactory {
 	 */
 	public static EsriFeatureClass FeatureClassFromJson(InputStream jsonInputStream) throws JsonParseException, IOException{
 		JsonParser parser = jsonFactory.createJsonParser(jsonInputStream);
-		return FeatureClassFromJson(parser);
+		parser.setCodec(jsonObjectMapper);
+		return parser.readValueAs(EsriFeatureClass.class);
 	}
 	
 	/**
+	 * @deprecated InputStream
 	 * Construct an {@link com.esri.json.EsriFeatureClass} from JSON
 	 * 
-	 * @param JsonParser parser that is pointed at the root of the JSON file created by ArcGIS
+	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeatureClass instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
+	@Deprecated
 	public static EsriFeatureClass FeatureClassFromJson(JsonParser parser) throws JsonProcessingException, IOException{
 		parser.setCodec(jsonObjectMapper);
 		return parser.readValueAs(EsriFeatureClass.class);
@@ -110,17 +113,19 @@ public class EsriJsonFactory {
 	 */
 	public static EsriFeature FeatureFromJson(InputStream jsonInputStream) throws JsonParseException, IOException{
 		JsonParser parser = jsonFactory.createJsonParser(jsonInputStream);
-		return FeatureFromJson(parser);
+		parser.setCodec(jsonObjectMapper);
+		return parser.readValueAs(EsriFeature.class);
 	}
 	
 	/**
 	 * Construct an {@link com.esri.json.EsriFeature} from JSON
-	 * 
-	 * @param JsonParser parser that is pointed at the root of the JSON file created by ArcGIS
+	 * @deprecated InputStream
+	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
 	 * @return EsriFeature instance that describes the fully parsed JSON representation
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
+	@Deprecated
 	public static EsriFeature FeatureFromJson(JsonParser parser) throws JsonProcessingException, IOException{
 		parser.setCodec(jsonObjectMapper);
 		return parser.readValueAs(EsriFeature.class);
