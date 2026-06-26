@@ -10,14 +10,15 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.esri.core.geometry.Geometry;
 
 /**
- * 
+ * @deprecated Intended for internal use by Spatial-Framework-for-Hadoop only.
  * Deserializes a JSON geometry type enumeration into a Geometry.Type.* enumeration
  */
+@Deprecated
 public class GeometryTypeJsonDeserializer extends JsonDeserializer<Geometry.Type> {
 
 	public GeometryTypeJsonDeserializer(){}
 	
-	@Override
+	@Deprecated @Override
 	public Geometry.Type deserialize(JsonParser parser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 		
