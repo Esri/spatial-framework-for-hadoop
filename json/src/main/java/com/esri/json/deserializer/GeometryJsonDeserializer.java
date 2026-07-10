@@ -9,14 +9,15 @@ import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 
 /**
- * 
+ * @deprecated Intended for internal use by Spatial-Framework-for-Hadoop only.
  * Deserializes a JSON geometry definition into a Geometry instance
  */
+@Deprecated
 public class GeometryJsonDeserializer extends JsonDeserializer<Geometry> {
 
 	public GeometryJsonDeserializer(){}
 	
-	@Override
+	@Deprecated @Override
 	public Geometry deserialize(JsonParser arg0, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 		return GeometryEngine.jsonToGeometry(arg0).getGeometry();

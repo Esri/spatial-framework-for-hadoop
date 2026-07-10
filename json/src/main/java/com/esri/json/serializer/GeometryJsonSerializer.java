@@ -10,9 +10,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 
+@Deprecated
 public class GeometryJsonSerializer extends JsonSerializer<Geometry> {
 
-	@Override
+	@Deprecated @Override
 	public void serialize(Geometry geometry, JsonGenerator jsonGenerator,
 			SerializerProvider arg2) throws IOException,
 			JsonProcessingException {

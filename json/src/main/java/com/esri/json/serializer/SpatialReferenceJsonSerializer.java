@@ -9,9 +9,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import com.esri.core.geometry.SpatialReference;
 
+@Deprecated
 public class SpatialReferenceJsonSerializer extends JsonSerializer<SpatialReference>{
 
-	@Override
+	@Deprecated @Override
 	public void serialize(SpatialReference spatialReference, JsonGenerator jsonGenerator,
 			SerializerProvider arg2) throws IOException,
 			JsonProcessingException {

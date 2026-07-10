@@ -10,14 +10,15 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.esri.core.geometry.SpatialReference;
 
 /**
- * 
+ * @deprecated Intended for internal use by Spatial-Framework-for-Hadoop only.
  * Deserializes a JSON spatial reference definition into a SpatialReference instance
  */
+@Deprecated
 public class SpatialReferenceJsonDeserializer extends JsonDeserializer<SpatialReference> {
 
 	public SpatialReferenceJsonDeserializer(){}
 	
-	@Override
+	@Deprecated @Override
 	public SpatialReference deserialize(JsonParser parser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 		try {
