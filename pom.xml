@@ -198,6 +198,30 @@
         <jackson.version>2.18.2</jackson.version>
       </properties>
     </profile>
+    <profile>
+      <id>jackson-2.19</id>
+      <properties>
+        <jackson.version>2.19.4</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.20</id>
+      <properties>
+        <jackson.version>2.20.2</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.21</id>
+      <properties>
+        <jackson.version>2.21.4</jackson.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jackson-2.22</id>
+      <properties>
+        <jackson.version>2.22.0</jackson.version>
+      </properties>
+    </profile>
 
     <profile>
       <id>geometry-2.2.0</id>
