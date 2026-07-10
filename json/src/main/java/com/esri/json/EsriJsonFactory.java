@@ -75,7 +75,7 @@ public class EsriJsonFactory {
 	}
 	
 	/**
-	 * @deprecated InputStream
+	 * @deprecated Use FeatureClassFromJson(InputStream)
 	 * Construct an {@link com.esri.json.EsriFeatureClass} from JSON
 	 * 
 	 * @param JsonParser parser (Jackson-2) pointed at the root of the JSON file created by ArcGIS
