@@ -53,8 +53,9 @@ processing.
 ## Requirements
 
 * Geometry v2.3
-* Hive v1 and above or SparkSQL ([compatibility details](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
-* Hadoop v2 and above
+* Hive v3 and above or SparkSQL ([compatibility details](https://github.com/Esri/spatial-framework-for-hadoop/wiki/ST_Geometry-for-Hive-Compatibility-with-Hive-Versions))
+* Hadoop v3 and above
+* Java JDK 1.17 or greater
 * Workflows calling MapReduce jobs require the location of the custom job to be run.
 * Custom MapReduce jobs that use the Esri Geometry API require that the developer has authored the job, 
   (referencing the com.esri.geometry.\* classes), and deployed the job Jar file to the Hadoop system,
