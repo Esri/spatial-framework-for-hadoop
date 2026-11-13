@@ -103,5 +103,6 @@ repository's [license.txt](https://raw.github.com/Esri/spatial-framework-for-had
 
 ## See Also
 
-* [Apache Sedona](https://github.com/apache/incubator-sedona/)
+* [Apache AsterixDB](https://asterixdb.apache.org)
+* [Apache Sedona](https://sedona.apache.org/)
 * [ArcGIS GeoAnalytics Engine](https://developers.arcgis.com/geoanalytics/)
